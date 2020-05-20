@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:foodieapp/vendors/screens/HomePage.dart';
+import 'package:foodieapp/vendors/screens/forgotPass.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
 
@@ -98,17 +100,15 @@ class _LoginState extends State<Login> {
                                 height: 60,
                                 child: SingleChildScrollView(
                                     child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
                                         children: <Widget>[
-                                            Container(
-                                                margin: EdgeInsets.only(left: MediaQuery.of(context).size.width/2.2,right: 0.0,top: 10.0),
-                                                child: Text("forgot ID ?",style: TextStyle(fontSize: 20,)),
-                                            ),
                                             Container(
                                                 margin: EdgeInsets.only(left:0.0,right: 0.0,top: 10.0),
                                                 child: FlatButton(
                                                     onPressed: (){
+                                                        Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPass()));
                                                     },
-                                                    child: Text("Send Request",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: secondaryColor,),)
+                                                    child: Text("forgot password ?",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: secondaryColor,),)
 
                                                 )
                                             )

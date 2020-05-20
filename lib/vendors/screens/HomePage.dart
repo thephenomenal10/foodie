@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:foodieapp/vendors/screens/MyAppBar.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:intl/intl.dart';
 import '../widgets/ordersData.dart';
@@ -20,19 +21,9 @@ class _HomeState extends State<Home> {
     String formattedDate = DateFormat('EEE d MMM y').format(now);
 
     return Scaffold(
-      appBar: new AppBar(
-        title: new Text("VENDOR APP"),
-        centerTitle: false,
-        actions: <Widget>[
-          Container(
-            child: Icon(
-              AntDesign.logout,
-              semanticLabel: "Logout",
-              size: 20.0,
-            ),
-          )
-        ],
-        brightness: Brightness.dark,
+      appBar: PreferredSize(
+        child: MyAppBar(),
+        preferredSize: Size.fromHeight(60.0),
       ),
       body: new ListView(
         children: <Widget>[
@@ -87,7 +78,6 @@ class _HomeState extends State<Home> {
                     itemBuilder: (context, index) {
                       int i = index + 1;
                       return Container(
-                        height: 100,
                         child: Card(
                           elevation: 6.0,
                           child: new Container(

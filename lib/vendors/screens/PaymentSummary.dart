@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 
+import 'MyAppBar.dart';
+
 class PaymentSumm extends StatefulWidget {
   @override
   _PaymentSummState createState() => _PaymentSummState();
@@ -11,19 +13,9 @@ class _PaymentSummState extends State<PaymentSumm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: new AppBar(
-            title: new Text("VENDOR APP"),
-            centerTitle: false,
-            actions: <Widget>[
-                Container(
-                    child: Icon(
-                        AntDesign.logout,
-                        semanticLabel: "Logout",
-                        size: 20.0,
-                    ),
-                )
-            ],
-            brightness: Brightness.dark,
+        appBar: PreferredSize(
+            child: MyAppBar(),
+            preferredSize: Size.fromHeight(60.0),
         ),
         body: new ListView(
             children: <Widget>[

@@ -6,6 +6,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:foodieapp/vendors/widgets/ordersData.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'MyAppBar.dart';
 import 'PaymentSummary.dart';
 
 class OrderInfo extends StatefulWidget {
@@ -26,19 +27,9 @@ class _OrderInfoState extends State<OrderInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(
-        title: new Text("VENDOR APP"),
-        centerTitle: false,
-        actions: <Widget>[
-          Container(
-            child: Icon(
-              AntDesign.logout,
-              semanticLabel: "Logout",
-              size: 20.0,
-            ),
-          )
-        ],
-        brightness: Brightness.dark,
+      appBar: PreferredSize(
+          child: MyAppBar(),
+          preferredSize: Size.fromHeight(60.0),
       ),
       floatingActionButton: SpeedDial(
           animatedIcon: AnimatedIcons.menu_close,
@@ -48,14 +39,14 @@ class _OrderInfoState extends State<OrderInfo> {
                   child: Icon(MaterialIcons.call, size: 30.0,),
                   label: "call customer",
                   onTap: () {
-                      launch('tel:8923088878');
+                      launch('tel:0123654789');
                   }
               ),
               SpeedDialChild(
                   child: Icon(AntDesign.customerservice,size: 30.0,),
                   label: "call care",
                   onTap: () {
-                      launch('tel:8923088878');
+                      launch('tel:0123654789');
 
                   }
               ),
@@ -261,7 +252,7 @@ class _OrderInfoState extends State<OrderInfo> {
                           child: FloatingActionButton(
                               backgroundColor: primaryColor,
                               hoverColor: Colors.white,
-                              splashColor: Colors.green.shade500,
+                              splashColor: secondaryColor,
                               heroTag: "tag1",
                               isExtended: true,
                               onPressed: () {
@@ -273,7 +264,7 @@ class _OrderInfoState extends State<OrderInfo> {
                         Container(
                             width: 150,
                           child: FloatingActionButton(
-                              backgroundColor: Colors.red,
+                              backgroundColor: primaryColor,
                               hoverColor: Colors.white,
                               splashColor: Colors.white,
                               isExtended: true,
