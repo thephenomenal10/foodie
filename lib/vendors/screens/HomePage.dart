@@ -1,6 +1,6 @@
+import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:foodieapp/vendors/screens/MyAppBar.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:intl/intl.dart';
@@ -27,6 +27,24 @@ class _HomeState extends State<Home> {
       ),
       body: new ListView(
         children: <Widget>[
+//          Padding(padding: EdgeInsets.only(top: 2),),
+          Container(
+            height: 300,
+            child: Carousel(
+              boxFit: BoxFit.fitWidth,
+              dotSize: 4.0,
+              dotColor: Colors.white,
+              autoplay: true,
+              images: [
+                AssetImage("assets/slider1.png"),
+                AssetImage("assets/slider2.jpg"),
+                AssetImage("assets/slider3.jpg"),
+                AssetImage("assets/slider4.jpg"),
+                AssetImage("assets/slider5.jpg"),
+              ],
+            ),
+          ),
+          Padding(padding: EdgeInsets.only(top: 8.0),),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -87,6 +105,12 @@ class _HomeState extends State<Home> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
+                                Image(
+                                    image: AssetImage("assets/my1.png"),
+                                  height: 85.0,
+                                  width: 65.0,
+                                ),
+
                                 Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[

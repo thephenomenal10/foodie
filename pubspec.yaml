@@ -33,6 +33,7 @@ dependencies:
   flutter_speed_dial: ^1.2.5
   url_launcher: ^5.4.7
   get_it: ^4.0.2
+  carousel_pro: ^0.0.13
 
 dev_dependencies:
   flutter_test:
@@ -50,8 +51,14 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/my1.png
+    - assets/slider1.png
+    - assets/slider2.jpg
+    - assets/slider3.jpg
+    - assets/slider4.jpg
+    - assets/slider5.jpg
+    - assets/appLogo.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

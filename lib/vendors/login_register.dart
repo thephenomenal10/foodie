@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:foodieapp/vendors/screens/HomePage.dart';
-// import 'package:foodieapp/vendors/screens/forgotPass.dart';
-// import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
-import 'package:foodieapp/vendors/widgets/dialogBox.dart';
-
-// import 'constants/constants.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -63,18 +58,6 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        title: Text(
-          "foodifi.in",
-          textScaleFactor: 1.5,
-          style: TextStyle(
-            color: Theme.of(context).primaryColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
       body: Center(
         child: Form(
           key: _formKey,

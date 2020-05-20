@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodieapp/vendors/login_register.dart';
 
 class AccountScreen extends StatefulWidget {
   @override
@@ -107,13 +108,26 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
             child: Column(
               children: <Widget>[
-                Text(
-                  "Profile",
-                  textScaleFactor: 2,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "Profile",
+                      textScaleFactor: 2,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                       ),
+                    ),
+                    GestureDetector(
+                        child: Icon(
+                            Icons.exit_to_app, color: Colors.white,size: 30.0,)   ,
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+                      },
+
+                    )
+                  ],
                 ),
                 SizedBox(
                   height: 20,

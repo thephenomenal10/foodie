@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
-import 'package:foodieapp/vendors/login.dart';
+import 'package:foodieapp/vendors/utils/primaryColor.dart';
+
+import 'account_screen.dart';
 
 class MyAppBar extends StatefulWidget {
   @override
@@ -10,25 +11,35 @@ class MyAppBar extends StatefulWidget {
 class _MyAppBarState extends State<MyAppBar> {
   @override
   Widget build(BuildContext context) {
-    return new AppBar(
-        title: new Text("VENDOR APP"),
-        centerTitle: false,
+    return AppBar(
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        title: new Image(
+            image: AssetImage("assets/appLogo.jpg"),
+                height: 120.0, width: 120.0
+        ),
         actions: <Widget>[
             GestureDetector(
               child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                  padding: EdgeInsets.symmetric(horizontal: 15),
                   child: Icon(
-                      AntDesign.logout,
-                      semanticLabel: "Logout",
-                      size: 30.0,
-                  ),
-              ),
+                      Icons.chat_bubble, color: primaryColor,size: 35)),
+
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+
                 },
-            )
+            ),
+            GestureDetector(
+                child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Icon(
+                        Icons.person, color: primaryColor,size: 35)),
+
+                onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => AccountScreen()));
+                },
+            ),
         ],
-        brightness: Brightness.dark,
     );
   }
 }
