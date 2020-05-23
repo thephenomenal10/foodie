@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:foodieapp/vendors/login_register.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
+import './vendors/services/isUserLoggedIn.dart';
 
-void main() {
+Future<void> main() async{
+    WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
       title: "Vendor",
-      home: Login(),
+      home: await isUserLoggedIn(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Roboto',
         primaryColor: primaryColor,
-      )
-      ));
+      )));
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:foodieapp/vendors/login_register.dart';
+
+import '../services/firebase_service.dart';
+
 
 class AccountScreen extends StatefulWidget {
   @override
@@ -7,6 +9,9 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
+
+  FirebaseAuthentication _firebaseAuthentication = new FirebaseAuthentication();
+
   var _isEditMode = false;
 
   Widget _infoField(label, initialValue, TextInputType inputType) => Padding(
@@ -123,7 +128,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         child: Icon(
                             Icons.exit_to_app, color: Colors.white,size: 30.0,)   ,
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+                        return _firebaseAuthentication.signOut(context);
                       },
 
                     )

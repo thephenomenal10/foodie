@@ -3,7 +3,8 @@ import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
-import '../login.dart';
+
+import 'login.dart';
 
 
 
