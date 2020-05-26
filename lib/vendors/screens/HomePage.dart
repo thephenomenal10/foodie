@@ -1,175 +1,166 @@
-import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:foodieapp/vendors/screens/MyAppBar.dart';
+import 'package:foodieapp/vendors/screens/account_screen.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
+import 'package:foodieapp/vendors/widgets/Orders.dart';
 import 'package:intl/intl.dart';
-import '../widgets/ordersData.dart';
-import 'orderInfo.dart';
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
-  OrdersData _ordersData = new OrdersData();
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+
+  TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = new TabController(length: 7, vsync: this, initialIndex: 3);
+    super.initState();
+  }
+
+// var date1, date2, date3, date4, date5, date6, date7;
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('EEE d MMM y').format(now);
 
     return Scaffold(
-      appBar: PreferredSize(
-        child: MyAppBar(),
-        preferredSize: Size.fromHeight(60.0),
-      ),
-      body: new ListView(
-        children: <Widget>[
-//          Padding(padding: EdgeInsets.only(top: 2),),
-          Container(
-            height: 300,
-            child: Carousel(
-              boxFit: BoxFit.fitWidth,
-              dotSize: 4.0,
-              dotColor: Colors.white,
-              autoplay: true,
-              images: [
-                AssetImage("assets/slider1.png"),
-                AssetImage("assets/slider2.jpg"),
-                AssetImage("assets/slider3.jpg"),
-                AssetImage("assets/slider4.jpg"),
-                AssetImage("assets/slider5.jpg"),
-              ],
-            ),
+      appBar: new AppBar(
+        automaticallyImplyLeading: false,
+        title: new Image(
+          image: AssetImage("assets/appLogo.jpg"),
+          height: 120.0,
+          width: 120.0,
+        ),
+        backgroundColor: Colors.white,
+        actions: <Widget>[
+          GestureDetector(
+            child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Icon(Icons.chat_bubble, color: primaryColor, size: 35)),
+            onTap: () {},
           ),
-          Padding(padding: EdgeInsets.only(top: 8.0),),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                child: new Text(
-                  "Welcome UserName,  have a good day",
-                  style: new TextStyle(
-                      fontSize: 18.0,
-                      color: secondaryColor,
-                      fontWeight: FontWeight.w600),
-                ),
-              ),
-              Divider(
-                thickness: 2.0,
-                indent: 10.0,
-                endIndent: 10.0,
-                color: Colors.grey.shade300,
-              ),
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
-                      child: new Text(
-                        "ORDERS",
-                        style: new TextStyle(
-                            color: secondaryColor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 25.0),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
-                      child: new Text(formattedDate),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 30.0,
-              ),
-              Container(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: _ordersData.customerName.length,
-                    itemBuilder: (context, index) {
-                      int i = index + 1;
-                      return Container(
-                        child: Card(
-                          elevation: 6.0,
-                          child: new Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 10.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Image(
-                                    image: AssetImage("assets/my1.png"),
-                                  height: 85.0,
-                                  width: 65.0,
-                                ),
-
-                                Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      "ORDER No: #$i",
-                                      style: new TextStyle(
-                                          color: secondaryColor, fontSize: 15),
-                                    ),
-                                    Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 5.0),
-                                      child: new Text(
-                                        _ordersData.customerName[index],
-                                        style: new TextStyle(
-                                            color: secondaryColor,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18.0),
-                                      ),
-                                    ),
-                                      Container(
-                                          padding:
-                                          EdgeInsets.symmetric(vertical: 5.0),
-                                          child: new Text(
-                                              _ordersData.customerAddress[index],
-                                              style: new TextStyle(
-                                                  color: secondaryColor,
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 18.0),
-                                          ),
-                                      )
-                                  ],
-                                ),
-                                Container(
-                                  child: RaisedButton(
-                                    color: primaryColor,
-                                    onPressed: () {
-                                        Navigator.push(
-                                            context, MaterialPageRoute(
-                                            builder: (context) => OrderInfo(
-                                                index,
-                                                _ordersData.customerName[index],
-                                                _ordersData.customerAddress[index])));
-                                    },
-                                    child: new Text("Order Info"),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-              ),
-              SizedBox(
-                height: 20.0,
-              )
-            ],
-          )
+          GestureDetector(
+            child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Icon(Icons.person, color: primaryColor, size: 35)),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AccountScreen()));
+            },
+          ),
         ],
+        bottom: TabBar(
+          isScrollable: true,
+          unselectedLabelColor: Colors.black,
+          labelColor: primaryColor,
+          tabs: [
+
+            Text(
+              DateFormat.yMMMd().format(
+                DateTime.now().subtract(
+                  Duration(days: 3),
+                ),
+              ),
+              style: new TextStyle(fontSize: 18.0),
+            ),
+            Text(
+              DateFormat.yMMMd().format(
+                DateTime.now().subtract(
+                  Duration(days: 2),
+                ),
+              ),
+              style: new TextStyle(fontSize: 18.0),
+            ),
+            Text(
+              'Yesterday',
+              style: new TextStyle(fontSize: 18.0),
+            ),
+            Text(
+              'Today',
+              style: new TextStyle(fontSize: 18.0),
+            ),
+            Text(
+              'Tomorrow',
+              style: new TextStyle(fontSize: 18.0),
+            ),
+            Text(
+              DateFormat.yMMMd().format(
+                DateTime.now().add(
+                  Duration(days: 2),
+                ),
+              ),
+              style: new TextStyle(fontSize: 18.0),
+            ),
+             Text(
+              DateFormat.yMMMd().format(
+                DateTime.now().add(
+                  Duration(days: 3),
+                ),
+              ),
+              style: new TextStyle(fontSize: 18.0),
+            ),
+          ],
+          controller: tabController,
+          indicatorColor: Colors.white,
+          indicatorSize: TabBarIndicatorSize.tab,
+        ),
+        bottomOpacity: 1,
+      ),
+      body: new TabBarView(
+        children: [
+         
+          Orders(
+            dateTime: DateFormat.yMMMd().format(
+                DateTime.now().subtract(
+                  Duration(days: 3),
+                ),
+              ) 
+            ),
+          Orders(
+            dateTime: DateFormat.yMMMd().format(
+                DateTime.now().subtract(
+                  Duration(days: 2),
+                ),
+              ) 
+          ),
+          Orders(
+            dateTime: DateFormat.yMMMd().format(
+                DateTime.now().subtract(
+                  Duration(days: 1),
+                ),
+              )
+            ),
+          Orders(
+            dateTime: DateFormat.yMMMd().format(
+                DateTime.now()
+              )
+          ),
+          Orders(
+            dateTime: DateFormat.yMMMd().format(
+                DateTime.now().add(
+                  Duration(days: 1),
+                ),
+              )
+            ),
+          Orders(
+             dateTime: DateFormat.yMMMd().format(
+                DateTime.now().add(
+                  Duration(days: 2),
+                ),
+              )
+          ),
+          Orders(
+             dateTime: DateFormat.yMMMd().format(
+                DateTime.now().add(
+                  Duration(days: 3),
+                ),
+              )
+          ),
+        ],
+        controller: tabController,
       ),
     );
   }

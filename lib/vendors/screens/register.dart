@@ -1,305 +1,429 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:foodieapp/vendors/services/firebase_service.dart';
-import 'package:foodieapp/vendors/utils/primaryColor.dart';
-import 'package:foodieapp/vendors/validation/validate.dart';
-import './login.dart';
-import '../widgets/isLoading.dart' as global;
+import 'package:flutter/services.dart';
+import 'package:foodieapp/vendors/constants/constants.dart';
+import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 
-class Register extends StatefulWidget {
+import 'HomePage.dart';
+
+class RegisterScreen extends StatefulWidget {
     @override
-    _RegisterState createState() => _RegisterState();
+    _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _RegisterState extends State<Register> {
+class _RegisterScreenState extends State<RegisterScreen> {
+    //bool _rememberMe = false;
+    bool _isSubscribed = false;
 
-    FirebaseAuthentication _firebaseAuthentication = new FirebaseAuthentication();
-
-    GlobalKey<FormState> _formKey = new GlobalKey();
-    TextEditingController _emailController = new TextEditingController();
-    TextEditingController _passController = new TextEditingController();
-    TextEditingController _nameController = new TextEditingController();
-    TextEditingController _numberController = new TextEditingController();
-    var _isSubscribed = false;
-
-
-    @override
-    Widget build(BuildContext context) {
-        return Scaffold(
-            backgroundColor: Colors.white,
-            body: global.isSignUpLoading
-            ? CircularProgressIndicator()
-            : Center(
-                child: Form(
-                    key: _formKey,
-                    child: SingleChildScrollView(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                                Container(
-                                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(5),
-                                        boxShadow: [
-                                            BoxShadow(
-                                                color: Colors.black.withOpacity(.3),
-                                                offset: Offset(0.0, 8.0),
-                                                blurRadius: 8.0,
-                                            ),
-                                        ],
+    Widget _buildNameTF() {
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+                Text(
+                    'Name',
+                    style: kLabelStyle,
+                ),
+                SizedBox(height: 5),
+                Row(
+                    children: <Widget>[
+                        Flexible(
+                            flex: 2,
+                            child: TextFormField(
+                                textAlign: TextAlign.left,
+                                style: TextStyle(fontSize: 12),
+                                decoration: InputDecoration(
+                                    fillColor: Color(0xFF00B712),
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                                        children: <Widget>[
-                                            Padding(
-                                                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                                                child: Text(
-                                                    "Name",
-                                                    textScaleFactor: 1.05,
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        letterSpacing: 1.25,
-                                                    ),
-                                                ),
-                                            ),
-                                            TextFormField(
-                                                controller: _nameController,
-                                                validator:  (val) {
-                                                    if(val.isEmpty){
-                                                        return "enter yout name";
-                                                    }
-                                                    return null;
-                                                },
-                                                decoration: InputDecoration(
-                                                    enabledBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.all(
-                                                            Radius.circular(12.0),
-                                                        ),
-                                                        borderSide: BorderSide(
-                                                            width: 2,
-                                                            color: primaryColor,
-                                                        ),
-                                                    ),
-                                                    focusedBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                                        borderSide: BorderSide(color: Colors.green),
-                                                    ),
-                                                ),
-                                            ),
-                                            Padding(
-                                                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                                                child: Text(
-                                                    "Phone",
-                                                    textScaleFactor: 1.05,
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        letterSpacing: 1.25,
-                                                    ),
-                                                ),
-                                            ),
-                                            TextFormField(
-                                                controller: _numberController,
-                                                validator:  (val) {
-                                                    if(val.isEmpty){
-                                                        return "enter your phone";
-                                                    }
-                                                    return null;
-                                                },
-                                                decoration: InputDecoration(
-                                                    enabledBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.all(
-                                                            Radius.circular(12.0),
-                                                        ),
-                                                        borderSide: BorderSide(
-                                                            width: 2,
-                                                            color: primaryColor,
-                                                        ),
-                                                    ),
-                                                    focusedBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                                        borderSide: BorderSide(color: Colors.green),
-                                                    ),
-                                                ),
-                                            ),
-                                            Padding(
-                                                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                                                child: Text(
-                                                    "Email",
-                                                    textScaleFactor: 1.05,
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        letterSpacing: 1.25,
-                                                    ),
-                                                ),
-                                            ),
-                                            TextFormField(
-                                                controller: _emailController,
-                                                validator:  validateEmail,
-                                                decoration: InputDecoration(
-                                                    enabledBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.all(
-                                                            Radius.circular(12.0),
-                                                        ),
-                                                        borderSide: BorderSide(
-                                                            width: 2,
-                                                            color: primaryColor,
-                                                        ),
-                                                    ),
-                                                    focusedBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                                        borderSide: BorderSide(color: Colors.green),
-                                                    ),
-                                                ),
-                                            ),
-                                            Padding(
-                                                padding: const EdgeInsets.only(top: 10, bottom: 10),
-                                                child: Text(
-                                                    "Password",
-                                                    textScaleFactor: 1.05,
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        letterSpacing: 1.25,
-                                                    ),
-                                                ),
-                                            ),
-                                            TextFormField(
-                                                controller: _passController,
-                                                validator:  validatePass,
-                                                decoration: InputDecoration(
-                                                    enabledBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.all(
-                                                            Radius.circular(12.0),
-                                                        ),
-                                                        borderSide: BorderSide(
-                                                            width: 2,
-                                                            color: primaryColor,
-                                                        ),
-                                                    ),
-                                                    focusedBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                                        borderSide: BorderSide(color: Colors.green),
-                                                    ),
-                                                ),
-                                                obscureText: true,
-                                            ),
-                                            ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                leading: FlatButton(
-                                                    color: Theme.of(context).primaryColor,
-                                                    onPressed: () {
-                                                        //navigate to payment gate way and return with some feed back.
-                                                        setState(() {
-                                                            _isSubscribed = !_isSubscribed;
-                                                        });
-                                                    },
-                                                    child: Padding(
-                                                        padding: const EdgeInsets.only(top: 10, bottom: 10),
-                                                        child: Text(
-                                                            "Subscribe",
-                                                            textScaleFactor: 1.05,
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                letterSpacing: 1.25,
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                                trailing: IconButton(
-                                                    icon: Icon(
-                                                        Icons.info,
-                                                        color: Theme.of(context).primaryColor,
-                                                    ),
-                                                    onPressed: () => showDialog(
-                                                        context: context,
-                                                        child: AlertDialog(
-                                                            title: Text('Subscribe to Continue'),
-                                                            content: Text(
-                                                                'You need to subscribe inorder to maintain your shop.\n\nSubscription amount is Rs 199',
-                                                            ),
-                                                            actions: <Widget>[
-                                                                FlatButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.of(context).pop(),
-                                                                    child: Text(
-                                                                        'Okay',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                            Theme.of(context).primaryColor,
-                                                                        ),
-                                                                    ),
-                                                                )
-                                                            ],
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                            InkWell(
-                                                onTap: (!_isSubscribed)
-                                                    ? null
-                                                    : () {
-                                                    signMeUp();
-                                                },
-                                                child: Container(
-                                                    margin: EdgeInsets.symmetric(
-                                                        vertical: 15,
-                                                        horizontal: 3,
-                                                    ),
-                                                    width: double.infinity,
-                                                    decoration: BoxDecoration(
-                                                        color: (_isSubscribed) ? Theme.of(context).primaryColor : Colors.black12,
-                                                        borderRadius: BorderRadius.circular(6.0),
-                                                        boxShadow: [
-                                                            BoxShadow(
-                                                                color: Colors.black.withOpacity(.3),
-                                                                offset: Offset(0.0, 4.0),
-                                                                blurRadius: 4.0,
-                                                            ),
-                                                        ],
-                                                    ),
-                                                    child: Center(
-                                                        child: Padding(
-                                                            padding: EdgeInsets.symmetric(vertical: 10),
-                                                            child: Text('Register',
-                                                                style: TextStyle(
-                                                                    color: Colors.white,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    letterSpacing: 1.5,
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ],
-                                    ),
-                                ),
-                                FlatButton(
-                                    onPressed: () {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
-                                    },
-                                    child: Text( "Already have an account ? Login.",
-                                        textScaleFactor: 1,
-                                        style: TextStyle(
-                                            color: Theme.of(context).primaryColor,
+                                    prefixIcon: Padding(
+                                        padding: EdgeInsets.all(0.0),
+                                        child: Icon(
+                                            Icons.person,
+                                            color: Colors.white,
                                         ),
                                     ),
-                                )
-                            ],
+                                    hintText: 'Enter your name',
+                                    hintStyle: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                    ),
+                                )),
                         ),
+                    ],
+                ),
+            ],
+        );
+    }
+
+    Widget _buildPhoneTF() {
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+                Text(
+                    'Phone',
+                    style: kLabelStyle,
+                ),
+                SizedBox(height: 5),
+                Row(
+                    children: <Widget>[
+                        Flexible(
+                            flex: 2,
+                            child: TextFormField(
+                                textAlign: TextAlign.left,
+                                style: TextStyle(fontSize: 12),
+                                decoration: InputDecoration(
+                                    fillColor: Color(0xFF00B712),
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    prefixIcon: Padding(
+                                        padding: EdgeInsets.all(0.0),
+                                        child: Icon(
+                                            Icons.call,
+                                            color: Colors.white,
+                                        ),
+                                    ),
+                                    hintText: 'Enter your phone',
+                                    hintStyle: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                    ),
+                                )),
+                        ),
+                    ],
+                ),
+            ],
+        );
+    }
+
+    Widget _buildEmailTF() {
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+                Text(
+                    'Email',
+                    style: kLabelStyle,
+                ),
+                SizedBox(height: 5),
+                Row(
+                    children: <Widget>[
+                        Flexible(
+                            flex: 2,
+                            child: TextFormField(
+                                textAlign: TextAlign.left,
+                                style: TextStyle(fontSize: 12),
+                                decoration: InputDecoration(
+                                    fillColor: Color(0xFF00B712),
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    prefixIcon: Padding(
+                                        padding: EdgeInsets.all(0.0),
+                                        child: Icon(
+                                            Icons.email,
+                                            color: Colors.white,
+                                        ),
+                                    ),
+                                    hintText: 'Enter your email',
+                                    hintStyle: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                    ),
+                                )),
+                        ),
+                    ],
+                ),
+            ],
+        );
+    }
+
+    Widget _buildPasswordTF() {
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+                Text(
+                    'Password',
+                    style: kLabelStyle,
+                ),
+                SizedBox(height: 5),
+                Row(
+                    children: <Widget>[
+                        Flexible(
+                            flex: 2,
+                            child: TextFormField(
+                                textAlign: TextAlign.left,
+                                style: TextStyle(fontSize: 12),
+                                decoration: InputDecoration(
+                                    fillColor: Color(0xFF00B712),
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    prefixIcon: Padding(
+                                        padding: EdgeInsets.all(0.0),
+                                        child: Icon(
+                                            Icons.lock_open,
+                                            color: Colors.white,
+                                        ),
+                                    ),
+                                    hintText: 'Enter your password',
+                                    hintStyle: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                    ),
+                                )),
+                        ),
+                    ],
+                ),
+            ],
+        );
+    }
+
+    Widget _buildConfirmPasswordTF() {
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+                Text(
+                    'Confirm password',
+                    style: kLabelStyle,
+                ),
+                SizedBox(height: 5),
+                Row(
+                    children: <Widget>[
+                        Flexible(
+                            flex: 2,
+                            child: TextFormField(
+                                textAlign: TextAlign.left,
+                                style: TextStyle(fontSize: 12),
+                                decoration: InputDecoration(
+                                    fillColor: Color(0xFF00B712),
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    prefixIcon: Padding(
+                                        padding: EdgeInsets.all(0.0),
+                                        child: Icon(
+                                            Icons.lock_outline,
+                                            color: Colors.white,
+                                        ),
+                                    ),
+                                    hintText: 'Confirm your password',
+                                    hintStyle: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                    ),
+                                )),
+                        ),
+                    ],
+                ),
+            ],
+        );
+    }
+
+    Widget _buildRegisterBtn(height) {
+        return Container(
+            padding: EdgeInsets.symmetric(vertical: height * 0.03),
+            width: double.infinity,
+
+            child: RaisedButton(
+                elevation: 5.0,
+                onPressed: (!_isSubscribed)
+                ? () {
+                    DialogBox().information(context, "Subscription to continue", "You need to Subscribe to continue");
+                }
+                    : ()
+                {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Home(),
+                        ));
+                    DialogBox().information(
+                        context, "Success", "Your have registered successfully");
+                },
+                padding: EdgeInsets.all(10),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                ),
+                color:  Colors.white,
+
+                child: Text(
+                    'REGISTER',
+                    textScaleFactor: 1.5,
+                    style: TextStyle(
+                        color: myGreen,
+                        letterSpacing: 1.8,
+                        fontWeight: FontWeight.bold,
                     ),
                 ),
             ),
         );
     }
 
-    void signMeUp() {
-        if(_formKey.currentState.validate()){
-            _formKey.currentState.save();
 
-            _firebaseAuthentication.signUp(context, _emailController, _passController);
-        }
+    Widget _buildSignupBtn() {
+        return GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: RichText(
+                text: TextSpan(
+                    children: [
+                        TextSpan(
+                            text: 'Already have an Account? ',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                            ),
+                        ),
+                        TextSpan(
+                            text: 'Sign In',
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                            ),
+                        ),
+                    ],
+                ),
+            ),
+        );
+    }
 
+    @override
+    Widget build(BuildContext context) {
+        double height = MediaQuery.of(context).size.height;
+        double width = MediaQuery.of(context).size.width;
+        return Scaffold(
+            body: SafeArea(
+                child: Container(
+                    padding: EdgeInsets.all(25),
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                                Color(0xFF5AFF15),
+                                Color(0xFF5AFF15),
+                                Color(0xFF00B712),
+                                Color(0xFF00B712),
+                            ],
+                            stops: [0.1, 0.4, 0.7, 0.9],
+                        ),
+                    ),
+                    child: AnnotatedRegion<SystemUiOverlayStyle>(
+                        value: SystemUiOverlayStyle.light,
+                        child: GestureDetector(
+                            onTap: () => FocusScope.of(context).unfocus(),
+                            child: Stack(
+                                children: <Widget>[
+                                    Container(
+                                        height: double.infinity,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                                colors: [
+                                                    Color(0xFF5AFF15),
+                                                    Color(0xFF5AFF15),
+                                                    Color(0xFF00B712),
+                                                    Color(0xFF00B712),
+                                                ],
+                                                stops: [0.1, 0.4, 0.7, 0.9],
+                                            ),
+                                            boxShadow: [
+                                                BoxShadow(
+                                                    color: Colors.black.withOpacity(.3),
+                                                    //offset: Offset(0.0, 8.0),
+                                                    blurRadius: 8.0)
+                                            ]),
+                                    ),
+                                    Container(
+                                        height: double.infinity,
+                                        child: SingleChildScrollView(
+                                            physics: AlwaysScrollableScrollPhysics(),
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: width * 0.1,
+                                                vertical: height * 0.02,
+                                            ),
+                                            child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                    Text(
+                                                        'Sign Up',
+                                                        textScaleFactor: 2,
+                                                        style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight: FontWeight.bold,
+                                                        ),
+                                                    ),
+                                                    SizedBox(height: height * 0.01),
+                                                    _buildNameTF(),
+                                                    SizedBox(height: height * 0.005),
+                                                    _buildPhoneTF(),
+                                                    SizedBox(height: height * 0.005),
+                                                    _buildEmailTF(),
+                                                    SizedBox(height: height * 0.005),
+                                                    _buildPasswordTF(),
+                                                    SizedBox(height: height * 0.005),
+                                                    _buildConfirmPasswordTF(),
+                                                    ListTile(
+                                                        contentPadding: EdgeInsets.zero,
+                                                        leading: FlatButton(
+//                                                            color: Theme.of(context).primaryColor,
+                                                            onPressed: () {
+                                                                //navigate to payment gate way and return with some feed back.
+                                                                setState(() {
+                                                                    _isSubscribed = !_isSubscribed;
+                                                                });
+                                                            },
+                                                            child: Padding(
+                                                                padding: const EdgeInsets.only(top: 10, bottom: 10),
+                                                                child: Text(
+                                                                    "Subscribe",
+                                                                    textScaleFactor: 1.05,
+                                                                    style: TextStyle(
+                                                                        color: Colors.white,
+                                                                        letterSpacing: 1.25,
+                                                                    ),
+                                                                ),
+                                                            ),
+                                                        ),
+                                                        trailing: IconButton(
+                                                            icon: Icon(
+                                                                Icons.info,
+                                                                color: Colors.white,
+                                                            ),
+                                                            onPressed: () => showDialog(
+                                                                context: context,
+                                                                child: DialogBox().information(
+                                                                    context,
+                                                                    "Subscribe to Continue",
+                                                                    "You need to subscribe inorder to maintain your shop.\n\nSubscription amount is Rs 199")
+                                                            ),
+                                                        ),
+                                                    ),
+                                                    _buildRegisterBtn(height),
+                                                    _buildSignupBtn(),
+                                                ],
+                                            ),
+                                        ),
+                                    )
+                                ],
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        );
     }
 }

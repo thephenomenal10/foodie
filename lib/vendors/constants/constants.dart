@@ -1,61 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:foodieapp/vendors/utils/primaryColor.dart';
+
+Color myGreen = Color(0xff6fda42);
+
+//login
 
 final kHintTextStyle = TextStyle(
-  color: secondaryColor,
-);
-final kHintTextStyle1 = TextStyle(
-  color: secondaryColor,
-);
-final kHintTextStyle2 = TextStyle(
-  color: secondaryColor,
-  fontSize: 13.0,
-);
-final kHintTextStyle3 = TextStyle(
-  color: secondaryColor,
-  fontSize: 10.0,
+  color: Colors.white54,
 );
 
 final kLabelStyle = TextStyle(
-  color: secondaryColor,
+  color: Colors.white,
   fontWeight: FontWeight.bold,
-);
-final kdraw = TextStyle(
-  fontSize: 15,
-  fontWeight: FontWeight.bold,
-
 );
 
 final kBoxDecorationStyle = BoxDecoration(
-  color: Colors.white,
-  borderRadius: BorderRadius.circular(6.0),
+  color: Color(0xFF00B712),
+  borderRadius: BorderRadius.circular(10.0),
   boxShadow: [
     BoxShadow(
-      color: secondaryColor,
-      blurRadius: 6.0,
-      offset: Offset(0, 1),
-    ),
-  ],
-);
-final kBoxDecorationStyle2 = BoxDecoration(
-  color: Colors.white,
-  borderRadius: BorderRadius.circular(16.0),
-  boxShadow: [
-    BoxShadow(
-      color: secondaryColor,
+      color: Colors.black12,
       blurRadius: 6.0,
       offset: Offset(0, 2),
     ),
   ],
 );
-final kBoxDecorationStyle1 = BoxDecoration(
-  color: secondaryColor,
-  borderRadius: BorderRadius.circular(6.0),
-  boxShadow: [
-    BoxShadow(
-      color: secondaryColor,
-      blurRadius: 6.0,
-      offset: Offset(0, 2),
-    ),
-  ],
+
+//onboarding
+final kTitleStyle = TextStyle(
+  color: Colors.white,
+  fontWeight: FontWeight.bold,
+  letterSpacing: 1.1,
+);
+
+final kSubtitleStyle = TextStyle(
+  color: Colors.white,
 );

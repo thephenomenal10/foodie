@@ -79,8 +79,8 @@ class _OrderInfoState extends State<OrderInfo> {
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                            new Text("Name", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 20.0),),
-                            new Text(widget.customerName, style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 20.0),)
+                            new Text("Name", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
+                            new Text(widget.customerName, style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                         ],
                       ),
                     ),
@@ -88,8 +88,8 @@ class _OrderInfoState extends State<OrderInfo> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                  new Text("Contact no.", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 20.0),),
-                                  new Text("1234567890", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 20.0),)
+                                  new Text("Contact no.", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
+                                  new Text("1234567890", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                               ],
                           ),
                       ),
@@ -97,8 +97,8 @@ class _OrderInfoState extends State<OrderInfo> {
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                  new Text("Address", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 20.0),),
-                                  new Text(widget.customerAddress, style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 20.0),)
+                                  new Text("Address", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
+                                  new Text(widget.customerAddress, style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                               ],
                           ),
                       ),
@@ -134,8 +134,8 @@ class _OrderInfoState extends State<OrderInfo> {
                                         child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                                new Text("Meal Type", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 20.0),),
-                                                new Text("Veg", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 20.0),)
+                                                new Text("Meal Type", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
+                                                new Text("Veg", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                                             ],
                                         ),
                                     ),
@@ -143,8 +143,8 @@ class _OrderInfoState extends State<OrderInfo> {
                                         child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                                new Text("Meal Time.", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 20.0),),
-                                                new Text("8:00 PM", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 20.0),)
+                                                new Text("Meal Time.", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
+                                                new Text("8:00 PM", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                                             ],
                                         ),
                                     ),
@@ -152,8 +152,8 @@ class _OrderInfoState extends State<OrderInfo> {
                                         child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                                new Text("Subscription Plan", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 20.0),),
-                                                new Text("Active(20 % off)", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 20.0),)
+                                                new Text("Subscription Plan", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
+                                                new Text("Active(20 % off)", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                                             ],
                                         ),
                                     ),
@@ -161,8 +161,8 @@ class _OrderInfoState extends State<OrderInfo> {
                                         child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                                new Text("Payment Type", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 20.0),),
-                                                new Text("Cash", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 20.0),)
+                                                new Text("Payment Type", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
+                                                new Text("Cash", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                                             ],
                                         ),
                                     ),
@@ -170,8 +170,8 @@ class _OrderInfoState extends State<OrderInfo> {
                                         child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                                new Text("Order Suggestion", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 20.0),),
-                                                new Text("proper packing", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 20.0),)
+                                                new Text("Order Suggestion", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
+                                                new Text("proper packing", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                                             ],
                                         ),
                                     ),
@@ -231,7 +231,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: <Widget>[
-                                                    Text(_ordersData.orderSummary[index], style: new TextStyle(color: secondaryColor, fontSize: 20.0, fontWeight: FontWeight.w400),),
+                                                    Text(_ordersData.orderSummary[index], style: new TextStyle(color: secondaryColor, fontSize: 15.0, fontWeight: FontWeight.w400),),
                                                 ],
                                             ),
                                         );

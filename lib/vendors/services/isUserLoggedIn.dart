@@ -10,6 +10,6 @@ Future<Widget> isUserLoggedIn () async {
         return Home();
     }
     else{
-        return Login();
+        return LoginScreen();
     }
 }

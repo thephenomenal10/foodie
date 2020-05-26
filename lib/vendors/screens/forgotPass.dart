@@ -4,7 +4,6 @@ import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 
-import 'login.dart';
 
 
 
@@ -46,11 +45,8 @@ class _ForgotPassState extends State<ForgotPass> {
                     RaisedButton(
                         elevation: 10,
                         onPressed: () {
-                            alertDialog(
-                                context,
-                                "your reset password has been sent to your mail",
-                                Login(),
-                            );
+                            DialogBox().information(
+                                context, "Success", "Your have registered successfully");
                         },
                         child: Padding(
                             padding: const EdgeInsets.only(left: 80.0,right: 80.0,top: 10.0,bottom: 10.0),

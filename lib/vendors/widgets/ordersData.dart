@@ -1,4 +1,6 @@
 
+import 'package:intl/intl.dart';
+
 class OrdersData {
     List<String> customerName = [
 
@@ -20,6 +22,20 @@ class OrdersData {
         "Customer addrees 5",
         "Customer addrees 6",
         "Customer addrees 7",
+    ];
+    static var newFormat = DateFormat("yy-MM-dd");
+    static var date = new DateTime(2020, 05, 25);
+    static var lastDate = new DateTime(date.year, date.month, date.day-2);
+    List<String> ordersDate = [
+
+        "${newFormat.format(DateTime.now())}",
+        "${newFormat.format(lastDate)}",
+        "${newFormat.format(lastDate)}",
+        "${newFormat.format(lastDate)}",
+        "${newFormat.format(lastDate)}",
+        "${newFormat.format(lastDate)}",
+        "${newFormat.format(lastDate)}",
+
     ];
     List<String> orderSummary = [
 

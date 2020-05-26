@@ -1,35 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:foodieapp/vendors/utils/primaryColor.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:foodieapp/vendors/constants/constants.dart';
 
-Future<dynamic> alertDialog(BuildContext context, String message, route) async {
-  return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Center(child: Text(message)),
-          content: SingleChildScrollView(
-            child: Row(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(left: 70),
-                  child: Center(
-                    child: RaisedButton(
-                      color: primaryColor,
-                      child: Text(
-                        "ok",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      onPressed: () {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) => route));
-                      },
+class DialogBox {
+  information(BuildContext context, String title, String desc) {
+    return showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text(
+              title,
+              style: TextStyle(
+                  color: myGreen, fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text(
+                    desc,
+                    style: TextStyle(
+                      fontSize: 12,
                     ),
                   ),
-                )
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      });
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  return Navigator.pop(context);
+                },
+                child: FaIcon(
+                  FontAwesomeIcons.checkCircle,
+                  color: myGreen,
+                ),
+              ),
+            ],
+          );
+        });
+  }
 }

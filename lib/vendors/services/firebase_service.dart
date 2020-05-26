@@ -105,7 +105,7 @@ class FirebaseAuthentication {
 
     Future<void > signOut(context) async{
          Navigator.pop(context);
-         return await auth.signOut().then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login())));
+         return await auth.signOut().then((value) => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen())));
 
     }
 }
