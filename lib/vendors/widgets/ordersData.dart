@@ -37,12 +37,5 @@ class OrdersData {
         "${newFormat.format(lastDate)}",
 
     ];
-    List<String> orderSummary = [
-
-        "Daal 1 X 2",
-        "Rice 2 X 1",
-        "Fry Rice 3 X 1",
-        "Rayata 1 X 1",
-    ];
 
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:foodieapp/vendors/widgets/ordersData.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'MyAppBar.dart';
@@ -22,7 +21,6 @@ class OrderInfo extends StatefulWidget {
 
 class _OrderInfoState extends State<OrderInfo> {
 
-    OrdersData _ordersData = new OrdersData();
 
   @override
   Widget build(BuildContext context) {
@@ -208,38 +206,6 @@ class _OrderInfoState extends State<OrderInfo> {
                         color: secondaryColor,
                         fontWeight: FontWeight.w500,
                         fontSize: 25.0),
-                ),
-            ),
-            Container(
-                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
-                child: new Card(
-                    elevation: 6.0,
-                    child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                                Container(
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: _ordersData.orderSummary.length,
-                                        itemBuilder: (context, index) {
-                                        return Container(
-                                            child: Row(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: <Widget>[
-                                                    Text(_ordersData.orderSummary[index], style: new TextStyle(color: secondaryColor, fontSize: 15.0, fontWeight: FontWeight.w400),),
-                                                ],
-                                            ),
-                                        );
-                                    }),
-                                )
-                            ],
-                        ),
-                    ),
                 ),
             ),
             Container(

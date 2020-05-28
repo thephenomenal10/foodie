@@ -6,6 +6,7 @@ String validateEmail(String value) {
     if (!regex.hasMatch(value)) {
         return 'Please enter a valid email id';
     }
+    return null;
 }
 
 String validatePass(String value) {
@@ -13,6 +14,8 @@ String validatePass(String value) {
         r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
     RegExp regExp = new RegExp(pattern);
     if (!regExp.hasMatch(value)) {
-        return "Password must contain 1 uppercase, 1 lowecase ,1 no, and special character";
+        return "Password must contain 1 \n uppercase, 1 lowecase ,1 no,\n and special character";
     }
+
+    return null;
 }

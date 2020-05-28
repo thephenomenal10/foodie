@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 
-import 'account_screen.dart';
 
 class MyAppBar extends StatefulWidget {
   @override
@@ -27,16 +26,6 @@ class _MyAppBarState extends State<MyAppBar> {
 
                 onTap: () {
 
-                },
-            ),
-            GestureDetector(
-                child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15),
-                    child: Icon(
-                        Icons.person, color: primaryColor,size: 35)),
-
-                onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AccountScreen()));
                 },
             ),
         ],

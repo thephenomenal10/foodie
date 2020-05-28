@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:foodieapp/vendors/screens/account_screen.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:foodieapp/vendors/widgets/Orders.dart';
 import 'package:intl/intl.dart';
@@ -42,16 +41,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 child: Icon(Icons.chat_bubble, color: primaryColor, size: 35)),
             onTap: () {},
           ),
-          GestureDetector(
-            child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Icon(Icons.person, color: primaryColor, size: 35)),
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AccountScreen()));
-            },
-          ),
+          
         ],
+        elevation: 10.0,
+        flexibleSpace: SizedBox(height: 30),
         bottom: TabBar(
           isScrollable: true,
           unselectedLabelColor: Colors.black,
