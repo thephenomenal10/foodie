@@ -6,6 +6,7 @@ import 'package:foodieapp/vendors/services/firebase_service.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 
+import 'HomePage.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -17,7 +18,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   DatabaseService _databaseService = new DatabaseService();
 
   //bool _rememberMe = false;
-  bool _isSubscribed = false;
 
   final GlobalKey<FormState> _formKey = new GlobalKey();
 
@@ -92,6 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               flex: 2,
               child: TextFormField(
                   controller: phoneController,
+                  keyboardType: TextInputType.phone,
                   validator: (val) {
                     if (val.isEmpty) {
                       return "enter your phone number";
@@ -275,12 +276,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
-        onPressed: (!_isSubscribed)
-            ? () {
-                DialogBox().information(context, "Subscription to continue",
-                    "You need to Subscribe to continue");
-              }
-            : () {
+        onPressed:  () {
                 return signMeUp();
               },
         padding: EdgeInsets.all(10),
@@ -409,42 +405,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _buildPasswordTF(),
                             SizedBox(height: height * 0.005),
                             _buildConfirmPasswordTF(),
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: FlatButton(
-                                //                                                            color: Theme.of(context).primaryColor,
-                                onPressed: () {
-                                  //navigate to payment gate way and return with some feed back.
-                                  setState(() {
-                                    _isSubscribed = !_isSubscribed;
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, bottom: 10),
-                                  child: Text(
-                                    "Subscribe",
-                                    textScaleFactor: 1.05,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      letterSpacing: 1.25,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              trailing: IconButton(
-                                icon: Icon(
-                                  Icons.info,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () => showDialog(
-                                    context: context,
-                                    child: DialogBox().information(
-                                        context,
-                                        "Subscribe to Continue",
-                                        "You need to subscribe inorder to maintain your shop.\n\nSubscription amount is Rs 199")),
-                              ),
-                            ),
                             _buildRegisterBtn(height),
                             _buildSignupBtn(),
                           ],
@@ -470,9 +430,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "Name": nameController.text,
         "Phone": phoneController.text,
       };
+    
+      firebaseAuthentication.signUp(context, emailController, passController, phoneController.text.trim());
       _databaseService.addUserData(userInfo, emailController.text);
 
-      firebaseAuthentication.signUp(context, emailController, passController);
     }
   }
 }

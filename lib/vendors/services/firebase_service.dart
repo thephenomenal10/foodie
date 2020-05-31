@@ -2,12 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/screens/login.dart';
+import 'package:foodieapp/vendors/screens/otpVerificationScreen.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 import 'package:foodieapp/vendors/screens/createTiffenCentre.dart';
 import 'package:foodieapp/vendors/bottomNavigationBar.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
+var currentUserUid;
 
 class FirebaseAuthentication {
   void signIn(context, emailController, passwordController) async {
@@ -20,8 +22,8 @@ class FirebaseAuthentication {
       });
       print(result.user);
       if (auth.currentUser() != null) {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
         DialogBox()
             .information(context, "Success", "Your have Login successfully");
       }
@@ -50,7 +52,8 @@ class FirebaseAuthentication {
     }
   }
 
-  void signUp(context, emailController, passwordController) async {
+  void signUp(
+      context, emailController, passwordController, phoneControlloer) async {
     try {
       AuthResult result = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
@@ -58,11 +61,10 @@ class FirebaseAuthentication {
           .catchError((e) {
         print(e);
       });
+      await result.user.sendEmailVerification();
+      currentUserUid = result.user.uid;
+      print(currentUserUid.toString());
       print(result);
-
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => CreateTiffenCentre()));
-
     } catch (e) {
       showDialog(
         context: context,
@@ -86,6 +88,35 @@ class FirebaseAuthentication {
       );
       return (e.message);
     }
+    verifyPhone(context, phoneControlloer);
+  }
+
+//PHONE NO VERIFICATION .....///////////////////...
+
+  Future<bool> verifyPhone(context, String phoneNumber) {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+
+    _auth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        timeout: Duration(seconds: 60),
+        verificationCompleted: null,
+        verificationFailed: (AuthException exception) {
+
+          user.delete().then((value) {
+            print("successfully user deleted.....................................");
+          });
+          print(exception.message.toString());
+        },
+        codeSent: (String verificationId, [int forceResendingToken]) {
+          // TextEditingController _codeController = new TextEditingController();
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => OTPVerifyScreen(
+                      verificationId: verificationId, phone: phoneNumber)));
+        },
+        codeAutoRetrievalTimeout: null);
   }
 
   Future resetPassword(String email) async {

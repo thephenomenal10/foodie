@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/firebase_service.dart';
-
+import 'package:foodieapp/vendors/widgets/isLoading.dart' as global;
 
 class AccountScreen extends StatefulWidget {
   @override
@@ -9,7 +9,6 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-
   FirebaseAuthentication _firebaseAuthentication = new FirebaseAuthentication();
 
   var _isEditMode = false;
@@ -98,112 +97,123 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   @override
+  void initState() {
+    global.isSignUpLoading = false;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: <Widget>[
-          Container(
-            height: 250,
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(40),
-              ),
-              color: Theme.of(context).primaryColor,
-            ),
-            child: Column(
+      body: global.isSignUpLoading == true
+          ? CircularProgressIndicator()
+          : ListView(
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      "Profile",
-                      textScaleFactor: 2,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                       ),
+                Container(
+                  height: 250,
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(40),
                     ),
-                    GestureDetector(
-                        child: Icon(
-                            Icons.exit_to_app, color: Colors.white,size: 30.0,)   ,
-                      onTap: (){
-                        return _firebaseAuthentication.signOut(context);
-                      },
-
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Stack(
-                  fit: StackFit.loose,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 5),
-                      child: CircleAvatar(
-                        radius: 70,
-                        backgroundColor: Colors.white,
-                        backgroundImage: NetworkImage(
-                          'https://www.shareicon.net/data/512x512/2016/07/26/802043_man_512x512.png',
-                        ),
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            "Profile",
+                            textScaleFactor: 2,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          GestureDetector(
+                            child: Icon(
+                              Icons.exit_to_app,
+                              color: Colors.white,
+                              size: 30.0,
+                            ),
+                            onTap: () {
+                                
+                              _firebaseAuthentication.signOut(context);
+                            },
+                          )
+                        ],
                       ),
-                    ),
-                    Positioned(
-                      bottom: 10,
-                      left: 0,
-                      child: CircleAvatar(
-                        radius: 25,
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          Icons.camera_alt,
-                          //size: 30,
-                          color: Theme.of(context).primaryColor,
-                        ),
+                      SizedBox(
+                        height: 20,
                       ),
+                      Stack(
+                        fit: StackFit.loose,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 5),
+                            child: CircleAvatar(
+                              radius: 70,
+                              backgroundColor: Colors.white,
+                              backgroundImage: NetworkImage(
+                                'https://www.shareicon.net/data/512x512/2016/07/26/802043_man_512x512.png',
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 10,
+                            left: 0,
+                            child: CircleAvatar(
+                              radius: 25,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.camera_alt,
+                                //size: 30,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                        alignment: Alignment.center,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 25),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            Text(
+                              'Account Information',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            !_isEditMode ? _getEditIcon() : SizedBox(),
+                          ],
+                        ),
+                        _infoField("Name", "Matt Smith", TextInputType.text),
+                        _infoField("Email", "msmith@gmail.com",
+                            TextInputType.emailAddress),
+                        _infoField("Phone", "1234567890", TextInputType.phone),
+                        _infoField(
+                            "Address", "Bulk Road, Weston", TextInputType.text),
+                        _isEditMode ? _getActionButtons() : SizedBox(),
+                      ],
                     ),
-                  ],
-                  alignment: Alignment.center,
+                  ),
                 ),
               ],
             ),
-          ),
-          Container(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 25),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      Text(
-                        'Account Information',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      !_isEditMode ? _getEditIcon() : SizedBox(),
-                    ],
-                  ),
-                  _infoField("Name", "Matt Smith", TextInputType.text),
-                  _infoField(
-                      "Email", "msmith@gmail.com", TextInputType.emailAddress),
-                  _infoField("Phone", "1234567890", TextInputType.phone),
-                  _infoField(
-                      "Address", "Bulk Road, Weston", TextInputType.text),
-                  _isEditMode ? _getActionButtons() : SizedBox(),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

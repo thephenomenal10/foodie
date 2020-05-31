@@ -4,6 +4,7 @@ import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/screens/register.dart';
 import 'package:foodieapp/vendors/services/firebase_service.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
+import 'package:foodieapp/vendors/widgets/isLoading.dart' as global;
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -180,76 +181,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSignInWithText() {
-    return Column(
-      children: <Widget>[
-        Text(
-          '- OR -',
-          textScaleFactor: 1.1,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-        SizedBox(height: 20.0),
-        Text(
-          'Sign in with',
-          textScaleFactor: 0.9,
-          style: kLabelStyle,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSocialBtn(Function onTap, AssetImage logo) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 35,
-        width: 35,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black26,
-              offset: Offset(0, 2),
-              blurRadius: 6.0,
-            ),
-          ],
-          image: DecorationImage(
-            image: logo,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSocialBtnRow(width) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          _buildSocialBtn(
-            () => print('Login with Facebook'),
-            AssetImage(
-              'assets/facebook.jpg',
-            ),
-          ),
-          SizedBox(
-            width: width * 0.15,
-          ),
-          _buildSocialBtn(
-            () => print('Login with Google'),
-            AssetImage(
-              'assets/google.jpg',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildSignupBtn() {
     return GestureDetector(
@@ -285,11 +216,21 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void initState() {
+
+    global.isSignUpLoading = false;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SafeArea(
+      body: 
+      global.isSignUpLoading == true
+      ? Center(child: CircularProgressIndicator())
+     : SafeArea(
         child: Form(
                 key: _formKey,
                   child: Container(
@@ -365,8 +306,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             _buildForgotPasswordBtn(),
                             _buildRememberMeCheckbox(),
                             _buildLoginBtn(height),
-                            _buildSignInWithText(),
-                            _buildSocialBtnRow(width),
                             _buildSignupBtn(),
                           ],
                         ),
@@ -386,8 +325,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
+          setState(() {
+            global.isSignUpLoading = true;
+          });
       firebaseAuthentication.signIn(context, emailController, passController);
-      
+
     }
+
   }
 }

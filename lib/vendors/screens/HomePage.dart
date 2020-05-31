@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:foodieapp/vendors/screens/account_screen.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:foodieapp/vendors/widgets/Orders.dart';
 import 'package:intl/intl.dart';
@@ -10,7 +11,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
-
   TabController tabController;
 
   @override
@@ -24,7 +24,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: new AppBar(
         automaticallyImplyLeading: false,
@@ -44,56 +43,77 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           
         ],
         elevation: 10.0,
-        flexibleSpace: SizedBox(height: 30),
+        flexibleSpace: SizedBox(height: 150),
         bottom: TabBar(
           isScrollable: true,
           unselectedLabelColor: Colors.black,
           labelColor: primaryColor,
+          labelPadding: EdgeInsets.symmetric(horizontal: 25.0, vertical: 3.0),
           tabs: [
-
-            Text(
-              DateFormat.yMMMd().format(
-                DateTime.now().subtract(
-                  Duration(days: 3),
+            Container(
+              padding: EdgeInsetsDirectional.only(bottom: 15.0),
+              child: Text(
+                DateFormat.yMMMd().format(
+                  DateTime.now().subtract(
+                    Duration(days: 3),
+                  ),
                 ),
+                style: new TextStyle(fontSize: 18.0),
               ),
-              style: new TextStyle(fontSize: 18.0),
             ),
-            Text(
-              DateFormat.yMMMd().format(
-                DateTime.now().subtract(
-                  Duration(days: 2),
+            Container(
+              padding: EdgeInsetsDirectional.only(bottom: 15.0),
+              child: Text(
+                DateFormat.yMMMd().format(
+                  DateTime.now().subtract(
+                    Duration(days: 2),
+                  ),
                 ),
+                style: new TextStyle(fontSize: 18.0),
               ),
-              style: new TextStyle(fontSize: 18.0),
             ),
-            Text(
-              'Yesterday',
-              style: new TextStyle(fontSize: 18.0),
+            Container(
+              padding: EdgeInsetsDirectional.only(bottom: 15.0),
+              child: Text(
+                'Yesterday',
+                style: new TextStyle(fontSize: 18.0),
+              ),
             ),
-            Text(
-              'Today',
-              style: new TextStyle(fontSize: 18.0),
+            Container(
+              padding: EdgeInsetsDirectional.only(bottom: 15.0),
+              child: Text(
+                'Today',
+                style: new TextStyle(fontSize: 18.0),
+              ),
             ),
-            Text(
-              'Tomorrow',
-              style: new TextStyle(fontSize: 18.0),
+            Container(
+              padding: EdgeInsetsDirectional.only(bottom: 15.0),
+              child: Text(
+                'Tomorrow',
+                style: new TextStyle(fontSize: 18.0),
+              ),
             ),
-            Text(
-              DateFormat.yMMMd().format(
-                DateTime.now().add(
-                  Duration(days: 2),
+            Container(
+              padding: EdgeInsetsDirectional.only(bottom: 15.0),
+              child: Text(
+                DateFormat.yMMMd().format(
+                  DateTime.now().add(
+                    Duration(days: 2),
+                  ),
                 ),
+                style: new TextStyle(fontSize: 18.0),
               ),
-              style: new TextStyle(fontSize: 18.0),
             ),
-             Text(
-              DateFormat.yMMMd().format(
-                DateTime.now().add(
-                  Duration(days: 3),
+            Container(
+              padding: EdgeInsetsDirectional.only(bottom: 15.0),
+              child: Text(
+                DateFormat.yMMMd().format(
+                  DateTime.now().add(
+                    Duration(days: 3),
+                  ),
                 ),
+                style: new TextStyle(fontSize: 18.0),
               ),
-              style: new TextStyle(fontSize: 18.0),
             ),
           ],
           controller: tabController,
@@ -104,54 +124,43 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       body: new TabBarView(
         children: [
-         
           Orders(
-            dateTime: DateFormat.yMMMd().format(
-                DateTime.now().subtract(
-                  Duration(days: 3),
-                ),
-              ) 
+              dateTime: DateFormat.yMMMd().format(
+            DateTime.now().subtract(
+              Duration(days: 3),
             ),
+          )),
           Orders(
-            dateTime: DateFormat.yMMMd().format(
-                DateTime.now().subtract(
-                  Duration(days: 2),
-                ),
-              ) 
-          ),
-          Orders(
-            dateTime: DateFormat.yMMMd().format(
-                DateTime.now().subtract(
-                  Duration(days: 1),
-                ),
-              )
+              dateTime: DateFormat.yMMMd().format(
+            DateTime.now().subtract(
+              Duration(days: 2),
             ),
+          )),
           Orders(
-            dateTime: DateFormat.yMMMd().format(
-                DateTime.now()
-              )
-          ),
-          Orders(
-            dateTime: DateFormat.yMMMd().format(
-                DateTime.now().add(
-                  Duration(days: 1),
-                ),
-              )
+              dateTime: DateFormat.yMMMd().format(
+            DateTime.now().subtract(
+              Duration(days: 1),
             ),
+          )),
+          Orders(dateTime: DateFormat.yMMMd().format(DateTime.now())),
           Orders(
-             dateTime: DateFormat.yMMMd().format(
-                DateTime.now().add(
-                  Duration(days: 2),
-                ),
-              )
-          ),
+              dateTime: DateFormat.yMMMd().format(
+            DateTime.now().add(
+              Duration(days: 1),
+            ),
+          )),
           Orders(
-             dateTime: DateFormat.yMMMd().format(
-                DateTime.now().add(
-                  Duration(days: 3),
-                ),
-              )
-          ),
+              dateTime: DateFormat.yMMMd().format(
+            DateTime.now().add(
+              Duration(days: 2),
+            ),
+          )),
+          Orders(
+              dateTime: DateFormat.yMMMd().format(
+            DateTime.now().add(
+              Duration(days: 3),
+            ),
+          )),
         ],
         controller: tabController,
       ),

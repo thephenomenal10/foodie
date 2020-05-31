@@ -13,4 +13,13 @@ class DatabaseService {
         print(e.message);
       }); 
   }
+
+
+  Future<void> createTiffen(tiffenData, userEmail) {
+
+    firestore.collection("tiffen_service_details").document(userEmail).setData(tiffenData)
+    .catchError((e) {
+      print(e.message);
+    });
+  }
 }
