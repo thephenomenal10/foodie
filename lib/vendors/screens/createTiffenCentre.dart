@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/services/databaseService.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import '../bottomNavigationBar.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class CreateTiffenCentre extends StatefulWidget {
   @override
@@ -39,13 +40,13 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   List<dynamic> foodCategory;
   String foodCategoryResult;
 
-  int _coverPosition = 0;
-  int _menuPosition = 0;
-  List<File> _coverImageList = List<File>.generate(4, (file) => File(''));
-  List<File> _menuImageList = List<File>.generate(7, (file) => File(''));
-  // List<String> _imageStringList = List<String>.generate(2, (i) => '');
-  List<String> _coverImageUrls = List();
-  List<String> _menuImageUrls = List();
+  List<Asset> coverImages = List<Asset>();
+  List<Asset> menuImages = List<Asset>();
+  List<String> coverImageUrls = <String>[];
+  List<String> menuImageUrls = <String>[];
+  String _error = 'No Error Dectected';
+  bool isUploading = false;
+
 
   TimeOfDay _time = TimeOfDay.now();
   var now = new DateTime.now();
@@ -126,101 +127,150 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
 
   ///TAKING IMAGES FROM THE GALLERY OF MOBILE
   
-  //get cover image form the library
-  Future _getCoverImage() async {
-    // Get image from gallery.
-    File image = await ImagePicker.pickImage(source: ImageSource.gallery).catchError((e){
+//code for cover photos
 
-      print(e.message);
-      Navigator.pop(context);
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CreateTiffenCentre()));
-    });
-    setState(() {
-      _coverImageList[_coverPosition] = image;
-    });
-  }
-//upload multiple image for cover photo
-  Future uploadMultipleCoverImage() async {
-    List<File> _coverImage = List();
 
-    _coverImage.add(_coverImageList[0]);
-    _coverImage.add(_coverImageList[1]);
-    _coverImage.add(_coverImageList[2]);
-    _coverImage.add(_coverImageList[3]);
-
+  Future<void> loadCoverImages() async {
+    List<Asset> resultList = List<Asset>();
+    
+    String error = 'No Error Dectected';
+    
     try {
-      
-      for (int i = 0; i < _coverImage.length; i++) {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 4,
+        enableCamera: true,
+        selectedAssets: coverImages,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Upload Image",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+      print(resultList.length);
+      print((await resultList[0].getThumbByteData(122, 100)));
+      print((await resultList[0].getByteData()));
+      print((await resultList[0].metadata));
 
-        final StorageReference storageReference =
-            FirebaseStorage.instance.ref().child("vendor_images").child("cover_images").child(emailController.text).child("cover_image_${i+1}");  
-        final StorageUploadTask uploadTask =
-            storageReference.putFile(_coverImageList[i]);
-
-        final StreamSubscription<StorageTaskEvent> streamSubscription =
-            uploadTask.events.listen((event) {
-          print("EVENT ${event.type}");
-        });
-         // Cancel your subscription when done.
-        await uploadTask.onComplete;
-        streamSubscription.cancel();
-
-        String imageUrl = await storageReference.getDownloadURL();
-        _coverImageUrls.add(imageUrl);
-        
-      }
-    } catch (e) {
-      print(e.message);
+    } on Exception catch (e) {
+      error = e.toString();
     }
-  }
 
-
-  //code for menu imaegs
-
-    //get cover image form the library
-  Future _getMenuImage() async {
-    // Get image from gallery.
-    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    // if (!mounted) return;
     setState(() {
-      _menuImageList[_menuPosition] = image;
+      coverImages = resultList;
+      _error = error;
     });
+
+    uploadCoverImages();
   }
-//upload multiple image for cover photo
-  Future uploadMultipleMenuImage() async {
-    List<File> _menuImage = List();
 
-    _menuImage.add(_menuImageList[0]);
-    _menuImage.add(_menuImageList[1]);
-    _menuImage.add(_menuImageList[2]);
-    _menuImage.add(_menuImageList[3]);
-    _menuImage.add(_menuImageList[4]);
-    _menuImage.add(_menuImageList[5]);
-
-    try {
-      
-      for (int i = 0; i < _menuImage.length; i++) {
-
-        final StorageReference storageReference =
-            FirebaseStorage.instance.ref().child("vendor_images").child("menu_images").child(emailController.text).child("menu_image_${i+1}");  
-        final StorageUploadTask uploadTask =
-            storageReference.putFile(_menuImageList[i]);
-
-        final StreamSubscription<StorageTaskEvent> streamSubscription =
-            uploadTask.events.listen((event) {
-          print("EVENT ${event.type}");
-        });
-         // Cancel your subscription when done.
-        await uploadTask.onComplete;
-        streamSubscription.cancel();
-
-        String imageUrl = await storageReference.getDownloadURL();
-        _menuImageUrls.add(imageUrl);
-        
-      }
-    } catch (e) {
-      print(e.message);
+  Future<void> uploadCoverImages(){
+    for ( var coverFile in coverImages) {
+      saveCoverImagesToFirebaseStorage(coverFile).then((downloadUrl) {
+        coverImageUrls.add(downloadUrl.toString());
+        if(coverImageUrls.length==coverImages.length){
+          Firestore.instance.collection("tiffen_service_details").document(emailController.text).setData({
+            'Cover Photos':coverImageUrls
+          }).then((_){
+            setState(() {
+              coverImages = [];
+              coverImageUrls = [];
+            });
+          });
+        }
+      }).catchError((err) {
+        print(err);
+      });
     }
+      return null;
   }
+
+  Future<dynamic> saveCoverImagesToFirebaseStorage(Asset imageFile) async {
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    StorageReference reference = FirebaseStorage.instance.ref().child("vendor_images").child("cover_images").child(emailController.text).child("cover_image_$fileName");  
+    StorageUploadTask uploadTask = reference.putData((await imageFile.getByteData()).buffer.asUint8List());
+    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    
+    print(storageTaskSnapshot.ref.getDownloadURL());
+    return storageTaskSnapshot.ref.getDownloadURL();  
+  }
+
+
+
+//////////////////////////MENU IMAGES CODE
+
+  Future<void> loadMenuImages() async {
+    List<Asset> resultList = List<Asset>();
+    
+    String error = 'No Error Dectected';
+    
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 7,
+        enableCamera: true,
+        selectedAssets: menuImages,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#95f783",
+          actionBarTitle: "Upload Image",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#95f783",
+        ),
+      );
+      print(resultList.length);
+      print((await resultList[0].getThumbByteData(122, 100)));
+      print((await resultList[0].getByteData()));
+      print((await resultList[0].metadata));
+
+    } on Exception catch (e) {
+      error = e.toString();
+    }
+
+    // if (!mounted) return;
+    setState(() {
+      menuImages = resultList;
+      _error = error;
+    });
+
+    uploadMenuImages();
+  }
+  
+  Future<void> uploadMenuImages(){
+    for ( var menuFile in menuImages) {
+      saveToMenuImageFirebaseStorage(menuFile).then((downloadUrl) {
+        menuImageUrls.add(downloadUrl.toString());
+        if(menuImageUrls.length==menuImages.length){
+          Firestore.instance.collection("tiffen_service_details").document(emailController.text).updateData({
+            'Menu Photos':menuImageUrls
+          }).then((_){
+            setState(() {
+              menuImages = [];
+              menuImageUrls = [];
+            });
+          });
+        }
+      }).catchError((err) {
+        print(err);
+      });
+    }
+      return null;
+  }
+
+  Future<dynamic> saveToMenuImageFirebaseStorage(Asset imageFile) async {
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    StorageReference reference = FirebaseStorage.instance.ref().child("vendor_images").child("Menu_images").child(emailController.text).child("Menu_image_$fileName");  
+    StorageUploadTask uploadTask = reference.putData((await imageFile.getByteData()).buffer.asUint8List());
+    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    
+    print(storageTaskSnapshot.ref.getDownloadURL());
+    return storageTaskSnapshot.ref.getDownloadURL();
+  }
+
+
 
   ///launching terms and condition url
   _launchURL() async {
@@ -742,106 +792,10 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                             new TextStyle(color: Colors.green, fontSize: 16.0),
                       ),
                     ),
-
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: new GestureDetector(
-                              onTap: () {
-                                _coverPosition = 0;
-                                _getCoverImage();
-                              },
-                              child: Container(
-                                width: 90,
-                                height: 90,
-                                child: Card(
-                                    child: (_coverImageList[0].path != '')
-                                        ? Image.file(
-                                            _coverImageList[0],
-                                            fit: BoxFit.fill,
-                                          )
-                                        : Icon(Icons.add_photo_alternate,
-                                            size: 20, color: Colors.grey[700])),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: new GestureDetector(
-                              onTap: () {
-                                _coverPosition = 1;
-                                _getCoverImage();
-                              },
-                              child: Container(
-                                width: 90,
-                                height: 90,
-                                child: Card(
-                                    child: (_coverImageList[1].path != '')
-                                        ? Image.file(
-                                            _coverImageList[1],
-                                            fit: BoxFit.fill,
-                                          )
-                                        : Icon(Icons.add_photo_alternate,
-                                            size: 20, color: Colors.grey[700])),
-                              ),
-                            ),
-                          ),
-                        ],
+                    FlatButton(
+                      onPressed: loadCoverImages, 
+                      child: new Text("select cover images", style: new TextStyle(color: Colors.green),),
                       ),
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: new GestureDetector(
-                              onTap: () {
-                                _coverPosition = 2;
-                                _getCoverImage();
-                              },
-                              child: Container(
-                                width: 90,
-                                height: 90,
-                                child: Card(
-                                    child: (_coverImageList[2].path != '')
-                                        ? Image.file(
-                                            _coverImageList[2],
-                                            fit: BoxFit.fill,
-                                          )
-                                        : Icon(Icons.add_photo_alternate,
-                                            size: 20, color: Colors.grey[700])),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: new GestureDetector(
-                              onTap: () {
-                                _coverPosition = 3;
-                                _getCoverImage();
-                              },
-                              child: Container(
-                                width: 90,
-                                height: 90,
-                                child: Card(
-                                    child: (_coverImageList[3].path != '')
-                                        ? Image.file(
-                                            _coverImageList[3],
-                                            fit: BoxFit.fill,
-                                          )
-                                        : Icon(Icons.add_photo_alternate,
-                                            size: 20, color: Colors.grey[700])),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
                     //MENU images code
                     Padding(
                       padding: EdgeInsets.all(10),
@@ -851,154 +805,10 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                             new TextStyle(color: Colors.green, fontSize: 16.0),
                       ),
                     ),
-
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          //1 image
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: new GestureDetector(
-                              onTap: () {
-                                _menuPosition = 0;
-                                _getMenuImage();
-                              },
-                              child: Container(
-                                width: 90,
-                                height: 90,
-                                child: Card(
-                                    child: (_menuImageList[0].path != '')
-                                        ? Image.file(
-                                            _menuImageList[0],
-                                            fit: BoxFit.fill,
-                                          )
-                                        : Icon(Icons.add_photo_alternate,
-                                            size: 20, color: Colors.grey[700])),
-                              ),
-                            ),
-                          ),
-                          // 2 image
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: new GestureDetector(
-                              onTap: () {
-                                _menuPosition = 1;
-                                _getMenuImage();
-                              },
-                              child: Container(
-                                width: 90,
-                                height: 90,
-                                child: Card(
-                                    child: (_menuImageList[1].path != '')
-                                        ? Image.file(
-                                            _menuImageList[1],
-                                            fit: BoxFit.fill,
-                                          )
-                                        : Icon(Icons.add_photo_alternate,
-                                            size: 20, color: Colors.grey[700])),
-                              ),
-                            ),
-                          ),
-                          //3 image
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: new GestureDetector(
-                              onTap: () {
-                                _menuPosition = 2;
-                                _getMenuImage();
-                              },
-                              child: Container(
-                                width: 90,
-                                height: 90,
-                                child: Card(
-                                    child: (_menuImageList[2].path != '')
-                                        ? Image.file(
-                                            _menuImageList[2],
-                                            fit: BoxFit.fill,
-                                          )
-                                        : Icon(Icons.add_photo_alternate,
-                                            size: 20, color: Colors.grey[700])),
-                              ),
-                            ),
-                          ),
-                        ],
+                    FlatButton(
+                      onPressed: loadMenuImages, 
+                      child: new Text("select Menu images", style: new TextStyle(color: Colors.green),),
                       ),
-                    ),
-                    //2 row
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          //4 image
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: new GestureDetector(
-                              onTap: () {
-                                _menuPosition = 3;
-                                _getMenuImage();
-                              },
-                              child: Container(
-                                width: 90,
-                                height: 90,
-                                child: Card(
-                                    child: (_menuImageList[3].path != '')
-                                        ? Image.file(
-                                            _menuImageList[3],
-                                            fit: BoxFit.fill,
-                                          )
-                                        : Icon(Icons.add_photo_alternate,
-                                            size: 20, color: Colors.grey[700])),
-                              ),
-                            ),
-                          ),
-                          //5 image
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: new GestureDetector(
-                              onTap: () {
-                                _menuPosition = 4;
-                                _getMenuImage();
-                              },
-                              child: Container(
-                                width: 90,
-                                height: 90,
-                                child: Card(
-                                    child: (_menuImageList[4].path != '')
-                                        ? Image.file(
-                                            _menuImageList[4],
-                                            fit: BoxFit.fill,
-                                          )
-                                        : Icon(Icons.add_photo_alternate,
-                                            size: 20, color: Colors.grey[700])),
-                              ),
-                            ),
-                          ),
-                          //6 image
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: new GestureDetector(
-                              onTap: () {
-                                _menuPosition = 5;
-                                _getMenuImage();
-                              },
-                              child: Container(
-                                width: 90,
-                                height: 90,
-                                child: Card(
-                                    child: (_menuImageList[5].path != '')
-                                        ? Image.file(
-                                            _menuImageList[5],
-                                            fit: BoxFit.fill,
-                                          )
-                                        : Icon(Icons.add_photo_alternate,
-                                            size: 20, color: Colors.grey[700])),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
 
                     Padding(
                       padding: EdgeInsets.all(10),
@@ -1398,8 +1208,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   createTiffen() async{
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      await uploadMultipleCoverImage();
-      await uploadMultipleMenuImage();
+
 
       setState(() {
         foodCategoryResult = foodCategory.toString();
@@ -1426,16 +1235,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         "BreakFast Time": "$breakFastTimefrom" + "-" "$breakFastTimeto",
         "Lunch Time": "$lunchTimefrom" + "-" "$lunchTimeto",
         "Dinner Time": "$dinnerTimefrom" + "-" "$dinnerTimeto",
-        "cover image 1" : _coverImageUrls[0],
-        "cover image 2" : _coverImageUrls[1],
-        "cover image 3" : _coverImageUrls[2],
-        "cover image 4" : _coverImageUrls[3],
-        "Menu Image 1" : _menuImageUrls[0],
-        "Menu Image 2" : _menuImageUrls[1],
-        "Menu Image 3" : _menuImageUrls[2],
-        "Menu Image 4" : _menuImageUrls[3],
-        "Menu Image 5" : _menuImageUrls[4],
-        "Menu Image 6" : _menuImageUrls[5],
+
       };
 
       _databaseService.createTiffen(tiffenInfo, emailController.text);
