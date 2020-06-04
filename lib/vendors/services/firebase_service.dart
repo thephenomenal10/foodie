@@ -65,6 +65,9 @@ class FirebaseAuthentication {
       currentUserUid = result.user.uid;
       print(currentUserUid.toString());
       print(result);
+
+    verifyPhone(context, phoneControlloer);
+
     } catch (e) {
       showDialog(
         context: context,
@@ -88,35 +91,84 @@ class FirebaseAuthentication {
       );
       return (e.message);
     }
-    verifyPhone(context, phoneControlloer);
   }
 
 //PHONE NO VERIFICATION .....///////////////////...
 
-  Future<bool> verifyPhone(context, String phoneNumber) {
+  Future<bool> verifyPhone(context, String phoneNumber) async{
     FirebaseAuth _auth = FirebaseAuth.instance;
+    TextEditingController _codeController = new TextEditingController();
+     user = await FirebaseAuth.instance.currentUser();
 
-    _auth.verifyPhoneNumber(
+_auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         timeout: Duration(seconds: 60),
         verificationCompleted: null,
-        verificationFailed: (AuthException exception) {
+        // (AuthCredential credential) async{
+        //   Navigator.of(context).pop();
 
-          user.delete().then((value) {
-            print("successfully user deleted.....................................");
-          });
-          print(exception.message.toString());
+        //   AuthResult result = await _auth.signInWithCredential(credential);
+
+        //   FirebaseUser user = result.user;
+
+        //   if(user != null){
+        //     Navigator.push(context, MaterialPageRoute(
+        //       builder: (context) => HomeScreen()
+        //     ));
+        //   }else{
+        //     print("Error");
+        //   }
+
+        //   //This callback would gets called when verification is done auto maticlly
+        // },
+        verificationFailed: (AuthException exception){
+          print(exception);
         },
-        codeSent: (String verificationId, [int forceResendingToken]) {
-          // TextEditingController _codeController = new TextEditingController();
-          Navigator.pop(context);
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => OTPVerifyScreen(
-                      verificationId: verificationId, phone: phoneNumber)));
+        codeSent: (String verificationId, [int forceResendingToken]){
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                title: Text("Give the code?"),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    TextField(
+                      controller: _codeController,
+                    ),
+                  ],
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("Confirm"),
+                    textColor: Colors.white,
+                    color: Colors.blue,
+                    onPressed: () async{
+                      final code = _codeController.text.trim();
+                      AuthCredential credential = PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: code);
+                       user.linkWithCredential(credential).then((authResult) {
+                         user = authResult.user;
+                         if(user != null){
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => CreateTiffenCentre()
+                        ));
+                      }else{
+                        print("Error");
+                      }
+
+                       }).catchError((e){
+                         print(e.message);
+                       });
+                    },
+                  )
+                ],
+              );
+            }
+          );
         },
-        codeAutoRetrievalTimeout: null);
+        codeAutoRetrievalTimeout: null
+    );
   }
 
   Future resetPassword(String email) async {
