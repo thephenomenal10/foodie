@@ -163,8 +163,8 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
       coverImages = resultList;
       _error = error;
     });
+    await uploadCoverImages();
 
-    uploadCoverImages();
   }
 
   Future<void> uploadCoverImages(){
@@ -175,6 +175,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
           Firestore.instance.collection("tiffen_service_details").document(emailController.text).setData({
             'Cover Photos':coverImageUrls
           }).then((_){
+            print('success');
             setState(() {
               coverImages = [];
               coverImageUrls = [];
@@ -182,7 +183,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
           });
         }
       }).catchError((err) {
-        print(err);
+        print('failed'+err.toString());
       });
     }
       return null;
@@ -236,7 +237,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
       _error = error;
     });
 
-    uploadMenuImages();
+    await uploadMenuImages();
   }
   
   Future<void> uploadMenuImages(){
