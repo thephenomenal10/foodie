@@ -158,46 +158,44 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
       error = e.toString();
     }
 
-    // if (!mounted) return;
+    if (!mounted) return;
     setState(() {
+
       coverImages = resultList;
       _error = error;
     });
 
-    uploadCoverImages();
+
   }
 
-  Future<void> uploadCoverImages(){
-    for ( var coverFile in coverImages) {
-      saveCoverImagesToFirebaseStorage(coverFile).then((downloadUrl) {
-        coverImageUrls.add(downloadUrl.toString());
-        if(coverImageUrls.length==coverImages.length){
-          Firestore.instance.collection("tiffen_service_details").document(emailController.text).setData({
+Future uploadCoverImages() async{
+
+  try{
+    for(int i=0; i< coverImages.length; i++){
+
+         final StorageReference storageReference =
+            FirebaseStorage.instance.ref().child("vendor_images").child("cover_images").child(emailController.text).child("cover_image_${i+1}");
+         final StorageUploadTask uploadTask = storageReference.putData((await coverImages[i].getByteData()).buffer.asUint8List());
+
+         final StreamSubscription<StorageTaskEvent> streamSubscription =  uploadTask.events.listen((event) {
+            print("EVENT ${event.type}");
+         }); 
+
+         await uploadTask.onComplete;
+         streamSubscription.cancel();
+
+         String imageUrl = await storageReference.getDownloadURL();
+
+         coverImageUrls.add(imageUrl.toString());
+         Firestore.instance.collection("tiffen_service_details").document(emailController.text).updateData({
             'Cover Photos':coverImageUrls
-          }).then((_){
-            setState(() {
-              coverImages = [];
-              coverImageUrls = [];
-            });
           });
-        }
-      }).catchError((err) {
-        print(err);
-      });
     }
-      return null;
   }
-
-  Future<dynamic> saveCoverImagesToFirebaseStorage(Asset imageFile) async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    StorageReference reference = FirebaseStorage.instance.ref().child("vendor_images").child("cover_images").child(emailController.text).child("cover_image_$fileName");  
-    StorageUploadTask uploadTask = reference.putData((await imageFile.getByteData()).buffer.asUint8List());
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-    
-    print(storageTaskSnapshot.ref.getDownloadURL());
-    return storageTaskSnapshot.ref.getDownloadURL();  
+  catch(e){
+      print(e.message);
   }
-
+}
 
 
 //////////////////////////MENU IMAGES CODE
@@ -230,45 +228,44 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
       error = e.toString();
     }
 
-    // if (!mounted) return;
+    if (!mounted) return;
     setState(() {
       menuImages = resultList;
       _error = error;
     });
 
-    uploadMenuImages();
+
+
   }
   
-  Future<void> uploadMenuImages(){
-    for ( var menuFile in menuImages) {
-      saveToMenuImageFirebaseStorage(menuFile).then((downloadUrl) {
-        menuImageUrls.add(downloadUrl.toString());
-        if(menuImageUrls.length==menuImages.length){
-          Firestore.instance.collection("tiffen_service_details").document(emailController.text).updateData({
-            'Menu Photos':menuImageUrls
-          }).then((_){
-            setState(() {
-              menuImages = [];
-              menuImageUrls = [];
-            });
-          });
-        }
-      }).catchError((err) {
-        print(err);
-      });
-    }
-      return null;
-  }
+Future uploadMenuImages() async{
 
-  Future<dynamic> saveToMenuImageFirebaseStorage(Asset imageFile) async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    StorageReference reference = FirebaseStorage.instance.ref().child("vendor_images").child("Menu_images").child(emailController.text).child("Menu_image_$fileName");  
-    StorageUploadTask uploadTask = reference.putData((await imageFile.getByteData()).buffer.asUint8List());
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-    
-    print(storageTaskSnapshot.ref.getDownloadURL());
-    return storageTaskSnapshot.ref.getDownloadURL();
+  try{
+    for(int i=0; i< menuImages.length; i++){
+
+         final StorageReference storageReference =
+            FirebaseStorage.instance.ref().child("vendor_images").child("menu_images").child(emailController.text).child("menu_image_${i+1}");
+         final StorageUploadTask uploadTask = storageReference.putData((await menuImages[i].getByteData()).buffer.asUint8List());
+
+         final StreamSubscription<StorageTaskEvent> streamSubscription =  uploadTask.events.listen((event) {
+            print("EVENT ${event.type}");
+         }); 
+
+         await uploadTask.onComplete;
+         streamSubscription.cancel();
+
+         String imageUrl = await storageReference.getDownloadURL();
+
+         menuImageUrls.add(imageUrl.toString());
+         Firestore.instance.collection("tiffen_service_details").document(emailController.text).updateData({
+            'Menu Photos':menuImageUrls
+          });
+    }
   }
+  catch(e){
+      print(e.message);
+  }
+}
 
 
 
@@ -1209,6 +1206,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
+      
 
       setState(() {
         foodCategoryResult = foodCategory.toString();
@@ -1239,7 +1237,11 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
       };
 
       _databaseService.createTiffen(tiffenInfo, emailController.text);
-
+    
+      await uploadCoverImages().whenComplete(() async{
+         await uploadMenuImages();
+      });
+      
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
       DialogBox()
