@@ -1351,8 +1351,8 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         "BreakFast Time": "$breakFastTimefrom" + "-" "$breakFastTimeto",
         "Lunch Time": "$lunchTimefrom" + "-" "$lunchTimeto",
         "Dinner Time": "$dinnerTimefrom" + "-" "$dinnerTimeto",
-        "Meal Description": global.mealDescription.toString(),
-        "Meal Cost": global.cost.toString(),
+        "Meal Description": global.mealDescription,
+        "Meal Cost": global.cost,
         "Locality Latitude": global.tiffenCentreLatitude,
         "Locality Longitude": global.tiffenCentreLongitude,
         "Tiffen Service Address": global.localityAddress
