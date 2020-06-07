@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/firebase_service.dart';
-import 'package:foodieapp/vendors/widgets/isLoading.dart' as global;
+import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
 
 class AccountScreen extends StatefulWidget {
   @override

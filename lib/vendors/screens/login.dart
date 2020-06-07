@@ -4,7 +4,7 @@ import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/screens/register.dart';
 import 'package:foodieapp/vendors/services/firebase_service.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
-import 'package:foodieapp/vendors/widgets/isLoading.dart' as global;
+import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
 
 class LoginScreen extends StatefulWidget {
   @override

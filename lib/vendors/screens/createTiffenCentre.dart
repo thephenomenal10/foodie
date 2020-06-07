@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/screens/searchLocalityScree.dart';
+import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
 import 'package:foodieapp/vendors/services/databaseService.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
@@ -12,8 +13,10 @@ import 'package:intl/intl.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
-import '../bottomNavigationBar.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+
+import '../bottomNavigationBar.dart';
+import '../widgets/addTiffinTypes.dart';
 
 class CreateTiffenCentre extends StatefulWidget {
   @override
@@ -23,7 +26,7 @@ class CreateTiffenCentre extends StatefulWidget {
 class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   DatabaseService _databaseService = new DatabaseService();
 
-  TextEditingController tiffenController = new TextEditingController();
+  TextEditingController tiffinController = new TextEditingController();
   TextEditingController addressController = new TextEditingController();
   TextEditingController emailController = new TextEditingController();
   TextEditingController ownerNameController = new TextEditingController();
@@ -34,6 +37,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   TextEditingController bankAccountController = new TextEditingController();
   TextEditingController upiController = new TextEditingController();
   TextEditingController ifscController = new TextEditingController();
+  TextEditingController paytmController = new TextEditingController();
 
   final GlobalKey<FormState> _formKey = new GlobalKey();
 
@@ -41,12 +45,14 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   String foodCategoryResult;
 
   List<Asset> coverImages = List<Asset>();
+  List<Asset> logoImage = List<Asset>();
   List<Asset> menuImages = List<Asset>();
+  List<String> logoImageUrls = <String>[];
   List<String> coverImageUrls = <String>[];
   List<String> menuImageUrls = <String>[];
+
   String _error = 'No Error Dectected';
   bool isUploading = false;
-
 
   TimeOfDay _time = TimeOfDay.now();
   var now = new DateTime.now();
@@ -125,16 +131,82 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
 
   /////////////////////////////////////
 
-  ///TAKING IMAGES FROM THE GALLERY OF MOBILE
-  
-//code for cover photos
+  ///TAKING IMAGES FROM THE GALLERY OF MOBILE and uploading to the firebase storage and urls to database as a List
 
+  Future<void> loadLogoImage() async {
+    List<Asset> resultList = List<Asset>();
+
+    String error = 'No Error Dectected';
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 1,
+        enableCamera: true,
+        selectedAssets: logoImage,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Upload Image",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      );
+      print(resultList.length);
+      print((await resultList[0].getThumbByteData(122, 100)));
+      print((await resultList[0].getByteData()));
+      print((await resultList[0].metadata));
+    } on Exception catch (e) {
+      error = e.toString();
+    }
+
+    if (!mounted) return;
+    setState(() {
+      logoImage = resultList;
+      _error = error;
+    });
+  }
+
+  Future uploadLogoImage() async {
+    try {
+      for (int i = 0; i < logoImage.length; i++) {
+        final StorageReference storageReference = FirebaseStorage.instance
+            .ref()
+            .child("vendor_images")
+            .child("Logo_image")
+            .child(emailController.text)
+            .child("logo_image_${i + 1}");
+        final StorageUploadTask uploadTask = storageReference
+            .putData((await logoImage[i].getByteData()).buffer.asUint8List());
+
+        final StreamSubscription<StorageTaskEvent> streamSubscription =
+            uploadTask.events.listen((event) {
+          print("EVENT ${event.type}");
+        });
+
+        await uploadTask.onComplete;
+        streamSubscription.cancel();
+
+        String imageUrl = await storageReference.getDownloadURL();
+
+        logoImageUrls.add(imageUrl.toString());
+        Firestore.instance
+            .collection("tiffen_service_details")
+            .document(emailController.text)
+            .updateData({'Logo Image': logoImageUrls});
+      }
+    } catch (e) {
+      print(e.message);
+    }
+  }
+
+//code for cover photos
 
   Future<void> loadCoverImages() async {
     List<Asset> resultList = List<Asset>();
-    
+
     String error = 'No Error Dectected';
-    
+
     try {
       resultList = await MultiImagePicker.pickImages(
         maxImages: 4,
@@ -153,58 +225,57 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
       print((await resultList[0].getThumbByteData(122, 100)));
       print((await resultList[0].getByteData()));
       print((await resultList[0].metadata));
-
     } on Exception catch (e) {
       error = e.toString();
     }
 
     if (!mounted) return;
     setState(() {
-
       coverImages = resultList;
       _error = error;
     });
-
-
   }
 
-Future uploadCoverImages() async{
+  Future uploadCoverImages() async {
+    try {
+      for (int i = 0; i < coverImages.length; i++) {
+        final StorageReference storageReference = FirebaseStorage.instance
+            .ref()
+            .child("vendor_images")
+            .child("cover_images")
+            .child(emailController.text)
+            .child("cover_image_${i + 1}");
+        final StorageUploadTask uploadTask = storageReference
+            .putData((await coverImages[i].getByteData()).buffer.asUint8List());
 
-  try{
-    for(int i=0; i< coverImages.length; i++){
+        final StreamSubscription<StorageTaskEvent> streamSubscription =
+            uploadTask.events.listen((event) {
+          print("EVENT ${event.type}");
+        });
 
-         final StorageReference storageReference =
-            FirebaseStorage.instance.ref().child("vendor_images").child("cover_images").child(emailController.text).child("cover_image_${i+1}");
-         final StorageUploadTask uploadTask = storageReference.putData((await coverImages[i].getByteData()).buffer.asUint8List());
+        await uploadTask.onComplete;
+        streamSubscription.cancel();
 
-         final StreamSubscription<StorageTaskEvent> streamSubscription =  uploadTask.events.listen((event) {
-            print("EVENT ${event.type}");
-         }); 
+        String imageUrl = await storageReference.getDownloadURL();
 
-         await uploadTask.onComplete;
-         streamSubscription.cancel();
-
-         String imageUrl = await storageReference.getDownloadURL();
-
-         coverImageUrls.add(imageUrl.toString());
-         Firestore.instance.collection("tiffen_service_details").document(emailController.text).updateData({
-            'Cover Photos':coverImageUrls
-          });
+        coverImageUrls.add(imageUrl.toString());
+        Firestore.instance
+            .collection("tiffen_service_details")
+            .document(emailController.text)
+            .updateData({'Cover Photos': coverImageUrls});
+      }
+    } catch (e) {
+      print(e.message);
     }
   }
-  catch(e){
-      print(e.message);
-  }
-}
-
 
 //////////////////////////MENU IMAGES CODE
 
   Future<void> loadMenuImages() async {
     List<Asset> resultList = List<Asset>();
-    
+
     String error = 'No Error Dectected';
-    
+
     try {
       resultList = await MultiImagePicker.pickImages(
         maxImages: 7,
@@ -223,7 +294,6 @@ Future uploadCoverImages() async{
       print((await resultList[0].getThumbByteData(122, 100)));
       print((await resultList[0].getByteData()));
       print((await resultList[0].metadata));
-
     } on Exception catch (e) {
       error = e.toString();
     }
@@ -233,41 +303,40 @@ Future uploadCoverImages() async{
       menuImages = resultList;
       _error = error;
     });
-
-
-
   }
-  
-Future uploadMenuImages() async{
 
-  try{
-    for(int i=0; i< menuImages.length; i++){
+  Future uploadMenuImages() async {
+    try {
+      for (int i = 0; i < menuImages.length; i++) {
+        final StorageReference storageReference = FirebaseStorage.instance
+            .ref()
+            .child("vendor_images")
+            .child("menu_images")
+            .child(emailController.text)
+            .child("menu_image_${i + 1}");
+        final StorageUploadTask uploadTask = storageReference
+            .putData((await menuImages[i].getByteData()).buffer.asUint8List());
 
-         final StorageReference storageReference =
-            FirebaseStorage.instance.ref().child("vendor_images").child("menu_images").child(emailController.text).child("menu_image_${i+1}");
-         final StorageUploadTask uploadTask = storageReference.putData((await menuImages[i].getByteData()).buffer.asUint8List());
+        final StreamSubscription<StorageTaskEvent> streamSubscription =
+            uploadTask.events.listen((event) {
+          print("EVENT ${event.type}");
+        });
 
-         final StreamSubscription<StorageTaskEvent> streamSubscription =  uploadTask.events.listen((event) {
-            print("EVENT ${event.type}");
-         }); 
+        await uploadTask.onComplete;
+        streamSubscription.cancel();
 
-         await uploadTask.onComplete;
-         streamSubscription.cancel();
+        String imageUrl = await storageReference.getDownloadURL();
 
-         String imageUrl = await storageReference.getDownloadURL();
-
-         menuImageUrls.add(imageUrl.toString());
-         Firestore.instance.collection("tiffen_service_details").document(emailController.text).updateData({
-            'Menu Photos':menuImageUrls
-          });
+        menuImageUrls.add(imageUrl.toString());
+        Firestore.instance
+            .collection("tiffen_service_details")
+            .document(emailController.text)
+            .updateData({'Meal Images': menuImageUrls});
+      }
+    } catch (e) {
+      print(e.message);
     }
   }
-  catch(e){
-      print(e.message);
-  }
-}
-
-
 
   ///launching terms and condition url
   _launchURL() async {
@@ -373,6 +442,26 @@ Future uploadMenuImages() async{
     });
   }
 
+  Widget getFormField(
+      TextEditingController controller, String errorMsg, String labelText) {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: TextFormField(
+        controller: controller,
+        validator: (val) {
+          if (val.isEmpty) {
+            return errorMsg;
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          labelText: labelText,
+        ),
+        keyboardType: TextInputType.text,
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -416,7 +505,9 @@ Future uploadMenuImages() async{
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 20),
+                        horizontal: 8,
+                        vertical: 20,
+                      ),
                       child: Container(
                         width: 300,
                         height: 150,
@@ -424,9 +515,10 @@ Future uploadMenuImages() async{
                           color: Colors.red,
                           borderRadius: BorderRadius.circular(10.0),
                           image: DecorationImage(
-                              image: NetworkImage(
-                                  "https://scontent.fbek1-1.fna.fbcdn.net/v/t31.0-8/22712358_1445487845569862_704682422345514729_o.jpg?_nc_cat=107&_nc_sid=09cbfe&_nc_ohc=cFNwkNbvrbsAX89FH3M&_nc_ht=scontent.fbek1-1.fna&oh=7e02ebc1165d837a8db900f83e632850&oe=5EF35CD5"),
-                              fit: BoxFit.cover),
+                            image: NetworkImage(
+                                "https://scontent.fbek1-1.fna.fbcdn.net/v/t31.0-8/22712358_1445487845569862_704682422345514729_o.jpg?_nc_cat=107&_nc_sid=09cbfe&_nc_ohc=cFNwkNbvrbsAX89FH3M&_nc_ht=scontent.fbek1-1.fna&oh=7e02ebc1165d837a8db900f83e632850&oe=5EF35CD5"),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
@@ -458,111 +550,67 @@ Future uploadMenuImages() async{
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: TextFormField(
-                          controller: tiffenController,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              return "enter your tiffen service name";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            labelText: "Tiffen Service Name",
-                          ),
-                          keyboardType: TextInputType.text),
+                    getFormField(
+                      tiffinController,
+                      'enter your tiffin service name',
+                      'Tiffin Service Name',
+                    ),
+                    getFormField(
+                      ownerNameController,
+                      'enter your Name',
+                      'Owner Name',
+                    ),
+                    getFormField(
+                      cityController,
+                      'enter your City',
+                      'City',
+                    ),
+                    getFormField(
+                      addressController,
+                      'enter your address',
+                      'Full address',
                     ),
                     Padding(
                       padding: EdgeInsets.all(10),
                       child: TextFormField(
-                          controller: ownerNameController,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              return "enter your Name";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            labelText: "Owner Name",
-                          ),
-                          keyboardType: TextInputType.text),
+                        controller: emailController,
+                        validator: validateEmail,
+                        decoration: InputDecoration(
+                          labelText: "Owner Email id",
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(10),
                       child: TextFormField(
-                          controller: cityController,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              return "enter your City";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            labelText: "City",
-                          ),
-                          keyboardType: TextInputType.text),
+                        controller: phoneController,
+                        validator: (val) {
+                          if (val.isEmpty) {
+                            return "enter your phone no";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          labelText: "Phone no.",
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
                     ),
-                    Padding(
+                    RaisedButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SearchLocality()));
+                      },
+                      child: Text('Select Locality'),
+                      color: Theme.of(context).primaryColor,
+                    ),
+                   global.localityAddress == null ? Container()
+                   : Padding(
                       padding: EdgeInsets.all(10),
                       child: TextFormField(
-                          controller: addressController,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              return "enter your address";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            labelText: "Full Address",
-                          ),
-                          keyboardType: TextInputType.text),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: TextFormField(
-                          controller: addressController,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              return "enter your Locality";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            labelText: "Locality",
-                            suffixIcon: IconButton(
-                                    icon: Icon(Icons.search),
-                                    onPressed: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> SearchLocality()));
-                                    },
-                                    iconSize: 30.0)
-                          ),
-                          keyboardType: TextInputType.text),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: TextFormField(
-                          controller: emailController,
-                          validator: validateEmail,
-                          decoration: InputDecoration(
-                            labelText: "Owner Email id",
-                          ),
-                          keyboardType: TextInputType.emailAddress),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: TextFormField(
-                          controller: phoneController,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              return "enter your phone no";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            labelText: "Phone no.",
-                          ),
-                          keyboardType: TextInputType.number),
+                        enabled: false,
+                        initialValue: global.localityAddress,
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(10),
@@ -597,26 +645,33 @@ Future uploadMenuImages() async{
                       ),
                     ),
                     Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: AddTiffinTypes(),
+                    ),
+                    Padding(
                       padding: EdgeInsets.all(10),
                       child: TextFormField(
-                          controller: costController,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              return "enter your average Cost per Tiffen ";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            labelText: "Average Cost per Tiffen(in Rupees)",
-                          ),
-                          keyboardType: TextInputType.number),
+                        controller: costController,
+                        validator: (val) {
+                          if (val.isEmpty) {
+                            return "enter your average Cost per Tiffen ";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          labelText: "Average Cost per Tiffen(in Rupees)",
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(10),
                       child: new Text(
                         "Service days",
-                        style:
-                            new TextStyle(color: Colors.green, fontSize: 16.0),
+                        style: new TextStyle(
+                          color: Colors.green,
+                          fontSize: 16.0,
+                        ),
                       ),
                     ),
                     Padding(
@@ -800,7 +855,21 @@ Future uploadMenuImages() async{
                         ),
                       ],
                     ),
-
+                    Padding(
+                      padding: EdgeInsets.all(10),
+                      child: new Text(
+                        "Select Logo image for your Tiffen Service",
+                        style:
+                            new TextStyle(color: Colors.green, fontSize: 16.0),
+                      ),
+                    ),
+                    FlatButton(
+                      onPressed: loadLogoImage,
+                      child: new Text(
+                        "select Logo image",
+                        style: new TextStyle(color: Colors.green),
+                      ),
+                    ),
                     //Code for images
                     Padding(
                       padding: EdgeInsets.all(10),
@@ -811,22 +880,28 @@ Future uploadMenuImages() async{
                       ),
                     ),
                     FlatButton(
-                      onPressed: loadCoverImages, 
-                      child: new Text("select cover images", style: new TextStyle(color: Colors.green),),
+                      onPressed: loadCoverImages,
+                      child: new Text(
+                        "select cover images",
+                        style: new TextStyle(color: Colors.green),
                       ),
-                    //MENU images code
+                    ),
+                    //Meal images code
                     Padding(
                       padding: EdgeInsets.all(10),
                       child: new Text(
-                        "Select Menu images for your Tiffen Service",
+                        "Select Meal images for your Tiffen Service",
                         style:
                             new TextStyle(color: Colors.green, fontSize: 16.0),
                       ),
                     ),
                     FlatButton(
-                      onPressed: loadMenuImages, 
-                      child: new Text("select Menu images", style: new TextStyle(color: Colors.green),),
+                      onPressed: loadMenuImages,
+                      child: new Text(
+                        "select Meal images",
+                        style: new TextStyle(color: Colors.green),
                       ),
+                    ),
 
                     Padding(
                       padding: EdgeInsets.all(10),
@@ -1063,7 +1138,24 @@ Future uploadMenuImages() async{
                                         errorBorder: InputBorder.none,
                                         disabledBorder: InputBorder.none,
                                       ),
-                                    )
+                                    ),
+                                    TextFormField(
+                                      controller: paytmController,
+                                      validator: (val) {
+                                        if (val.isEmpty) {
+                                          return "enter your Paytm Number";
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        labelText: "Paytm No.",
+                                        border: InputBorder.none,
+                                        focusedBorder: InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        errorBorder: InputBorder.none,
+                                        disabledBorder: InputBorder.none,
+                                      ),
+                                    ),
                                   ],
                                 )
                               : Container(),
@@ -1132,17 +1224,18 @@ Future uploadMenuImages() async{
                       ),
                     ),
                     Padding(
-                        padding: EdgeInsets.all(0.1),
-                        child: new FlatButton(
-                          child: new Text(
-                            "Terms & conditions",
-                            style: new TextStyle(
-                                color: Colors.green, fontSize: 16.0),
-                          ),
-                          onPressed: () {
-                            _launchURL();
-                          },
-                        )),
+                      padding: EdgeInsets.all(0.1),
+                      child: new FlatButton(
+                        child: new Text(
+                          "Terms & conditions",
+                          style: new TextStyle(
+                              color: Colors.green, fontSize: 16.0),
+                        ),
+                        onPressed: () {
+                          _launchURL();
+                        },
+                      ),
+                    ),
                     Padding(
                       padding: EdgeInsets.all(10),
                       child: new Column(
@@ -1173,7 +1266,9 @@ Future uploadMenuImages() async{
                               new Text(
                                 'Yes',
                                 style: new TextStyle(
-                                    fontSize: 16.0, color: Colors.green),
+                                  fontSize: 16.0,
+                                  color: Colors.green,
+                                ),
                               ),
                             ],
                           ),
@@ -1223,19 +1318,19 @@ Future uploadMenuImages() async{
     );
   }
 
-  createTiffen() async{
+  createTiffen() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      
+      print(global.cost.toString());
+      print(global.mealDescription.toString());
 
       setState(() {
         foodCategoryResult = foodCategory.toString();
       });
       print(foodCategoryResult);
-
-      Map<String, String> tiffenInfo = {
-        "Tiffen Name": tiffenController.text,
+      Map<String, dynamic> tiffenInfo = {
+        "Tiffen Name": tiffinController.text,
         "Email": emailController.text,
         "OwnerName": ownerNameController.text,
         "Address": addressController.text,
@@ -1250,19 +1345,23 @@ Future uploadMenuImages() async{
         "UPI ID": upiController.text,
         "Bank Account No.": bankAccountController.text,
         "IFSC code": ifscController.text,
+        "Paytm Number": paytmController.text,
         "Offer cancellation Subscription": sub,
         "BreakFast Time": "$breakFastTimefrom" + "-" "$breakFastTimeto",
         "Lunch Time": "$lunchTimefrom" + "-" "$lunchTimeto",
         "Dinner Time": "$dinnerTimefrom" + "-" "$dinnerTimeto",
-
+        "Meal Description": global.mealDescription.toString(),
+        "Meal Cost": global.cost.toString(),
+        "Locality Latitude": global.tiffenCentreLatitude,
+        "Locality Longitude": global.tiffenCentreLongitude,
+        "Tiffen Service Address": global.localityAddress
       };
-
       _databaseService.createTiffen(tiffenInfo, emailController.text);
-    
-      await uploadCoverImages().whenComplete(() async{
-         await uploadMenuImages();
+      await uploadCoverImages().whenComplete(() async {
+        await uploadMenuImages().whenComplete(() async {
+          await uploadLogoImage();
+        });
       });
-      
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
       DialogBox()
