@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
+import 'package:foodieapp/vendors/screens/searchLocalityScree.dart';
 import 'package:foodieapp/vendors/services/databaseService.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
@@ -515,6 +515,27 @@ Future uploadMenuImages() async{
                           },
                           decoration: InputDecoration(
                             labelText: "Full Address",
+                          ),
+                          keyboardType: TextInputType.text),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10),
+                      child: TextFormField(
+                          controller: addressController,
+                          validator: (val) {
+                            if (val.isEmpty) {
+                              return "enter your Locality";
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            labelText: "Locality",
+                            suffixIcon: IconButton(
+                                    icon: Icon(Icons.search),
+                                    onPressed: () {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> SearchLocality()));
+                                    },
+                                    iconSize: 30.0)
                           ),
                           keyboardType: TextInputType.text),
                     ),
