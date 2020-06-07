@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
+import 'package:foodieapp/vendors/screens/proofOfPaymentScreen.dart';
 import 'package:foodieapp/vendors/screens/searchLocalityScree.dart';
 import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
 import 'package:foodieapp/vendors/services/databaseService.dart';
@@ -1363,9 +1364,8 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         });
       });
       Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
-      DialogBox()
-          .information(context, "Success", "Your have Login successfully");
+          MaterialPageRoute(builder: (context) => ProofOfPayment(vendorEmail: emailController.text,)));
+     
     }
   }
 }

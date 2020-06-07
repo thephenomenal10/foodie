@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/screens/createTiffenCentre.dart';
 import 'package:foodieapp/vendors/screens/login.dart';
+import 'package:foodieapp/vendors/screens/proofOfPaymentScreen.dart';
 import 'package:foodieapp/vendors/services/isUserLoggedIn.dart';
 
 
