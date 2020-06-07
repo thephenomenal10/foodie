@@ -43,7 +43,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   final GlobalKey<FormState> _formKey = new GlobalKey();
 
   List<dynamic> foodCategory;
-  String foodCategoryResult;
+  List<dynamic> foodCategoryResult;
 
   List<Asset> coverImages = List<Asset>();
   List<Asset> logoImage = List<Asset>();
@@ -467,7 +467,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   void initState() {
     super.initState();
     foodCategory = [];
-    foodCategoryResult = "";
+    foodCategoryResult = [];
   }
 
   @override
@@ -600,19 +600,23 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                     ),
                     RaisedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SearchLocality()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SearchLocality()));
                       },
                       child: Text('Select Locality'),
                       color: Theme.of(context).primaryColor,
                     ),
-                   global.localityAddress == null ? Container()
-                   : Padding(
-                      padding: EdgeInsets.all(10),
-                      child: TextFormField(
-                        enabled: false,
-                        initialValue: global.localityAddress,
-                      ),
-                    ),
+                    global.localityAddress == null
+                        ? Container()
+                        : Padding(
+                            padding: EdgeInsets.all(10),
+                            child: TextFormField(
+                              enabled: false,
+                              initialValue: global.localityAddress,
+                            ),
+                          ),
                     Padding(
                       padding: EdgeInsets.all(10),
                       child: MultiSelectFormField(
@@ -1327,7 +1331,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
       print(global.mealDescription.toString());
 
       setState(() {
-        foodCategoryResult = foodCategory.toString();
+        foodCategoryResult = foodCategory;
       });
       print(foodCategoryResult);
       Map<String, dynamic> tiffenInfo = {
@@ -1337,7 +1341,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         "Address": addressController.text,
         "Phone": phoneController.text,
         "City": cityController.text,
-        "CostPerMeal": "₹${costController.text}",
+        "CostPerMeal": "${costController.text}",
         "Food Category": foodCategoryResult,
         "Service Days": days,
         "FSSAI License": license,
@@ -1355,7 +1359,9 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         "Meal Cost": global.cost,
         "Locality Latitude": global.tiffenCentreLatitude,
         "Locality Longitude": global.tiffenCentreLongitude,
-        "Tiffen Service Address": global.localityAddress
+        "Tiffen Service Address": global.localityAddress,
+        "rating": null,
+        "no of ratings": 0,
       };
       _databaseService.createTiffen(tiffenInfo, emailController.text);
       await uploadCoverImages().whenComplete(() async {
@@ -1363,9 +1369,12 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
           await uploadLogoImage();
         });
       });
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => ProofOfPayment(vendorEmail: emailController.text,)));
-     
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ProofOfPayment(
+                    vendorEmail: emailController.text,
+                  )));
     }
   }
 }
