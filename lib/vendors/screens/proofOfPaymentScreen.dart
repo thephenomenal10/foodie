@@ -18,7 +18,7 @@ class ProofOfPayment extends StatefulWidget {
 
 class _ProofOfPaymentState extends State<ProofOfPayment> {
   List<Asset> proofImages = List<Asset>();
-  List<String> proofImageUrls = <String>[];
+  String proofImageUrl;
   String _error = 'No Error Dectected';
   bool isUploading = false;
 
@@ -76,13 +76,12 @@ class _ProofOfPaymentState extends State<ProofOfPayment> {
         await uploadTask.onComplete;
         streamSubscription.cancel();
 
-        String imageUrl = await storageReference.getDownloadURL();
+        String proofImageUrl = await storageReference.getDownloadURL();
 
-        proofImageUrls.add(imageUrl.toString());
         Firestore.instance
             .collection("tiffen_service_details")
             .document(widget.vendorEmail)
-            .updateData({'Proof of Payment Photos': proofImageUrls});
+            .updateData({'Proof of Payment Photos': proofImageUrl});
       }
     } catch (e) {
       print(e.message);

@@ -43,12 +43,12 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   final GlobalKey<FormState> _formKey = new GlobalKey();
 
   List<dynamic> foodCategory;
-  List<dynamic> foodCategoryResult;
+  String foodCategoryResult;
 
   List<Asset> coverImages = List<Asset>();
   List<Asset> logoImage = List<Asset>();
   List<Asset> menuImages = List<Asset>();
-  List<String> logoImageUrls = <String>[];
+  String logoImageUrl;
   List<String> coverImageUrls = <String>[];
   List<String> menuImageUrls = <String>[];
 
@@ -188,13 +188,12 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         await uploadTask.onComplete;
         streamSubscription.cancel();
 
-        String imageUrl = await storageReference.getDownloadURL();
+        logoImageUrl = await storageReference.getDownloadURL();
 
-        logoImageUrls.add(imageUrl.toString());
         Firestore.instance
             .collection("tiffen_service_details")
             .document(emailController.text)
-            .updateData({'Logo Image': logoImageUrls});
+            .updateData({'Logo Image': logoImageUrl});
       }
     } catch (e) {
       print(e.message);
@@ -467,7 +466,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   void initState() {
     super.initState();
     foodCategory = [];
-    foodCategoryResult = [];
+    foodCategoryResult = '';
   }
 
   @override
@@ -1331,7 +1330,8 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
       print(global.mealDescription.toString());
 
       setState(() {
-        foodCategoryResult = foodCategory;
+        foodCategoryResult =
+            foodCategory.length == 2 ? 'Both' : foodCategory[0].toString();
       });
       print(foodCategoryResult);
       Map<String, dynamic> tiffenInfo = {
@@ -1341,7 +1341,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         "Address": addressController.text,
         "Phone": phoneController.text,
         "City": cityController.text,
-        "CostPerMeal": "${costController.text}",
+        "CostPerMeal": double.parse(costController.text),
         "Food Category": foodCategoryResult,
         "Service Days": days,
         "FSSAI License": license,
@@ -1357,8 +1357,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         "Dinner Time": "$dinnerTimefrom" + "-" "$dinnerTimeto",
         "Meal Description": global.mealDescription,
         "Meal Cost": global.cost,
-        "Locality Latitude": global.tiffenCentreLatitude,
-        "Locality Longitude": global.tiffenCentreLongitude,
+        "Locality": [global.tiffenCentreLatitude, global.tiffenCentreLongitude],
         "Tiffen Service Address": global.localityAddress,
         "rating": null,
         "no of ratings": 0,
@@ -1370,11 +1369,13 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         });
       });
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ProofOfPayment(
-                    vendorEmail: emailController.text,
-                  )));
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProofOfPayment(
+            vendorEmail: emailController.text,
+          ),
+        ),
+      );
     }
   }
 }
