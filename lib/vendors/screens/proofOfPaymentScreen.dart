@@ -114,11 +114,9 @@ class _ProofOfPaymentState extends State<ProofOfPayment> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  BottomNavigationScreen())).whenComplete(() {
-                        DialogBox().information(
-                            context, "Success", "Your have Login successfully");
-                      });
+                              builder: (context) => BottomNavigationScreen()));
+                      DialogBox().information(
+                          context, "Success", "Your have Login successfully");
                     });
                   });
                 },
