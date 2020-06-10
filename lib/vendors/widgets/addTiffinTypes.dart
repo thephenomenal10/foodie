@@ -49,7 +49,7 @@ class _AddTiffinTypesState extends State<AddTiffinTypes> {
                     SizedBox(
                       width: width * 0.20,
                       child: TextFormField(
-                        initialValue: global.cost[ind],
+                        initialValue: global.cost[ind].toString(),
                         autovalidate: true,
                         decoration: InputDecoration(prefixText: '\u20B9 '),
                         validator: (value) {
@@ -59,7 +59,7 @@ class _AddTiffinTypesState extends State<AddTiffinTypes> {
                           return null;
                         },
                         onChanged: (value) {
-                          global.cost[ind] = value;
+                          global.cost[ind] = double.parse(value);
                         },
                         keyboardType: TextInputType.number,
                       ),
@@ -112,7 +112,7 @@ class _AddTiffinTypesState extends State<AddTiffinTypes> {
               if (_formKey.currentState.validate()) {
                 setState(() {
                   global.mealDescription.add(mealController.text);
-                  global.cost.add(costController.text);
+                  global.cost.add(double.parse(costController.text));
                 });
 
                 print(global.mealDescription);

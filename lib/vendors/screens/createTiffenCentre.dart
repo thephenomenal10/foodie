@@ -16,7 +16,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
-import '../bottomNavigationBar.dart';
 import '../widgets/addTiffinTypes.dart';
 
 class CreateTiffenCentre extends StatefulWidget {
@@ -48,7 +47,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   List<Asset> coverImages = List<Asset>();
   List<Asset> logoImage = List<Asset>();
   List<Asset> menuImages = List<Asset>();
-  List<String> logoImageUrls = <String>[];
+  String logoImageUrl;
   List<String> coverImageUrls = <String>[];
   List<String> menuImageUrls = <String>[];
 
@@ -188,13 +187,12 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         await uploadTask.onComplete;
         streamSubscription.cancel();
 
-        String imageUrl = await storageReference.getDownloadURL();
+        logoImageUrl = await storageReference.getDownloadURL();
 
-        logoImageUrls.add(imageUrl.toString());
         Firestore.instance
             .collection("tiffen_service_details")
             .document(emailController.text)
-            .updateData({'Logo Image': logoImageUrls});
+            .updateData({'Logo Image': logoImageUrl});
       }
     } catch (e) {
       print(e.message);
@@ -467,7 +465,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   void initState() {
     super.initState();
     foodCategory = [];
-    foodCategoryResult = "";
+    foodCategoryResult = '';
   }
 
   @override
@@ -600,19 +598,23 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                     ),
                     RaisedButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SearchLocality()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SearchLocality()));
                       },
                       child: Text('Select Locality'),
                       color: Theme.of(context).primaryColor,
                     ),
-                   global.localityAddress == null ? Container()
-                   : Padding(
-                      padding: EdgeInsets.all(10),
-                      child: TextFormField(
-                        enabled: false,
-                        initialValue: global.localityAddress,
-                      ),
-                    ),
+                    global.localityAddress == null
+                        ? Container()
+                        : Padding(
+                            padding: EdgeInsets.all(10),
+                            child: TextFormField(
+                              enabled: false,
+                              initialValue: global.localityAddress,
+                            ),
+                          ),
                     Padding(
                       padding: EdgeInsets.all(10),
                       child: MultiSelectFormField(
@@ -1327,7 +1329,8 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
       print(global.mealDescription.toString());
 
       setState(() {
-        foodCategoryResult = foodCategory.toString();
+        foodCategoryResult =
+            foodCategory.length == 2 ? 'Both' : foodCategory[0].toString();
       });
       print(foodCategoryResult);
       Map<String, dynamic> tiffenInfo = {
@@ -1337,7 +1340,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         "Address": addressController.text,
         "Phone": phoneController.text,
         "City": cityController.text,
-        "CostPerMeal": "₹${costController.text}",
+        "CostPerMeal": double.parse(costController.text),
         "Food Category": foodCategoryResult,
         "Service Days": days,
         "FSSAI License": license,
@@ -1351,11 +1354,12 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         "BreakFast Time": "$breakFastTimefrom" + "-" "$breakFastTimeto",
         "Lunch Time": "$lunchTimefrom" + "-" "$lunchTimeto",
         "Dinner Time": "$dinnerTimefrom" + "-" "$dinnerTimeto",
-        "Meal Description": global.mealDescription.toString(),
-        "Meal Cost": global.cost.toString(),
-        "Locality Latitude": global.tiffenCentreLatitude,
-        "Locality Longitude": global.tiffenCentreLongitude,
-        "Tiffen Service Address": global.localityAddress
+        "Meal Description": global.mealDescription,
+        "Meal Cost": global.cost,
+        "Locality": [global.tiffenCentreLatitude, global.tiffenCentreLongitude],
+        "Tiffen Service Address": global.localityAddress,
+        "rating": null,
+        "no of ratings": 0,
       };
       _databaseService.createTiffen(tiffenInfo, emailController.text);
       await uploadCoverImages().whenComplete(() async {
@@ -1363,9 +1367,14 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
           await uploadLogoImage();
         });
       });
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => ProofOfPayment(vendorEmail: emailController.text,)));
-     
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProofOfPayment(
+            vendorEmail: emailController.text,
+          ),
+        ),
+      );
     }
   }
 }

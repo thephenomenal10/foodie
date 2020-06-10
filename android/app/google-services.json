@@ -8,12 +8,65 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:197127339220:android:b13ca80ebaaf0a48cacf41",
+        "mobilesdk_app_id": "1:197127339220:android:6e40cd9541a3f541cacf41",
         "android_client_info": {
           "package_name": "com.example.foodie"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "197127339220-ad2ndqum6rjniiq3q3errgu7uofivpse.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.foodie",
+            "certificate_hash": "7681982d21acbabeb1ff45089b7aff37bb6e2225"
+          }
+        },
+        {
+          "client_id": "197127339220-be9q8m1l9c87mrernvn5u6fnjbl48vem.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.foodie",
+            "certificate_hash": "b0d8f88952d1769a190f4a1597eabcc406dc9e8f"
+          }
+        },
+        {
+          "client_id": "197127339220-g1u1d4l70ks8p5uadl52njvfai97l4mn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhRMsIBG8BQdPikTmOhbl1ShbGgNXLU4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "197127339220-g1u1d4l70ks8p5uadl52njvfai97l4mn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:197127339220:android:7a8a58c6dccc6fbfcacf41",
+        "android_client_info": {
+          "package_name": "com.redpositive.foodie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "197127339220-au8cqqurqobi3g6fbshf9vnu7mda32p5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redpositive.foodie",
+            "certificate_hash": "0aceccbb9060edbbe7fbdcc3318b0ee0307c156a"
+          }
+        },
         {
           "client_id": "197127339220-g1u1d4l70ks8p5uadl52njvfai97l4mn.apps.googleusercontent.com",
           "client_type": 3
@@ -43,6 +96,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "197127339220-a7dmu1etm8geshpau22d5to5d92imvm1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redpositive.foodieapp",
+            "certificate_hash": "3817e2891e2b03e298b65659f2390a67b2878cf8"
+          }
+        },
         {
           "client_id": "197127339220-g1u1d4l70ks8p5uadl52njvfai97l4mn.apps.googleusercontent.com",
           "client_type": 3

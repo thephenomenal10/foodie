@@ -30,6 +30,12 @@ class _IsUserLoggedInState extends State<IsUserLoggedIn> {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
     if (firebaseAuth.currentUser() != null && user != null) {
+      if (user.phoneNumber == null || user.phoneNumber == '') {
+        print(user.phoneNumber);
+        user.delete().catchError((error) {});
+        return LoginScreen();
+      }
+      print(user.phoneNumber);
       return BottomNavigationScreen();
     } else {
       return LoginScreen();
