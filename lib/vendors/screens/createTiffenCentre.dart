@@ -8,10 +8,10 @@ import 'package:foodieapp/vendors/screens/proofOfPaymentScreen.dart';
 import 'package:foodieapp/vendors/screens/searchLocalityScree.dart';
 import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
 import 'package:foodieapp/vendors/services/databaseService.dart';
-import 'package:foodieapp/vendors/validation/validate.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 import 'package:intl/intl.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -28,7 +28,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
 
   TextEditingController tiffinController = new TextEditingController();
   TextEditingController addressController = new TextEditingController();
-  TextEditingController emailController = new TextEditingController();
+  // TextEditingController emailController = new TextEditingController();
   TextEditingController ownerNameController = new TextEditingController();
   TextEditingController phoneController = new TextEditingController();
   TextEditingController cityController = new TextEditingController();
@@ -174,7 +174,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
             .ref()
             .child("vendor_images")
             .child("Logo_image")
-            .child(emailController.text)
+            .child(email)
             .child("logo_image_${i + 1}");
         final StorageUploadTask uploadTask = storageReference
             .putData((await logoImage[i].getByteData()).buffer.asUint8List());
@@ -191,7 +191,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
 
         Firestore.instance
             .collection("tiffen_service_details")
-            .document(emailController.text)
+            .document(email)
             .updateData({'Logo Image': logoImageUrl});
       }
     } catch (e) {
@@ -242,7 +242,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
             .ref()
             .child("vendor_images")
             .child("cover_images")
-            .child(emailController.text)
+            .child(email)
             .child("cover_image_${i + 1}");
         final StorageUploadTask uploadTask = storageReference
             .putData((await coverImages[i].getByteData()).buffer.asUint8List());
@@ -260,7 +260,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         coverImageUrls.add(imageUrl.toString());
         Firestore.instance
             .collection("tiffen_service_details")
-            .document(emailController.text)
+            .document(email)
             .updateData({'Cover Photos': coverImageUrls});
       }
     } catch (e) {
@@ -311,7 +311,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
             .ref()
             .child("vendor_images")
             .child("menu_images")
-            .child(emailController.text)
+            .child(email)
             .child("menu_image_${i + 1}");
         final StorageUploadTask uploadTask = storageReference
             .putData((await menuImages[i].getByteData()).buffer.asUint8List());
@@ -329,7 +329,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         menuImageUrls.add(imageUrl.toString());
         Firestore.instance
             .collection("tiffen_service_details")
-            .document(emailController.text)
+            .document(email)
             .updateData({'Meal Images': menuImageUrls});
       }
     } catch (e) {
@@ -461,8 +461,17 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
     );
   }
 
+  String email;
+  void getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      email = prefs.getString("currentUserEmail");
+    });
+  }
+
   @override
   void initState() {
+    getEmail();
     super.initState();
     foodCategory = [];
     foodCategoryResult = '';
@@ -569,15 +578,27 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                       'enter your address',
                       'Full address',
                     ),
+                    // Padding(
+                    //   padding: EdgeInsets.all(10),
+                    //   child: TextFormField(
+                    //     controller: emailController,
+                    //     validator: validateEmail,
+                    //     decoration: InputDecoration(
+                    //       labelText: "Owner Email id",
+                    //     ),
+                    //     keyboardType: TextInputType.emailAddress,
+                    //   ),
+                    // ),
                     Padding(
                       padding: EdgeInsets.all(10),
                       child: TextFormField(
-                        controller: emailController,
-                        validator: validateEmail,
+                        // initialValue: email,
+
+                        enabled: false,
                         decoration: InputDecoration(
-                          labelText: "Owner Email id",
+                          labelText: email,
+                          labelStyle: TextStyle(color: Colors.black)
                         ),
-                        keyboardType: TextInputType.emailAddress,
                       ),
                     ),
                     Padding(
@@ -1335,7 +1356,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
       print(foodCategoryResult);
       Map<String, dynamic> tiffenInfo = {
         "Tiffen Name": tiffinController.text,
-        "Email": emailController.text,
+        "Email": email,
         "OwnerName": ownerNameController.text,
         "Address": addressController.text,
         "Phone": phoneController.text,
@@ -1358,10 +1379,10 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         "Meal Cost": global.cost,
         "Locality": [global.tiffenCentreLatitude, global.tiffenCentreLongitude],
         "Tiffen Service Address": global.localityAddress,
-        "rating": null,
+        "rating": "",
         "no of ratings": 0,
       };
-      _databaseService.createTiffen(tiffenInfo, emailController.text);
+      _databaseService.createTiffen(tiffenInfo, email);
       await uploadCoverImages().whenComplete(() async {
         await uploadMenuImages().whenComplete(() async {
           await uploadLogoImage();
@@ -1371,7 +1392,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         context,
         MaterialPageRoute(
           builder: (context) => ProofOfPayment(
-            vendorEmail: emailController.text,
+            vendorEmail: email,
           ),
         ),
       );

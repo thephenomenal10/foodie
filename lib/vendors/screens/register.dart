@@ -5,6 +5,7 @@ import 'package:foodieapp/vendors/services/databaseService.dart';
 import 'package:foodieapp/vendors/services/firebase_service.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'HomePage.dart';
 
@@ -421,10 +422,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  signMeUp() {
+  signMeUp() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("currentUserEmail", emailController.text);
       Map<String, String> userInfo = {
         "Email": emailController.text,
         "Name": nameController.text,

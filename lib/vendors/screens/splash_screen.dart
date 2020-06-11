@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodieapp/vendors/bottomNavigationBar.dart';
 import 'package:foodieapp/vendors/services/isUserLoggedIn.dart';
 
 
@@ -18,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
         // splashscreen duration
         Future.delayed(Duration(seconds: 3), () {
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => IsUserLoggedIn()));
+                context, MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
         });
     }
 
