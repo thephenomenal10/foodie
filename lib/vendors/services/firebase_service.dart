@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/screens/login.dart';
@@ -66,8 +68,7 @@ class FirebaseAuthentication {
       print(currentUserUid.toString());
       print(result);
 
-    verifyPhone(context, phoneControlloer);
-
+      verifyPhone(context, phoneControlloer);
     } catch (e) {
       showDialog(
         context: context,
@@ -95,12 +96,12 @@ class FirebaseAuthentication {
 
 //PHONE NO VERIFICATION .....///////////////////...
 
-  Future<bool> verifyPhone(context, String phoneNumber) async{
+  Future<bool> verifyPhone(context, String phoneNumber) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     TextEditingController _codeController = new TextEditingController();
-     user = await FirebaseAuth.instance.currentUser();
+    user = await FirebaseAuth.instance.currentUser();
 
-_auth.verifyPhoneNumber(
+    _auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         timeout: Duration(seconds: 60),
         verificationCompleted: null,
@@ -121,54 +122,55 @@ _auth.verifyPhoneNumber(
 
         //   //This callback would gets called when verification is done auto maticlly
         // },
-        verificationFailed: (AuthException exception){
+        verificationFailed: (AuthException exception) {
           print(exception);
         },
-        codeSent: (String verificationId, [int forceResendingToken]){
+        codeSent: (String verificationId, [int forceResendingToken]) {
           showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return AlertDialog(
-                title: Text("Give the code?"),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    TextField(
-                      controller: _codeController,
-                    ),
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text("Give the code?"),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      TextField(
+                        controller: _codeController,
+                      ),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text("Confirm"),
+                      textColor: Colors.white,
+                      color: Colors.blue,
+                      onPressed: () async {
+                        final code = _codeController.text.trim();
+                        AuthCredential credential =
+                            PhoneAuthProvider.getCredential(
+                                verificationId: verificationId, smsCode: code);
+                        user.linkWithCredential(credential).then((authResult) {
+                          user = authResult.user;
+                          if (user != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CreateTiffenCentre()));
+                          } else {
+                            print("Error");
+                          }
+                        }).catchError((e) {
+                          print(e.message);
+                        });
+                      },
+                    )
                   ],
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Confirm"),
-                    textColor: Colors.white,
-                    color: Colors.blue,
-                    onPressed: () async{
-                      final code = _codeController.text.trim();
-                      AuthCredential credential = PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: code);
-                       user.linkWithCredential(credential).then((authResult) {
-                         user = authResult.user;
-                         if(user != null){
-                        Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => CreateTiffenCentre()
-                        ));
-                      }else{
-                        print("Error");
-                      }
-
-                       }).catchError((e){
-                         print(e.message);
-                       });
-                    },
-                  )
-                ],
-              );
-            }
-          );
+                );
+              });
         },
-        codeAutoRetrievalTimeout: null
-    );
+        codeAutoRetrievalTimeout: null);
   }
 
   Future resetPassword(String email) async {
@@ -181,6 +183,14 @@ _auth.verifyPhoneNumber(
   }
 
   Future<void> signOut(context) async {
+    user = await FirebaseAuth.instance.currentUser();
+    final ref = Firestore.instance
+        .collection('tiffen_service_details')
+        .document(user.email);
+    var tokens = [...(await ref.get()).data['fcmTokens']];
+    final token = await FirebaseMessaging().getToken();
+    tokens.remove(token);
+    await ref.updateData({'fcmTokens': tokens});
     return await auth.signOut().then((value) => Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginScreen())));
   }

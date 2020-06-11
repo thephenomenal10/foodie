@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:foodieapp/vendors/tabs.dart';
@@ -13,6 +15,22 @@ class BottomNavigationScreen extends StatefulWidget {
 
 class BottomNavigationScreenState extends State<BottomNavigationScreen> {
   int _currentIndex = 0;
+
+  Future<void> storeFCMToken() async {
+    final token = await FirebaseMessaging().getToken();
+    print(token);
+    final user = await FirebaseAuth.instance.currentUser();
+    var reference = Firestore.instance
+        .collection('tiffen_service_details')
+        .document(user.email);
+    List<String> fcmTokens = (await reference.get()).data['fcmTokens'] == null
+        ? []
+        : [...(await reference.get()).data['fcmTokens']];
+    if (!fcmTokens.contains(token)) {
+      fcmTokens.add(token);
+    }
+    await reference.updateData({'fcmTokens': fcmTokens});
+  }
 
   @override
   void initState() {
@@ -33,6 +51,7 @@ class BottomNavigationScreenState extends State<BottomNavigationScreen> {
         return;
       },
     );
+    storeFCMToken();
   }
 
   @override
