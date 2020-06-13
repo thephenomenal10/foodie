@@ -91,36 +91,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Flexible(
               flex: 2,
               child: TextFormField(
-                  controller: phoneController,
-                  keyboardType: TextInputType.phone,
-                  validator: (val) {
-                    if (val.isEmpty) {
-                      return "enter your phone number";
-                    }
-                    return null;
-                  },
-                  textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 12),
-                  decoration: InputDecoration(
-                    fillColor: Color(0xFF00B712),
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(0.0),
-                      child: Icon(
-                        Icons.call,
-                        color: Colors.white,
-                      ),
-                    ),
-                    hintText: 'Enter your phone',
-                    hintStyle: TextStyle(
-                      fontSize: 12,
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                validator: (val) {
+                  if (val.isEmpty) {
+                    return "enter your phone number";
+                  }
+                  return null;
+                },
+                textAlign: TextAlign.left,
+                style: TextStyle(fontSize: 12),
+                decoration: InputDecoration(
+                  prefixText: '+91',
+                  prefixStyle: TextStyle(fontSize: 12),
+                  fillColor: Color(0xFF00B712),
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.all(0.0),
+                    child: Icon(
+                      Icons.call,
                       color: Colors.white,
-                      fontWeight: FontWeight.w500,
                     ),
-                  )),
+                  ),
+                  hintText: 'Enter your phone',
+                  hintStyle: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -276,9 +279,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       width: double.infinity,
       child: RaisedButton(
         elevation: 5.0,
-        onPressed:  () {
-                return signMeUp();
-              },
+        onPressed: () {
+          return signMeUp();
+        },
         padding: EdgeInsets.all(10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -428,12 +431,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       Map<String, String> userInfo = {
         "Email": emailController.text,
         "Name": nameController.text,
-        "Phone": phoneController.text,
+        "Phone": '+ 91 ' + phoneController.text,
       };
-    
-      firebaseAuthentication.signUp(context, emailController, passController, phoneController.text.trim());
-      _databaseService.addUserData(userInfo, emailController.text);
 
+      firebaseAuthentication.signUp(context, emailController, passController,
+          '+ 91 ' + phoneController.text.trim());
+      _databaseService.addUserData(userInfo, emailController.text);
     }
   }
 }

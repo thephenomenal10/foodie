@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:foodieapp/vendors/tabs.dart';
+import 'package:foodieapp/vendors/services/local_notifications.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
   @override
@@ -40,6 +41,7 @@ class BottomNavigationScreenState extends State<BottomNavigationScreen> {
     fbm.configure(
       onMessage: (message) {
         print(message);
+        LocalNotifications.showNotification(message);
         return;
       },
       onResume: (message) {
