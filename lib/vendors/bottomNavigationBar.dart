@@ -19,22 +19,6 @@ class BottomNavigationScreen extends StatefulWidget {
 class BottomNavigationScreenState extends State<BottomNavigationScreen> {
   int _currentIndex = 0;
 
-  Future<void> storeFCMToken() async {
-    final user = await FirebaseAuth.instance.currentUser();
-    final token = await FirebaseMessaging().getToken();
-    print(token);
-    var reference = Firestore.instance
-        .collection('tiffen_service_details')
-        .document(user.email);
-    List<String> fcmTokens = (await reference.get()).data['fcmTokens'] == null
-        ? []
-        : [...(await reference.get()).data['fcmTokens']];
-    if (!fcmTokens.contains(token)) {
-      fcmTokens.add(token);
-    }
-    await reference.updateData({'fcmTokens': fcmTokens});
-  }
-
   @override
   void initState() {
     super.initState();
@@ -55,7 +39,6 @@ class BottomNavigationScreenState extends State<BottomNavigationScreen> {
         return;
       },
     );
-    storeFCMToken();
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/screens/login.dart';
 import 'package:foodieapp/vendors/screens/otpVerificationScreen.dart';
+import 'package:foodieapp/vendors/services/local_notifications.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 import 'package:foodieapp/vendors/screens/createTiffenCentre.dart';
 import 'package:foodieapp/vendors/bottomNavigationBar.dart';
@@ -24,6 +25,7 @@ class FirebaseAuthentication {
       });
       print(result.user);
       if (auth.currentUser() != null) {
+        await LocalNotifications.storeFCMToken(emailController.text.trim());
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
         DialogBox()
@@ -185,8 +187,8 @@ class FirebaseAuthentication {
   Future<void> signOut(context) async {
     user = await FirebaseAuth.instance.currentUser();
     final ref = Firestore.instance
-        .collection('tiffen_service_details')
-        .document(user.email); 
+        .collection('vendor_collection/vendors/registered_vendors')
+        .document(user.email);
     var tokens = [...(await ref.get()).data['fcmTokens']];
     final token = await FirebaseMessaging().getToken();
     tokens.remove(token);
