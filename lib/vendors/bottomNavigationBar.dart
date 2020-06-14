@@ -4,7 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:foodieapp/vendors/tabs.dart';
+import 'package:foodieapp/vendors/screens/HomePage.dart';
+import 'package:foodieapp/vendors/screens/account_screen.dart';
+import 'package:foodieapp/vendors/screens/customer_orders_screen.dart';
 import 'package:foodieapp/vendors/services/local_notifications.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
@@ -18,9 +20,9 @@ class BottomNavigationScreenState extends State<BottomNavigationScreen> {
   int _currentIndex = 0;
 
   Future<void> storeFCMToken() async {
+    final user = await FirebaseAuth.instance.currentUser();
     final token = await FirebaseMessaging().getToken();
     print(token);
-    final user = await FirebaseAuth.instance.currentUser();
     var reference = Firestore.instance
         .collection('tiffen_service_details')
         .document(user.email);
@@ -63,7 +65,12 @@ class BottomNavigationScreenState extends State<BottomNavigationScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: new Container(
-          child: tabs[_currentIndex],
+          child: [
+            Center(child: Home()),
+            Center(child: CustomerOrdersScreen()),
+            Center(child: AccountScreen()),
+          ][_currentIndex],
+          // child: tabs[_currentIndex],
         ),
         bottomNavigationBar: new BottomNavigationBar(
           currentIndex: _currentIndex,
