@@ -1,4 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:foodieapp/vendors/constants/constants.dart';
+import 'package:foodieapp/vendors/screens/showTiffenInfo.dart';
+import 'package:foodieapp/vendors/services/databaseService.dart';
+import 'package:foodieapp/vendors/utils/mySlide.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/firebase_service.dart';
 import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
@@ -10,24 +16,20 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   FirebaseAuthentication _firebaseAuthentication = new FirebaseAuthentication();
+  DatabaseService databaseService = new DatabaseService();
 
+  String userName;
+  String email;
+  String phone;
+  String address;
   var _isEditMode = false;
 
-  Widget _infoField(label, initialValue, TextInputType inputType) => Padding(
-        padding: EdgeInsets.all(10),
-        child: TextFormField(
-          initialValue: initialValue,
-          enabled: _isEditMode,
-          decoration: InputDecoration(
-            labelText: label,
-          ),
-          keyboardType: inputType,
-          onSaved: (String value) {},
-          validator: (String value) {
-            return value.contains('@') ? 'Do not use the @ char.' : null;
-          },
-        ),
-      );
+  Firestore firestore = Firestore.instance;
+
+  TextEditingController nameController = new TextEditingController();
+  TextEditingController emailController = new TextEditingController();
+  TextEditingController phoneController = new TextEditingController();
+  GlobalKey<FormState> _formKey = new GlobalKey();
 
   Widget _getActionButtons() {
     return Padding(
@@ -43,9 +45,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 textColor: Colors.white,
                 color: Theme.of(context).primaryColor,
                 onPressed: () {
-                  setState(() {
-                    _isEditMode = !_isEditMode;
-                  });
+                  updateUserInfo();
                 },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0)),
@@ -96,8 +96,30 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
+  Future<void> getVendorInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String currentUserEmail = prefs.getString("currentUserEmail");
+    await firestore
+        .collection("vendor_collection")
+        .document("vendors")
+        .collection("registered_vendors")
+        .document(currentUserEmail)
+        .get()
+        .then((DocumentSnapshot ds) {
+      setState(() {
+        userName = ds['Name'];
+        print(userName);
+        phone = ds['Phone'];
+
+        email = ds['Email'];
+        print(email);
+      });
+    });
+  }
+
   @override
   void initState() {
+    getVendorInfo();
     global.isSignUpLoading = false;
     super.initState();
   }
@@ -105,8 +127,8 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: global.isSignUpLoading == true
-          ? CircularProgressIndicator()
+      body: userName == null || email == null || phone == null
+          ? Center(child: CircularProgressIndicator( ))
           : ListView(
               children: <Widget>[
                 Container(
@@ -138,7 +160,6 @@ class _AccountScreenState extends State<AccountScreen> {
                               size: 30.0,
                             ),
                             onTap: () {
-                                
                               _firebaseAuthentication.signOut(context);
                             },
                           )
@@ -201,19 +222,115 @@ class _AccountScreenState extends State<AccountScreen> {
                             !_isEditMode ? _getEditIcon() : SizedBox(),
                           ],
                         ),
-                        _infoField("Name", "Matt Smith", TextInputType.text),
-                        _infoField("Email", "msmith@gmail.com",
-                            TextInputType.emailAddress),
-                        _infoField("Phone", "1234567890", TextInputType.phone),
-                        _infoField(
-                            "Address", "Bulk Road, Weston", TextInputType.text),
+                        Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: TextFormField(
+                                    controller: nameController,
+                                    // initialValue:
+                                    enabled: _isEditMode,
+                                    decoration: InputDecoration(
+                                        labelText: _isEditMode == true
+                                            ? "Name"
+                                            : userName,
+                                        labelStyle:
+                                            TextStyle(color: Colors.black)),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: TextFormField(
+                                    controller: emailController,
+                                    // initialValue:
+                                    enabled: _isEditMode,
+                                    decoration: InputDecoration(
+                                        labelText: _isEditMode == true
+                                            ? "Email"
+                                            : email,
+                                        labelStyle:
+                                            TextStyle(color: Colors.black)),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: TextFormField(
+                                    controller: phoneController,
+                                    // initialValue: _isEditMode == true ? phone : null,
+                                    enabled: _isEditMode,
+                                    decoration: InputDecoration(
+                                        labelText: _isEditMode == true
+                                            ? "Phone"
+                                            : phone,
+                                        labelStyle:
+                                            TextStyle(color: Colors.black)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                         _isEditMode ? _getActionButtons() : SizedBox(),
                       ],
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(30.0),
+                  child: RaisedButton(
+                    elevation: 5.0,
+                    onPressed: () {
+                      return showTiffenInfo();
+                    },
+                    padding: EdgeInsets.all(10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    color: Colors.white,
+                    child: Text(
+                      'Show Tiffen Details',
+                      textScaleFactor: 1.5,
+                      style: TextStyle(
+                        color: myGreen,
+                        letterSpacing: 1.8,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
     );
+  }
+
+  showTiffenInfo() {
+    Route route = MySlide(builder: (context) => ShowTiffenInfo());
+    Navigator.push(context, route);
+  }
+
+  void updateUserInfo() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("currentUserEmail", emailController.text);
+      Map<String, String> userInfo = {
+        "Email": emailController.text,
+        "Name": nameController.text,
+        "Phone": phoneController.text,
+      };
+
+      databaseService.addUserData(userInfo, emailController.text);
+      setState(() {
+        _isEditMode = !_isEditMode;
+        nameController.clear();
+        phoneController.clear();
+        emailController.clear();
+        getVendorInfo();
+      });
+    }
   }
 }

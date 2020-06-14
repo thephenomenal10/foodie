@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
 
 
 class DatabaseService {
@@ -22,4 +24,14 @@ class DatabaseService {
       print(e.message);
     });
   }
+
+
+
+  // Future<dynamic>  getVendorInfo() async{
+
+  //     // SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     // String email = prefs.getString("currentUserEmail");
+
+  //    return  await firestore.collection("tiffen_service_details").document("sahyogsaini.cse@gmail.com").get();
+  // }
 }

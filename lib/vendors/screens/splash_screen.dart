@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:foodieapp/vendors/bottomNavigationBar.dart';
+import 'package:foodieapp/vendors/screens/createTiffenCentre.dart';
+import 'package:foodieapp/vendors/screens/register.dart';
+import 'package:foodieapp/vendors/screens/subPaymentScreen.dart';
 import 'package:foodieapp/vendors/services/isUserLoggedIn.dart';
 
 
