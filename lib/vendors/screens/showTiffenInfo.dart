@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/screens/MyAppBar.dart';
+import 'package:foodieapp/vendors/screens/updateTiffenInfo.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:foodieapp/vendors/widgets/tiffenContainer.dart';
 import 'package:foodieapp/vendors/widgets/tiffenInfoWidget.dart';
@@ -22,6 +23,32 @@ class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
     setState(() {
       currentUserEmail = prefs.getString("currentUserEmail");
     });
+
+    
+  }
+
+
+bool _isEditMode = false;
+
+Widget _getEditIcon() {
+    return GestureDetector(
+      child: CircleAvatar(
+        backgroundColor: Theme.of(context).primaryColor,
+        radius: 14.0,
+        child: Icon(
+          Icons.edit,
+          color: Colors.white,
+          size: 16.0,
+        ),
+      ),
+      onTap: () {
+        setState(() {
+          _isEditMode = !_isEditMode;
+
+          Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateTiffenInfo()));
+        });
+      },
+    );
   }
 
   @override
@@ -38,7 +65,7 @@ class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
           .document(currentUserEmail)
           .snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else {
           var doc = snapshot.data;
@@ -142,21 +169,11 @@ class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
                               context: context,
                               title: "Dinner Time",
                               data: doc['Dinner Time']),
-
                           mealInfo(
-                            context: context,
-                            title: "Meal Information",
-                            desc: doc['Meal Description'],
-                            cost: doc['Meal Cost']
-                            ),
-                          tiffenInfo(
                               context: context,
-                              title: "Meal Description",
-                              data: '${doc['Meal Description'].toString()}'),
-                          tiffenInfo(
-                              context: context,
-                              title: "Meal Cost",
-                              data: '${doc['Meal Cost'].toString()}'),
+                              title: "Meal Information",
+                              desc: doc['Meal Description'],
+                              cost: doc['Meal Cost']),
                           tiffenInfo(
                               context: context,
                               title: "Tiffen Address",

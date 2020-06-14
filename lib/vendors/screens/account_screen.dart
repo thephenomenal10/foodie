@@ -128,7 +128,7 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: userName == null || email == null || phone == null
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator( ))
           : ListView(
               children: <Widget>[
                 Container(

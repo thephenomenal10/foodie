@@ -186,7 +186,7 @@ class FirebaseAuthentication {
     user = await FirebaseAuth.instance.currentUser();
     final ref = Firestore.instance
         .collection('tiffen_service_details')
-        .document(user.email);
+        .document(user.email); 
     var tokens = [...(await ref.get()).data['fcmTokens']];
     final token = await FirebaseMessaging().getToken();
     tokens.remove(token);
