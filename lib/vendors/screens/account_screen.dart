@@ -97,24 +97,25 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Future<void> getVendorInfo() async {
-          // SharedPreferences prefs = await SharedPreferences.getInstance();
-      // String email = prefs.getString("currentUserEmail");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String currentUserEmail = prefs.getString("currentUserEmail");
     await firestore
         .collection("vendor_collection")
         .document("vendors")
         .collection("registered_vendors")
-        .document("sahyogsaini.cse@gmail.com")
+        .document(currentUserEmail)
         .get()
         .then((DocumentSnapshot ds) {
-           setState(() {
+      setState(() {
         userName = ds['Name'];
         print(userName);
         phone = ds['Phone'];
+
         email = ds['Email'];
+        print(email);
       });
     });
   }
-
 
   @override
   void initState() {

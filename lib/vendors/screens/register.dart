@@ -427,6 +427,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _formKey.currentState.save();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString("currentUserEmail", emailController.text);
+      await prefs.setString("currentUserName", emailController.text);
       Map<String, String> userInfo = {
         "Email": emailController.text,
         "Name": nameController.text,

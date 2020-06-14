@@ -23,3 +23,41 @@ Widget tiffenInfo({BuildContext context, String data, String title}) {
     ],
   );
 }
+
+Widget mealInfo({BuildContext context, title, desc, cost}) {
+  return ExpansionTile(
+    title: new Text(title,
+        style: new TextStyle(fontWeight: FontWeight.bold),
+        textAlign: TextAlign.start),
+    children: [
+      ListView.builder(
+        shrinkWrap: true,
+          itemCount: desc.length,
+          itemBuilder: (context, int index) {
+            return new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      
+                      margin: EdgeInsets.only(left: 16.0),
+                      child: new Text(desc[index].toString()),
+                    ),
+                    // SizedBox(height:20.0),
+                    Container(
+                      // margin: EdgeInsets.only(right: 16.0),
+                      child: new Text(cost[index].toString()),
+                    ),
+                    SizedBox(height:20.0),
+
+                  ],
+                )
+              ],
+            );
+          })
+    ],
+  );
+}

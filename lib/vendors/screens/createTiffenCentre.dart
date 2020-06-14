@@ -1379,7 +1379,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         "Meal Cost": global.cost,
         "Locality": [global.tiffenCentreLatitude, global.tiffenCentreLongitude],
         "Tiffen Service Address": global.localityAddress,
-        "rating": "",
+        "rating": 0,
         "no of ratings": 0,
       };
       _databaseService.createTiffen(tiffenInfo, email);

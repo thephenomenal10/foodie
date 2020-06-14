@@ -8,8 +8,9 @@ import 'ordersData.dart';
 
 class Orders extends StatefulWidget {
   final String dateTime;
+  final String userName;
 
-  const Orders({Key key, this.dateTime}) : super(key: key);
+  const Orders({Key key, this.dateTime, this.userName}) : super(key: key);
 
 
 
@@ -112,7 +113,7 @@ class _OrdersState extends State<Orders> {
                                       padding:
                                           EdgeInsets.symmetric(vertical: 5.0),
                                       child: new Text(
-                                        _ordersData.customerName[index],
+                                        widget.userName,
                                         style: new TextStyle(
                                             color: secondaryColor,
                                             fontWeight: FontWeight.w600,
