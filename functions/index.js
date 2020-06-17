@@ -5,7 +5,7 @@ const { Message } = require("firebase-functions/lib/providers/pubsub");
 admin.initializeApp(functions.config().firebase);
 
 exports.newOrderNotification = functions.firestore
-  .document("tiffen_service_details/{vendorEmail}/orders/{neworder}")
+  .document("tiffen_service_details/{vendorEmail}/pendingOrders/{neworder}")
   .onCreate(async (snapshot, context) => {
     const vendorEmail = context.params.vendorEmail;
     const registeredTokens = [
@@ -35,7 +35,7 @@ exports.newOrderNotification = functions.firestore
   });
 
 exports.mealChangeNotification = functions.firestore
-  .document("tiffen_service_details/{vendorEmail}/orders/{order}")
+  .document("tiffen_service_details/{vendorEmail}/acceptedOrders/{order}")
   .onUpdate(async (change, context) => {
     const beforeData = change.before.data();
     const afterData = change.after.data();

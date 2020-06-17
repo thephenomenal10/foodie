@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/screens/MyAppBar.dart';
-import 'package:foodieapp/vendors/screens/pos_screen.dart';
+import 'package:foodieapp/vendors/widgets/customer_orders.dart';
 
 class CustomerSubscriptionsScreen extends StatelessWidget {
+  final String id;
   final String customerName;
-  CustomerSubscriptionsScreen(this.customerName);
-  
+  final String vendorEmail;
+  CustomerSubscriptionsScreen(this.id, this.customerName, this.vendorEmail);
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -14,9 +16,8 @@ class CustomerSubscriptionsScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         child: MyAppBar(),
-         preferredSize: Size.fromHeight(60.0)
-         ),
-         
+        preferredSize: Size.fromHeight(60.0),
+      ),
       body: Column(
         children: <Widget>[
           Container(
@@ -45,41 +46,12 @@ class CustomerSubscriptionsScreen extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(
-              vertical: 5,
-            ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, ind) => GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => POSScreen(),
-                  ),
-                ),
-                child: Card(
-                  elevation: 5,
-                  // margin: EdgeInsets.symmetric(
-                  //   horizontal: 10,
-                  //   vertical: 5,
-                  // ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      'Subscription #${ind + 1}',
-                      style: TextStyle(
-                        fontSize: height * 0.03,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: 5,
               ),
-              itemCount: 7,
+              child: CustomerOrders(id, vendorEmail),
             ),
           ),
         ],

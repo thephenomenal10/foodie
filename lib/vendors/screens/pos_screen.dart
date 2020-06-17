@@ -4,10 +4,12 @@ import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'MyAppBar.dart';
 
 class POSScreen extends StatelessWidget {
-  final String mealType = 'Veg';
-  final int skippedMeals = 10;
-  final int totalMeals = 10;
-  final double mealCost = 49;
+  final String mealType;
+  final int skippedMeals;
+  final int totalMeals;
+  final double mealCost;
+
+  POSScreen({this.mealCost, this.mealType, this.skippedMeals, this.totalMeals});
 
   Widget titleText(String title) {
     return Text(
@@ -34,8 +36,8 @@ class POSScreen extends StatelessWidget {
     return Scaffold(
       appBar: PreferredSize(
         child: MyAppBar(),
-         preferredSize: Size.fromHeight(60.0)
-         ),
+        preferredSize: Size.fromHeight(60.0),
+      ),
       body: Container(
         padding: EdgeInsets.all(20),
         child: Column(
@@ -91,31 +93,34 @@ class POSScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: new Container(
+      bottomNavigationBar: Container(
           child: Row(
         children: <Widget>[
           Expanded(
-              child: new ListTile(
-                  title: new Text(
-                    "Total:",
-                    style: new TextStyle(
-                        color: primaryColor,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  subtitle:  valueText('${totalMeals * mealCost}',
-                  ),
-                  )),
+            child: new ListTile(
+              title: new Text(
+                "Total:",
+                style: new TextStyle(
+                    color: primaryColor,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold),
+              ),
+              subtitle: valueText(
+                '${totalMeals * mealCost}',
+              ),
+            ),
+          ),
           Expanded(
-              child: new MaterialButton(
-                padding: EdgeInsets.symmetric(horizontal:10.0),
-                  onPressed: () {},
-                  color: primaryColor,
-                
-                  child: new Text(
-                    "POS",
-                    style: new TextStyle(color: Colors.white, fontSize: 20.0),
-                  )))
+            child: new MaterialButton(
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              onPressed: () {},
+              color: primaryColor,
+              child: new Text(
+                "POS",
+                style: new TextStyle(color: Colors.white, fontSize: 20.0),
+              ),
+            ),
+          ),
         ],
       )),
     );

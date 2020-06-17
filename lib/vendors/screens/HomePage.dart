@@ -37,7 +37,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           width: 120.0,
         ),
         backgroundColor: Colors.white,
-        
         elevation: 10.0,
         flexibleSpace: SizedBox(height: 150),
         bottom: TabBar(
@@ -128,7 +127,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           }
           return StreamBuilder(
               stream: Firestore.instance
-                  .collection('tiffen_service_details/$email/orders')
+                  .collection('tiffen_service_details/$email/acceptedOrders')
                   .orderBy('startDate', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
