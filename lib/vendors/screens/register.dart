@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/services/databaseService.dart';
 import 'package:foodieapp/vendors/services/firebase_service.dart';
+import 'package:foodieapp/vendors/services/local_notifications.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -439,7 +440,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       firebaseAuthentication.signUp(context, emailController, passController,
           '+ 91 ' + phoneController.text.trim());
-      _databaseService.addUserData(userInfo, emailController.text);
+      await _databaseService.addUserData(userInfo, emailController.text);
+      await LocalNotifications.storeFCMToken(emailController.text.trim());
     }
   }
 }

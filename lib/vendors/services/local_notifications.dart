@@ -1,8 +1,25 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 class LocalNotifications {
+  static Future<void> storeFCMToken(String email) async {
+    final token = await FirebaseMessaging().getToken();
+    print(token);
+    var reference = Firestore.instance
+        .collection('vendor_collection/vendors/registered_vendors')
+        .document(email);
+    List<String> fcmTokens = (await reference.get()).data['fcmTokens'] == null
+        ? []
+        : [...(await reference.get()).data['fcmTokens']];
+    if (!fcmTokens.contains(token)) {
+      fcmTokens.add(token);
+    }
+    await reference.updateData({'fcmTokens': fcmTokens});
+  }
+
   static Future<void> _initializeNotiication() async {
     var android = AndroidInitializationSettings('mipmap/ic_launcher');
     var platform = InitializationSettings(android, null);
