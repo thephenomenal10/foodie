@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 Widget tiffenInfo({BuildContext context, String data, String title}) {
-  
   return ExpansionTile(
     title: new Text(title,
         style: new TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         textAlign: TextAlign.start),
-        trailing: Icon(Icons.arrow_drop_down, color: Colors.black,),
+    trailing: Icon(
+      Icons.arrow_drop_down,
+      color: Colors.black,
+    ),
     children: [
       Column(
         children: [

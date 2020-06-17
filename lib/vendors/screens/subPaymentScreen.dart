@@ -543,7 +543,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Text(
-                            'CONFIRdcleM',
+                            'CONFIRM',
                             style: TextStyle(
                               letterSpacing: 0.3,
                               color: Colors.white,

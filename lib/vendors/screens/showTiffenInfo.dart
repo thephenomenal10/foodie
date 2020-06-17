@@ -23,14 +23,11 @@ class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
     setState(() {
       currentUserEmail = prefs.getString("currentUserEmail");
     });
-
-    
   }
 
+  bool _isEditMode = false;
 
-bool _isEditMode = false;
-
-Widget _getEditIcon() {
+  Widget _getEditIcon() {
     return GestureDetector(
       child: CircleAvatar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -45,7 +42,8 @@ Widget _getEditIcon() {
         setState(() {
           _isEditMode = !_isEditMode;
 
-          Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateTiffenInfo()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => UpdateTiffenInfo()));
         });
       },
     );
@@ -74,15 +72,24 @@ Widget _getEditIcon() {
                 child: MyAppBar(), preferredSize: Size.fromHeight(60.0)),
             body: new ListView(
               children: [
-                Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                  child: new Text("Tiffene Information",
-                      style: new TextStyle(
-                        fontSize: 28.0,
-                        color: myGreen,
-                        fontWeight: FontWeight.w600,
-                      )),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 20.0),
+                      child: new Text("Tiffene Information",
+                          style: new TextStyle(
+                            fontSize: 28.0,
+                            color: myGreen,
+                            fontWeight: FontWeight.w600,
+                          )),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(right: 25.0),
+                      child: _getEditIcon()
+                      ),
+                  ],
                 ),
                 Expanded(
                   child: Container(

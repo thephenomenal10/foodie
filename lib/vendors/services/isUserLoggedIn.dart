@@ -9,7 +9,7 @@ class IsUserLoggedIn extends StatefulWidget {
 }
 
 class _IsUserLoggedInState extends State<IsUserLoggedIn> {
-  FirebaseUser user = null;
+  FirebaseUser user;
 
   Future<void> getUserData() async {
     FirebaseUser userData = await FirebaseAuth.instance.currentUser();

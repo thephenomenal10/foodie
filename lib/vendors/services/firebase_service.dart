@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/screens/login.dart';
 import 'package:foodieapp/vendors/screens/otpVerificationScreen.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
@@ -131,7 +132,7 @@ class FirebaseAuthentication {
               barrierDismissible: false,
               builder: (context) {
                 return AlertDialog(
-                  title: Text("Give the code?"),
+                  title: Text("Enter the 6-digit code "),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -144,7 +145,7 @@ class FirebaseAuthentication {
                     FlatButton(
                       child: Text("Confirm"),
                       textColor: Colors.white,
-                      color: Colors.blue,
+                      color: myGreen,
                       onPressed: () async {
                         final code = _codeController.text.trim();
                         AuthCredential credential =
@@ -194,4 +195,87 @@ class FirebaseAuthentication {
     return await auth.signOut().then((value) => Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginScreen())));
   }
+
+
+
+    
+
+  Future<bool> updatePhoneNumber(context, String phoneNumber) async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    TextEditingController _codeController = new TextEditingController();
+    user = await FirebaseAuth.instance.currentUser();
+
+    _auth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        timeout: Duration(seconds: 60),
+        verificationCompleted: null,
+        // (AuthCredential credential) async{
+        //   Navigator.of(context).pop();
+
+        //   AuthResult result = await _auth.signInWithCredential(credential);
+
+        //   FirebaseUser user = result.user;
+
+        //   if(user != null){
+        //     Navigator.push(context, MaterialPageRoute(
+        //       builder: (context) => HomeScreen()
+        //     ));
+        //   }else{
+        //     print("Error");
+        //   }
+
+        //   //This callback would gets called when verification is done auto maticlly
+        // },
+        verificationFailed: (AuthException exception) {
+          print(exception);
+        },
+        codeSent: (String verificationId, [int forceResendingToken]) {
+          showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text("Enter the 6-digit code "),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      TextField(
+                        controller: _codeController,
+                      ),
+                    ],
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text("Confirm"),
+                      textColor: Colors.white,
+                      color: myGreen,
+                      onPressed: () async {
+                        final code = _codeController.text.trim();
+                        AuthCredential credential =
+                            PhoneAuthProvider.getCredential(
+                                verificationId: verificationId, smsCode: code);
+                        user.updatePhoneNumberCredential(credential).then((authResult) {
+                          
+                          if (user != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        BottomNavigationScreen()));
+                          } else {
+                            print("Error");
+                          }
+                        }).catchError((e) {
+                          print(e.message);
+                        });
+                      },
+                    )
+                  ],
+                );
+              });
+        },
+        codeAutoRetrievalTimeout: null);
+  }
+
+
 }

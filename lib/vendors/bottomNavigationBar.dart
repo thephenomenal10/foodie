@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:foodieapp/vendors/screens/HomePage.dart';
+import 'package:foodieapp/vendors/screens/acceptedOrdersScreen.dart';
 import 'package:foodieapp/vendors/screens/account_screen.dart';
 import 'package:foodieapp/vendors/screens/customer_orders_screen.dart';
 import 'package:foodieapp/vendors/services/local_notifications.dart';
@@ -67,6 +69,7 @@ class BottomNavigationScreenState extends State<BottomNavigationScreen> {
           child: [
             Center(child: Home()),
             Center(child: CustomerOrdersScreen()),
+            Center(child: AcceptedOrders()),
             Center(child: AccountScreen()),
           ][_currentIndex],
           // child: tabs[_currentIndex],
@@ -83,6 +86,10 @@ class BottomNavigationScreenState extends State<BottomNavigationScreen> {
             BottomNavigationBarItem(
               icon: new Icon(Icons.event_note),
               title: new Text("Orders"),
+            ),
+             BottomNavigationBarItem(
+              icon: new Icon(FlutterIcons.note_text_mco),
+              title: new Text("Accepted Orders"),
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.person),

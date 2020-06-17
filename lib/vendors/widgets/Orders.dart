@@ -3,20 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/screens/orderInfo.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 
-// import 'ordersData.dart';
-
-class Orders extends StatelessWidget {
+class Orders extends StatefulWidget {
   final String dateTime;
   final orders;
 
   const Orders({Key key, this.dateTime, this.orders}) : super(key: key);
 
-//   @override
-//   _OrdersState createState() => _OrdersState();
-// }
+  @override
+  _OrdersState createState() => _OrdersState();
+}
 
-// class _OrdersState extends State<Orders> {
-//   OrdersData _ordersData = new OrdersData();
+class _OrdersState extends State<Orders> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,7 @@ class Orders extends StatelessWidget {
                   ),
                   Container(
                       padding: EdgeInsets.symmetric(horizontal: 20.0),
-                      child: new Text(dateTime.toString(),
+                      child: new Text(widget.dateTime.toString(),
                           style: new TextStyle(
                               fontSize: 20.0,
                               color: primaryColor,
@@ -81,7 +82,7 @@ class Orders extends StatelessWidget {
               child: ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: orders.length,
+                  itemCount: widget.orders.length,
                   itemBuilder: (context, index) {
                     int i = index + 1;
                     return Container(
@@ -111,7 +112,7 @@ class Orders extends StatelessWidget {
                                     padding:
                                         EdgeInsets.symmetric(vertical: 5.0),
                                     child: new Text(
-                                      orders[index]['customerName'],
+                                      widget.orders[index]['customerName'],
                                       style: new TextStyle(
                                           color: secondaryColor,
                                           fontWeight: FontWeight.w600,
@@ -122,7 +123,7 @@ class Orders extends StatelessWidget {
                                     padding:
                                         EdgeInsets.symmetric(vertical: 5.0),
                                     child: new Text(
-                                      orders[index]['customerAddress'],
+                                      widget.orders[index]['customerAddress'],
                                       style: new TextStyle(
                                           color: secondaryColor,
                                           fontWeight: FontWeight.w600,
@@ -138,8 +139,30 @@ class Orders extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => OrderInfo(index,
-                                            orders[index], orders[index]),
+                                        builder: (context) => OrderInfo(
+                                            name: widget.orders[index]
+                                                ['customerName'],
+                                            address: widget.orders[index]
+                                                ['customerAddress'],
+                                            customerLatitude: widget.orders[index]
+                                                ['customerCoordinates'][0],
+                                            customerLongitude:
+                                                widget.orders[index]
+                                                    ['customerCoordinates'][1],
+                                            mealType: widget.orders[index]
+                                                ['foodType'],
+                                            subscriptionDays: widget.orders[index]
+                                                ['subscriptionDays'],
+                                            orderId: widget.orders[index]
+                                                ['orderId'],
+                                            index: index,
+                                            paymentMode: widget.orders[index]
+                                                ['paymentMode'],
+                                            orderSuggestion: widget.orders[index]['orderNotes'],
+                                            proofOfPayment: widget.orders[index]['proofOfPayment'],
+                                            totalCost: widget.orders[index]['totalCost'],
+                                            mealDescription: widget.orders[index]['mealDescription'],
+                                            vendorEmail: widget.orders[index]['vendorEmail']),
                                       ),
                                     );
                                   },

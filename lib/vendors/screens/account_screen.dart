@@ -1,9 +1,17 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:foodieapp/vendors/bottomNavigationBar.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/screens/showTiffenInfo.dart';
 import 'package:foodieapp/vendors/services/databaseService.dart';
 import 'package:foodieapp/vendors/utils/mySlide.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/firebase_service.dart';
@@ -26,6 +34,56 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Firestore firestore = Firestore.instance;
 
+  FirebaseUser user;
+
+  QuerySnapshot personaldata;
+
+  Uint8List imageFile;
+  File _image;
+
+  saveImageToFirebase(a) {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child("vendor_images")
+        .child("user_profile")
+        .child(a);
+    storageReference.child("image_$a.jpg").putFile(_image);
+  }
+
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = image;
+      saveImageToFirebase(user.email);
+      fetchImageFromFirebase(user.email);
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
+    });
+  }
+
+  Future<void> getUserData() async {
+    FirebaseUser userEmail = await FirebaseAuth.instance.currentUser();
+    setState(() {
+      user = userEmail;
+    });
+    print(user);
+  }
+
+  fetchImageFromFirebase(a) {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child("vendor_images")
+        .child("user_profile")
+        .child(a);
+    int maxSize = 5 * 1024 * 1024;
+    storageReference.child("image_$a.jpg").getData(maxSize).then((value) {
+      setState(() {
+        imageFile = value;
+      });
+    });
+  }
+
   TextEditingController nameController = new TextEditingController();
   TextEditingController emailController = new TextEditingController();
   TextEditingController phoneController = new TextEditingController();
@@ -44,8 +102,16 @@ class _AccountScreenState extends State<AccountScreen> {
                 child: Text("Save"),
                 textColor: Colors.white,
                 color: Theme.of(context).primaryColor,
-                onPressed: () {
+                onPressed: () async{
                   updateUserInfo();
+
+                  await FirebaseAuthentication().updatePhoneNumber(
+                      context, '+ 91 ' + phoneController.text.trim()).whenComplete(() {
+
+                      });
+
+
+                  // Navigator.pop(context);
                 },
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0)),
@@ -119,8 +185,12 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   void initState() {
-    getVendorInfo();
+    getVendorInfo().whenComplete(() {
+      fetchImageFromFirebase(user.email);
+    });
     global.isSignUpLoading = false;
+
+    getUserData();
     super.initState();
   }
 
@@ -128,7 +198,7 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: userName == null || email == null || phone == null
-          ? Center(child: CircularProgressIndicator( ))
+          ? Center(child: CircularProgressIndicator())
           : ListView(
               children: <Widget>[
                 Container(
@@ -177,21 +247,26 @@ class _AccountScreenState extends State<AccountScreen> {
                             child: CircleAvatar(
                               radius: 70,
                               backgroundColor: Colors.white,
-                              backgroundImage: NetworkImage(
-                                'https://www.shareicon.net/data/512x512/2016/07/26/802043_man_512x512.png',
-                              ),
+                              backgroundImage: imageFile == null
+                                  ? NetworkImage(
+                                      'https://www.shareicon.net/data/512x512/2016/07/26/802043_man_512x512.png',
+                                    )
+                                  : MemoryImage(imageFile),
                             ),
                           ),
                           Positioned(
                             bottom: 10,
                             left: 0,
-                            child: CircleAvatar(
-                              radius: 25,
-                              backgroundColor: Colors.white,
-                              child: Icon(
-                                Icons.camera_alt,
-                                //size: 30,
-                                color: Theme.of(context).primaryColor,
+                            child: GestureDetector(
+                              onTap: getImage,
+                              child: CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.camera_alt,
+                                  //size: 30,
+                                  color: Theme.of(context).primaryColor,
+                                ),
                               ),
                             ),
                           ),
@@ -228,6 +303,20 @@ class _AccountScreenState extends State<AccountScreen> {
                             key: _formKey,
                             child: Column(
                               children: [
+                                _isEditMode == true
+                                    ? SizedBox()
+                                    : Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: TextFormField(
+                                          controller: emailController,
+                                          // initialValue:
+                                          enabled: false,
+                                          decoration: InputDecoration(
+                                              labelText: email,
+                                              labelStyle: TextStyle(
+                                                  color: Colors.black)),
+                                        ),
+                                      ),
                                 Padding(
                                   padding: EdgeInsets.all(10.0),
                                   child: TextFormField(
@@ -238,20 +327,6 @@ class _AccountScreenState extends State<AccountScreen> {
                                         labelText: _isEditMode == true
                                             ? "Name"
                                             : userName,
-                                        labelStyle:
-                                            TextStyle(color: Colors.black)),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: TextFormField(
-                                    controller: emailController,
-                                    // initialValue:
-                                    enabled: _isEditMode,
-                                    decoration: InputDecoration(
-                                        labelText: _isEditMode == true
-                                            ? "Email"
-                                            : email,
                                         labelStyle:
                                             TextStyle(color: Colors.black)),
                                   ),
@@ -316,9 +391,8 @@ class _AccountScreenState extends State<AccountScreen> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString("currentUserEmail", emailController.text);
+      await prefs.setString("currentUserEmail", email);
       Map<String, String> userInfo = {
-        "Email": emailController.text,
         "Name": nameController.text,
         "Phone": phoneController.text,
       };

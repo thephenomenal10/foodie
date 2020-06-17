@@ -37,14 +37,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           width: 120.0,
         ),
         backgroundColor: Colors.white,
-        actions: <Widget>[
-          GestureDetector(
-            child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Icon(Icons.chat_bubble, color: primaryColor, size: 35)),
-            onTap: () {},
-          ),
-        ],
+        
         elevation: 10.0,
         flexibleSpace: SizedBox(height: 150),
         bottom: TabBar(

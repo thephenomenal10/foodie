@@ -10,7 +10,7 @@ class DatabaseService {
 
   Future<void> addUserData(userData, userEmail) {
 
-      firestore.collection("vendor_collection").document("vendors").collection("registered_vendors").document(userEmail).setData(userData)
+      firestore.collection("vendor_collection").document("vendors").collection("registered_vendors").document(userEmail).updateData(userData)
       .catchError((e) {
         print(e.message);
       }); 
