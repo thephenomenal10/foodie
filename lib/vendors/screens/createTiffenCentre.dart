@@ -58,12 +58,12 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   var now = new DateTime.now();
   var dt = DateTime.now();
 
-  var breakFastTimefrom = "00:00";
-  var breakFastTimeto = "00:00";
-  var lunchTimefrom = "00:00";
-  var lunchTimeto = "00:00";
-  var dinnerTimefrom = "00:00";
-  var dinnerTimeto = "00:00";
+  var breakFastTimefrom = "09:00";
+  var breakFastTimeto = "11:00";
+  var lunchTimefrom = "01:00";
+  var lunchTimeto = "03:00";
+  var dinnerTimefrom = "08:00";
+  var dinnerTimeto = "10:00";
   var format;
 
 ///////////////////////////////////////      this function will set the time into HH:MM am///////////////////////////////////////////////////////////
@@ -578,17 +578,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                       'enter your address',
                       'Full address',
                     ),
-                    // Padding(
-                    //   padding: EdgeInsets.all(10),
-                    //   child: TextFormField(
-                    //     controller: emailController,
-                    //     validator: validateEmail,
-                    //     decoration: InputDecoration(
-                    //       labelText: "Owner Email id",
-                    //     ),
-                    //     keyboardType: TextInputType.emailAddress,
-                    //   ),
-                    // ),
+                    
                     Padding(
                       padding: EdgeInsets.all(10),
                       child: TextFormField(

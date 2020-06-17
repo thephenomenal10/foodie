@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/screens/MyAppBar.dart';
@@ -16,12 +17,11 @@ class ShowTiffenInfo extends StatefulWidget {
 class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
   Firestore firestore = Firestore.instance;
 
-  String currentUserEmail;
+  var currentUserEmail;
 
-  Future<void> getCurrentUserEmail() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      currentUserEmail = prefs.getString("currentUserEmail");
+  Future<void> getCurrentEmail() async {
+    setState(() async{
+      currentUserEmail = (await FirebaseAuth.instance.currentUser()).email;
     });
   }
 
@@ -51,7 +51,7 @@ class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
 
   @override
   void initState() {
-    getCurrentUserEmail();
+    getCurrentEmail();
     super.initState();
   }
 
@@ -86,9 +86,8 @@ class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
                           )),
                     ),
                     Container(
-                      margin: EdgeInsets.only(right: 25.0),
-                      child: _getEditIcon()
-                      ),
+                        margin: EdgeInsets.only(right: 25.0),
+                        child: _getEditIcon()),
                   ],
                 ),
                 Expanded(

@@ -102,14 +102,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 child: Text("Save"),
                 textColor: Colors.white,
                 color: Theme.of(context).primaryColor,
-                onPressed: () async{
+                onPressed: () async {
                   updateUserInfo();
-
-                  await FirebaseAuthentication().updatePhoneNumber(
-                      context, '+ 91 ' + phoneController.text.trim()).whenComplete(() {
-
-                      });
-
 
                   // Navigator.pop(context);
                 },
@@ -163,13 +157,12 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Future<void> getVendorInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String currentUserEmail = prefs.getString("currentUserEmail");
+     email = (await FirebaseAuth.instance.currentUser()).email;
     await firestore
         .collection("vendor_collection")
         .document("vendors")
         .collection("registered_vendors")
-        .document(currentUserEmail)
+        .document(email)
         .get()
         .then((DocumentSnapshot ds) {
       setState(() {
@@ -388,6 +381,7 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   void updateUserInfo() async {
+     email = (await FirebaseAuth.instance.currentUser()).email;
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -397,7 +391,12 @@ class _AccountScreenState extends State<AccountScreen> {
         "Phone": phoneController.text,
       };
 
-      databaseService.addUserData(userInfo, emailController.text);
+      databaseService.updateUserData(userInfo, email);
+
+      await FirebaseAuthentication()
+          .updatePhoneNumber(context, '+ 91 ' + phoneController.text.trim());
+          
+
       setState(() {
         _isEditMode = !_isEditMode;
         nameController.clear();
