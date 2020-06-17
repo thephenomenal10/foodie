@@ -100,41 +100,4 @@ class CustomerOrderDetails {
     });
     return customers;
   }
-
-  static Future<List<Map<String, dynamic>>> getCustomerSubscriptions(
-      String id) async {
-    List<Map<String, dynamic>> subscriptions = [];
-    List<DocumentSnapshot> orderDocs = [];
-    final email = (await FirebaseAuth.instance.currentUser()).email;
-    orderDocs += [
-      ...(await Firestore.instance
-              .collection('tiffen_service_details/$email/acceptedOrders')
-              .getDocuments())
-          .documents
-    ];
-    orderDocs += [
-      ...(await Firestore.instance
-              .collection('tiffen_service_details/$email/pendingOrders')
-              .getDocuments())
-          .documents
-    ];
-    orderDocs += [
-      ...(await Firestore.instance
-              .collection('tiffen_service_details/$email/rejectedOrders')
-              .getDocuments())
-          .documents
-    ];
-    orderDocs += [
-      ...(await Firestore.instance
-              .collection('tiffen_service_details/$email/canceledOrders')
-              .getDocuments())
-          .documents
-    ];
-    orderDocs.forEach((element) {
-      if (element.data['vendorEmail'] == email) {
-        subscriptions.add(element.data);
-      }
-    });
-    return subscriptions;
-  }
 }
