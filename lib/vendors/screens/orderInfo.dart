@@ -10,10 +10,9 @@ import 'PaymentSummary.dart';
 
 class OrderInfo extends StatefulWidget {
   final index;
-  final customerName;
-  final customerAddress;
-
-  OrderInfo(this.index, this.customerName, this.customerAddress);
+  final order;
+  
+  OrderInfo(this.index, this.order);
 
   @override
   _OrderInfoState createState() => _OrderInfoState();
@@ -78,7 +77,7 @@ class _OrderInfoState extends State<OrderInfo> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                             new Text("Name", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
-                            new Text(widget.customerName, style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
+                            new Text(widget.order['customerName'], style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                         ],
                       ),
                     ),
@@ -87,7 +86,7 @@ class _OrderInfoState extends State<OrderInfo> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                   new Text("Contact no.", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
-                                  new Text("1234567890", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
+                                  new Text('9999999999', style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                               ],
                           ),
                       ),
@@ -96,7 +95,7 @@ class _OrderInfoState extends State<OrderInfo> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                   new Text("Address", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
-                                  new Text(widget.customerAddress, style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
+                                  new Text(widget.order['customerAddress'], style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                               ],
                           ),
                       ),
@@ -133,7 +132,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
                                                 new Text("Meal Type", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
-                                                new Text("Veg", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
+                                                new Text(widget.order['foodType'], style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                                             ],
                                         ),
                                     ),
@@ -160,7 +159,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
                                                 new Text("Payment Type", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w400, fontSize: 15.0),),
-                                                new Text("Cash", style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
+                                                new Text(widget.order['paymentMode'], style: new TextStyle(color: secondaryColor, fontWeight: FontWeight.w500, fontSize: 15.0),)
                                             ],
                                         ),
                                     ),

@@ -150,13 +150,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     Orders(
                       dateTime: DateFormat.yMMMd().format(
                         DateTime.now().subtract(
-                          Duration(days: 3),
+                          Duration(
+                            days: 3,
+                          ),
                         ),
                       ),
                       orders: OrdersList(
                         orders: orders,
                         date: DateTime.now().subtract(
-                          Duration(days: 3),
+                          Duration(days: 3, hours: DateTime.now().hour),
                         ),
                       ).getDayOrders(),
                     ),
@@ -169,7 +171,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       orders: OrdersList(
                         orders: orders,
                         date: DateTime.now().subtract(
-                          Duration(days: 2),
+                          Duration(days: 2, hours: DateTime.now().hour),
                         ),
                       ).getDayOrders(),
                     ),
@@ -182,7 +184,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       orders: OrdersList(
                         orders: orders,
                         date: DateTime.now().subtract(
-                          Duration(days: 1),
+                          Duration(days: 1, hours: DateTime.now().hour),
                         ),
                       ).getDayOrders(),
                     ),
@@ -190,7 +192,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       dateTime: DateFormat.yMMMd().format(DateTime.now()),
                       orders: OrdersList(
                         orders: orders,
-                        date: DateTime.now(),
+                        date: DateTime.now()
+                            .subtract(Duration(hours: DateTime.now().hour)),
                       ).getDayOrders(),
                     ),
                     Orders(
@@ -201,9 +204,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ),
                       orders: OrdersList(
                         orders: orders,
-                        date: DateTime.now().add(
-                          Duration(days: 1),
-                        ),
+                        date: DateTime.now()
+                            .subtract(Duration(hours: DateTime.now().hour))
+                            .add(
+                              Duration(days: 1, hours: DateTime.now().hour),
+                            ),
                       ).getDayOrders(),
                     ),
                     Orders(
@@ -214,9 +219,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ),
                       orders: OrdersList(
                         orders: orders,
-                        date: DateTime.now().add(
-                          Duration(days: 2),
-                        ),
+                        date: DateTime.now()
+                            .subtract(Duration(hours: DateTime.now().hour))
+                            .add(
+                              Duration(days: 2, hours: DateTime.now().hour),
+                            ),
                       ).getDayOrders(),
                     ),
                     Orders(
@@ -227,9 +234,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ),
                       orders: OrdersList(
                         orders: orders,
-                        date: DateTime.now().add(
-                          Duration(days: 3),
-                        ),
+                        date: DateTime.now()
+                            .subtract(Duration(hours: DateTime.now().hour))
+                            .add(
+                              Duration(days: 3),
+                            ),
                       ).getDayOrders(),
                     ),
                   ],

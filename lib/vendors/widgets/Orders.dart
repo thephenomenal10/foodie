@@ -138,8 +138,10 @@ class Orders extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => OrderInfo(index,
-                                            orders[index], orders[index]),
+                                        builder: (context) => OrderInfo(
+                                          index,
+                                          orders[index],
+                                        ),
                                       ),
                                     );
                                   },
