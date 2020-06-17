@@ -15,7 +15,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/firebase_service.dart';
-import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
+// import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
 
 class AccountScreen extends StatefulWidget {
   @override
@@ -31,12 +31,6 @@ class _AccountScreenState extends State<AccountScreen> {
   String phone;
   String address;
   var _isEditMode = false;
-
-  Firestore firestore = Firestore.instance;
-
-  FirebaseUser user;
-
-  QuerySnapshot personaldata;
 
   Uint8List imageFile;
   File _image;
@@ -60,14 +54,6 @@ class _AccountScreenState extends State<AccountScreen> {
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
     });
-  }
-
-  Future<void> getUserData() async {
-    FirebaseUser userEmail = await FirebaseAuth.instance.currentUser();
-    setState(() {
-      user = userEmail;
-    });
-    print(user);
   }
 
   fetchImageFromFirebase(a) {
@@ -102,19 +88,16 @@ class _AccountScreenState extends State<AccountScreen> {
                 child: Text("Save"),
                 textColor: Colors.white,
                 color: Theme.of(context).primaryColor,
-                onPressed: () async{
+                onPressed: () async {
                   updateUserInfo();
-
-                  await FirebaseAuthentication().updatePhoneNumber(
-                      context, '+ 91 ' + phoneController.text.trim()).whenComplete(() {
-
-                      });
-
-
-                  // Navigator.pop(context);
+                  await FirebaseAuthentication()
+                      .updatePhoneNumber(
+                          context, '+ 91 ' + phoneController.text.trim())
+                      .whenComplete(() {});
                 },
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0)),
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
               ),
             ),
             flex: 2,
@@ -162,223 +145,238 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  Future<void> getVendorInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String currentUserEmail = prefs.getString("currentUserEmail");
-    await firestore
-        .collection("vendor_collection")
-        .document("vendors")
-        .collection("registered_vendors")
-        .document(currentUserEmail)
-        .get()
-        .then((DocumentSnapshot ds) {
-      setState(() {
-        userName = ds['Name'];
-        print(userName);
-        phone = ds['Phone'];
-
-        email = ds['Email'];
-        print(email);
-      });
-    });
+  Future<void> getUserInfo() async {
+    final currentEmail = (await FirebaseAuth.instance.currentUser()).email;
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String currentUserEmail = prefs.getString("currentUserEmail");
+    final data = await Firestore.instance
+        .collection("vendor_collection/vendors/registered_vendors")
+        .document(currentEmail)
+        .get();
+    userName = data['Name'];
+    email = currentEmail;
+    phone = data['Phone'];
+    //   .get()
+    //   .then((DocumentSnapshot ds) {
+    // setState(() {
+    //   userName = ds['Name'];
+    //   print(userName);
+    //   phone = ds['Phone'];
+    //   email = ds['Email'];
+    //   print(email);
+    // });
+    // });
   }
 
   @override
   void initState() {
-    getVendorInfo().whenComplete(() {
-      fetchImageFromFirebase(user.email);
-    });
-    global.isSignUpLoading = false;
-
-    getUserData();
+    // getVendorInfo().whenComplete(() {
+    //   fetchImageFromFirebase(user.email);
+    // });
+    // global.isSignUpLoading = false;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: userName == null || email == null || phone == null
-          ? Center(child: CircularProgressIndicator())
-          : ListView(
-              children: <Widget>[
-                Container(
-                  height: 250,
-                  padding: EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(40),
-                    ),
-                    color: Theme.of(context).primaryColor,
+    return FutureBuilder(
+      future: getUserInfo(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.white,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).primaryColor,
+                ),
+              ),
+            ),
+          );
+        }
+        return Scaffold(
+          body: ListView(
+            children: <Widget>[
+              Container(
+                height: 250,
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(40),
                   ),
+                  color: Theme.of(context).primaryColor,
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          "Profile",
+                          textScaleFactor: 2,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        GestureDetector(
+                          child: Icon(
+                            Icons.exit_to_app,
+                            color: Colors.white,
+                            size: 30.0,
+                          ),
+                          onTap: () {
+                            _firebaseAuthentication.signOut(context);
+                          },
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Stack(
+                      fit: StackFit.loose,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 5,
+                          ),
+                          child: CircleAvatar(
+                            radius: 70,
+                            backgroundColor: Colors.white,
+                            backgroundImage: imageFile == null
+                                ? NetworkImage(
+                                    'https://www.shareicon.net/data/512x512/2016/07/26/802043_man_512x512.png',
+                                  )
+                                : MemoryImage(imageFile),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 10,
+                          left: 0,
+                          child: GestureDetector(
+                            onTap: getImage,
+                            child: CircleAvatar(
+                              radius: 25,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.camera_alt,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                      alignment: Alignment.center,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 25),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           Text(
-                            "Profile",
-                            textScaleFactor: 2,
+                            'Account Information',
                             style: TextStyle(
+                              fontSize: 18.0,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
                             ),
                           ),
-                          GestureDetector(
-                            child: Icon(
-                              Icons.exit_to_app,
-                              color: Colors.white,
-                              size: 30.0,
-                            ),
-                            onTap: () {
-                              _firebaseAuthentication.signOut(context);
-                            },
-                          )
+                          !_isEditMode ? _getEditIcon() : SizedBox(),
                         ],
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Stack(
-                        fit: StackFit.loose,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 5),
-                            child: CircleAvatar(
-                              radius: 70,
-                              backgroundColor: Colors.white,
-                              backgroundImage: imageFile == null
-                                  ? NetworkImage(
-                                      'https://www.shareicon.net/data/512x512/2016/07/26/802043_man_512x512.png',
-                                    )
-                                  : MemoryImage(imageFile),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 10,
-                            left: 0,
-                            child: GestureDetector(
-                              onTap: getImage,
-                              child: CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.white,
-                                child: Icon(
-                                  Icons.camera_alt,
-                                  //size: 30,
-                                  color: Theme.of(context).primaryColor,
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              _isEditMode == true
+                                  ? SizedBox()
+                                  : Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: TextFormField(
+                                        controller: emailController,
+                                        // initialValue:
+                                        enabled: false,
+                                        decoration: InputDecoration(
+                                          labelText: email,
+                                          labelStyle:
+                                              TextStyle(color: Colors.black),
+                                        ),
+                                      ),
+                                    ),
+                              Padding(
+                                padding: EdgeInsets.all(10.0),
+                                child: TextFormField(
+                                  controller: nameController,
+                                  // initialValue:
+                                  enabled: _isEditMode,
+                                  decoration: InputDecoration(
+                                    labelText:
+                                        _isEditMode == true ? "Name" : userName,
+                                    labelStyle: TextStyle(color: Colors.black),
+                                  ),
                                 ),
                               ),
-                            ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: TextFormField(
+                                  controller: phoneController,
+                                  // initialValue: _isEditMode == true ? phone : null,
+                                  enabled: _isEditMode,
+                                  decoration: InputDecoration(
+                                    labelText:
+                                        _isEditMode == true ? "Phone" : phone,
+                                    labelStyle: TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                        alignment: Alignment.center,
+                        ),
                       ),
+                      _isEditMode ? _getActionButtons() : SizedBox(),
                     ],
                   ),
                 ),
-                Container(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 25),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            Text(
-                              'Account Information',
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            !_isEditMode ? _getEditIcon() : SizedBox(),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                _isEditMode == true
-                                    ? SizedBox()
-                                    : Padding(
-                                        padding: EdgeInsets.all(10),
-                                        child: TextFormField(
-                                          controller: emailController,
-                                          // initialValue:
-                                          enabled: false,
-                                          decoration: InputDecoration(
-                                              labelText: email,
-                                              labelStyle: TextStyle(
-                                                  color: Colors.black)),
-                                        ),
-                                      ),
-                                Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: TextFormField(
-                                    controller: nameController,
-                                    // initialValue:
-                                    enabled: _isEditMode,
-                                    decoration: InputDecoration(
-                                        labelText: _isEditMode == true
-                                            ? "Name"
-                                            : userName,
-                                        labelStyle:
-                                            TextStyle(color: Colors.black)),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: TextFormField(
-                                    controller: phoneController,
-                                    // initialValue: _isEditMode == true ? phone : null,
-                                    enabled: _isEditMode,
-                                    decoration: InputDecoration(
-                                        labelText: _isEditMode == true
-                                            ? "Phone"
-                                            : phone,
-                                        labelStyle:
-                                            TextStyle(color: Colors.black)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        _isEditMode ? _getActionButtons() : SizedBox(),
-                      ],
+              ),
+              Container(
+                margin: EdgeInsets.all(30.0),
+                child: RaisedButton(
+                  elevation: 5.0,
+                  onPressed: () {
+                    return showTiffenInfo();
+                  },
+                  padding: EdgeInsets.all(10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  color: Colors.white,
+                  child: Text(
+                    'Show Tiffen Details',
+                    textScaleFactor: 1.5,
+                    style: TextStyle(
+                      color: myGreen,
+                      letterSpacing: 1.8,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.all(30.0),
-                  child: RaisedButton(
-                    elevation: 5.0,
-                    onPressed: () {
-                      return showTiffenInfo();
-                    },
-                    padding: EdgeInsets.all(10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    color: Colors.white,
-                    child: Text(
-                      'Show Tiffen Details',
-                      textScaleFactor: 1.5,
-                      style: TextStyle(
-                        color: myGreen,
-                        letterSpacing: 1.8,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -403,7 +401,7 @@ class _AccountScreenState extends State<AccountScreen> {
         nameController.clear();
         phoneController.clear();
         emailController.clear();
-        getVendorInfo();
+        getUserInfo();
       });
     }
   }
