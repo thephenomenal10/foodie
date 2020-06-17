@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 class OrdersData {
@@ -42,7 +44,8 @@ class OrdersList {
   List<Map<String, dynamic>> getDayOrders() {
     List<Map<String, dynamic>> dayOrders = [];
     orders.forEach((element) {
-      final DateTime endDate = element.data['endDate'].toDate();
+      final DateTime endDate =
+          element.data['endDate'].toDate().add(Duration(days: 1));
       final startDate = element.data['startDate'].toDate();
       if (!endDate.difference(date).isNegative &&
           !date.difference(startDate).isNegative) {
@@ -50,5 +53,27 @@ class OrdersList {
       }
     });
     return dayOrders;
+  }
+}
+
+class CustomerList {
+  static Future<List<Map<String, dynamic>>> getCustomers() async {
+    List<Map<String, String>> customerIds = [];
+    final email = (await FirebaseAuth.instance.currentUser()).email;
+    final orderDocs = await Firestore.instance
+        .collection('tiffin_service_details/$email/orders')
+        .getDocuments();
+    orderDocs.documents.forEach((element) {
+      final id = element.data['customerId'];
+      final data = {
+        'customerId': element.data['customerId'],
+        'customerName': element.data['customerName'],
+        'customerAddress': element.data['customerAddress'],
+      };
+      if (!customerIds.contains(id)) {
+        customerIds.add(data);
+      }
+    });
+    return customerIds;
   }
 }
