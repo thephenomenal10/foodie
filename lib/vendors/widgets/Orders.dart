@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:foodieapp/vendors/screens/orderInfo.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 
 class Orders extends StatelessWidget {
@@ -49,7 +50,7 @@ class Orders extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 20.0),
                     child: new Text(
-                      "ORDERS",
+                      "ACCEPTED ORDERS",
                       style: new TextStyle(
                           color: secondaryColor,
                           fontWeight: FontWeight.w500,
@@ -144,16 +145,17 @@ class Orders extends StatelessWidget {
                                   child: RaisedButton(
                                     color: primaryColor,
                                     onPressed: () {
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) => OrderInfo(
-                                      //       index,
-                                      //       orders[index],
-                                      //       snapshot.data['phone'],
-                                      //     ),
-                                      //   ),
-                                      // );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => OrderInfo(
+                                            index,
+                                            orders[index],
+                                            snapshot.data['phone'],
+                                            true,
+                                          ),
+                                        ),
+                                      );
                                     },
                                     child: Text("Order Info"),
                                   ),

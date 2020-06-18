@@ -152,6 +152,7 @@ class PendingOrders extends StatelessWidget {
                                                 index,
                                                 docs[index],
                                                 snapshot.data['phone'],
+                                                false,
                                               ),
                                             ),
                                           );

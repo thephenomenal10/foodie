@@ -1309,7 +1309,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
         // "Bank Account No.": bankAccountController.text,
         "IFSC code": ifscController.text,
         "Paytm Number": paytmController.text,
-        "Offer cancellation Subscription": sub,
+        "refundPolicy": sub,
         "BreakFast Time": "$breakFastTimefrom" + "-" "$breakFastTimeto",
         "Lunch Time": "$lunchTimefrom" + "-" "$lunchTimeto",
         "Dinner Time": "$dinnerTimefrom" + "-" "$dinnerTimeto",

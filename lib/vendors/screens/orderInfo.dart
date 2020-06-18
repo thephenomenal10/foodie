@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:foodieapp/vendors/constants/constants.dart';
+import 'package:foodieapp/vendors/screens/customerAddressNavigationScreen.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,8 +14,9 @@ class OrderInfo extends StatefulWidget {
   final index;
   final order;
   final phoneNumber;
+  final bool accepted;
 
-  OrderInfo(this.index, this.order, this.phoneNumber);
+  OrderInfo(this.index, this.order, this.phoneNumber, this.accepted);
 
   @override
   _OrderInfoState createState() => _OrderInfoState();
@@ -37,9 +40,10 @@ class _OrderInfoState extends State<OrderInfo> {
       ),
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
-        backgroundColor: Colors.green,
+        backgroundColor: myGreen,
         children: [
           SpeedDialChild(
+            backgroundColor: myGreen,
             child: Icon(
               MaterialIcons.call,
               size: 30.0,
@@ -50,6 +54,7 @@ class _OrderInfoState extends State<OrderInfo> {
             },
           ),
           SpeedDialChild(
+            backgroundColor: myGreen,
             child: Icon(
               AntDesign.customerservice,
               size: 30.0,
@@ -221,7 +226,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     new Text(
-                                      "Meal Time.",
+                                      "Meal Description",
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w400,
@@ -229,7 +234,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                       ),
                                     ),
                                     new Text(
-                                      "8:00 PM",
+                                      widget.order['mealDescription'],
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w500,
@@ -245,7 +250,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     new Text(
-                                      "Subscription Plan",
+                                      "Subscription Days",
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w400,
@@ -253,7 +258,8 @@ class _OrderInfoState extends State<OrderInfo> {
                                       ),
                                     ),
                                     new Text(
-                                      "Active(20 % off)",
+                                      widget.order['subscriptionDays']
+                                          .toString(),
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w500,
@@ -269,7 +275,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     new Text(
-                                      "Payment Type",
+                                      "Payment Mode",
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w400,
@@ -313,45 +319,60 @@ class _OrderInfoState extends State<OrderInfo> {
                                   ],
                                 ),
                               ),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    new Text(
+                                      "Total Amount",
+                                      style: new TextStyle(
+                                        color: secondaryColor,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15.0,
+                                      ),
+                                    ),
+                                    new Text(
+                                      "Rs. ${widget.order['totalCost'].toString()}",
+                                      style: new TextStyle(
+                                        color: secondaryColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15.0,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ),
                     ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          RaisedButton(
-                            color: primaryColor,
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PaymentSumm(
-                                    order: widget.order,
-                                  ),
+                    widget.accepted == true
+                        ? SizedBox()
+                        : Container(
+                            padding: EdgeInsets.symmetric(horizontal: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                RaisedButton(
+                                  color: primaryColor,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PaymentSumm(
+                                          order: widget.order,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: new Text("Payment Proof"),
                                 ),
-                              );
-                            },
-                            child: new Text("Payment summary"),
-                          ),
-                        ],
-                      ),
-                    )
+                              ],
+                            ),
+                          )
                   ],
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 20.0, top: 20.0),
-                  child: new Text(
-                    "Order Summary",
-                    style: new TextStyle(
-                      color: secondaryColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 25.0,
-                    ),
-                  ),
                 ),
                 Container(
                   padding:
@@ -359,78 +380,101 @@ class _OrderInfoState extends State<OrderInfo> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Container(
-                        width: 150.0,
-                        child: FloatingActionButton(
-                          backgroundColor: primaryColor,
-                          hoverColor: Colors.white,
-                          splashColor: secondaryColor,
-                          heroTag: "tag1",
-                          isExtended: true,
-                          onPressed: () async {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            final email = widget.order['vendorEmail'];
-                            final customerUid = widget.order['customerId'];
-                            Map<String, dynamic> updatedOrder =
-                                widget.order.data;
-                            updatedOrder['orderStatus'] = 'Accepted';
-                            await Firestore.instance
-                                .collection(
-                                    'tiffen_service_details/$email/acceptedOrders')
-                                .document(widget.order['orderId'])
-                                .setData(updatedOrder);
-                            await Firestore.instance
-                                .collection(
-                                    'tiffen_service_details/$email/pendingOrders')
-                                .document(widget.order['orderId'])
-                                .delete();
-                            await Firestore.instance
-                                .collection(
-                                    'customer_collection/$customerUid/acceptedOrders')
-                                .document(widget.order['orderId'])
-                                .setData(updatedOrder);
-                            await Firestore.instance
-                                .collection(
-                                    'customer_collection/$customerUid/pendingOrders')
-                                .document(widget.order['orderId'])
-                                .delete();
-                            setState(() {
-                              _isLoading = false;
-                            });
-                            Navigator.of(context).pop();
-                          },
-                          child: new Text(
-                            "Accept",
-                            style: new TextStyle(fontSize: 25.0),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: 150,
-                        child: FloatingActionButton(
-                          backgroundColor: primaryColor,
-                          hoverColor: Colors.white,
-                          splashColor: Colors.white,
-                          isExtended: true,
-                          heroTag: "tag2",
-                          onPressed: () async {
-                            await Navigator.of(context).push(
-                              PageRouteBuilder(
-                                opaque: false,
-                                pageBuilder: (context, _, __) =>
-                                    ModalBottomSheet(widget.order),
+                      widget.accepted == true
+                          ? Container(
+                              width: 150,
+                              child: FloatingActionButton(
+                                  backgroundColor: primaryColor,
+                                  hoverColor: Colors.white,
+                                  splashColor: secondaryColor,
+                                  heroTag: "tag3",
+                                  isExtended: true,
+                                  child: new Text("Find Customer", style: new TextStyle(fontSize: 20),),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                CustomerAddressNavigate(
+                                                  customerAddress: widget.order['customerAddress'].toString(),
+                                                )));
+                                  }),
+                            )
+                          : Container(
+                              width: 150.0,
+                              child: FloatingActionButton(
+                                backgroundColor: primaryColor,
+                                hoverColor: Colors.white,
+                                splashColor: secondaryColor,
+                                heroTag: "tag1",
+                                isExtended: true,
+                                onPressed: () async {
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                  final email = widget.order['vendorEmail'];
+                                  final customerUid =
+                                      widget.order['customerId'];
+                                  Map<String, dynamic> updatedOrder =
+                                      widget.order.data;
+                                  updatedOrder['orderStatus'] = 'Accepted';
+                                  await Firestore.instance
+                                      .collection(
+                                          'tiffen_service_details/$email/acceptedOrders')
+                                      .document(widget.order['orderId'])
+                                      .setData(updatedOrder);
+                                  await Firestore.instance
+                                      .collection(
+                                          'tiffen_service_details/$email/pendingOrders')
+                                      .document(widget.order['orderId'])
+                                      .delete();
+                                  await Firestore.instance
+                                      .collection(
+                                          'customer_collection/$customerUid/acceptedOrders')
+                                      .document(widget.order['orderId'])
+                                      .setData(updatedOrder);
+                                  await Firestore.instance
+                                      .collection(
+                                          'customer_collection/$customerUid/pendingOrders')
+                                      .document(widget.order['orderId'])
+                                      .delete();
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                                child: new Text(
+                                  "Accept",
+                                  style: new TextStyle(fontSize: 25.0),
+                                ),
                               ),
-                            );
-                            Navigator.of(context).pop();
-                          },
-                          child: new Text(
-                            "Reject",
-                            style: new TextStyle(fontSize: 25.0),
-                          ),
-                        ),
-                      ),
+                            ),
+                      widget.accepted == true
+                          ? SizedBox()
+                          : Container(
+                              width: 150,
+                              child: FloatingActionButton(
+                                backgroundColor: primaryColor,
+                                hoverColor: Colors.white,
+                                splashColor: Colors.white,
+                                isExtended: true,
+                                heroTag: "tag2",
+                                onPressed: () async {
+                                  await Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      opaque: false,
+                                      pageBuilder: (context, _, __) =>
+                                          ModalBottomSheet(widget.order),
+                                    ),
+                                  );
+                                  Navigator.of(context).pop();
+                                },
+                                child: new Text(
+                                  "Reject",
+                                  style: new TextStyle(fontSize: 25.0),
+                                ),
+                              ),
+                            ),
                     ],
                   ),
                 ),
