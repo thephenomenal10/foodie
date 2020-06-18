@@ -395,7 +395,7 @@ class _AccountScreenState extends State<AccountScreen> {
         "Phone": phoneController.text,
       };
 
-      databaseService.addUserData(userInfo, emailController.text);
+      databaseService.userData(userInfo, emailController.text);
       setState(() {
         _isEditMode = !_isEditMode;
         nameController.clear();

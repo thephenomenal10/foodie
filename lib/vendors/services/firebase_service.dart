@@ -57,28 +57,28 @@ class FirebaseAuthentication {
     }
   }
 
-  void signUp(
+  Future<void> signUp(
       context, emailController, passwordController, phoneControlloer) async {
     try {
       AuthResult result = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: emailController.text, password: passwordController.text)
           .catchError((e) {
-        print(e);
+        print(e.toString());
       });
       await result.user.sendEmailVerification();
       currentUserUid = result.user.uid;
       print(currentUserUid.toString());
       print(result);
 
-      verifyPhone(context, phoneControlloer);
+      await verifyPhone(context, phoneControlloer);
     } catch (e) {
       showDialog(
         context: context,
         child: AlertDialog(
           title: Text('Alert'),
           content: Text(
-            e.meesage,
+            e.toString(),
           ),
           actions: <Widget>[
             FlatButton(
@@ -93,18 +93,18 @@ class FirebaseAuthentication {
           ],
         ),
       );
-      return (e.message);
+      return (e);
     }
   }
 
 //PHONE NO VERIFICATION .....///////////////////...
 
-  Future<bool> verifyPhone(context, String phoneNumber) async {
+  Future<void> verifyPhone(context, String phoneNumber) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     TextEditingController _codeController = new TextEditingController();
     user = await FirebaseAuth.instance.currentUser();
 
-    _auth.verifyPhoneNumber(
+    await _auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         timeout: Duration(seconds: 60),
         verificationCompleted: null,
@@ -128,8 +128,8 @@ class FirebaseAuthentication {
         verificationFailed: (AuthException exception) {
           print(exception);
         },
-        codeSent: (String verificationId, [int forceResendingToken]) {
-          showDialog(
+        codeSent: (String verificationId, [int forceResendingToken]) async {
+          await showDialog(
               context: context,
               barrierDismissible: false,
               builder: (context) {
@@ -153,7 +153,9 @@ class FirebaseAuthentication {
                         AuthCredential credential =
                             PhoneAuthProvider.getCredential(
                                 verificationId: verificationId, smsCode: code);
-                        user.linkWithCredential(credential).then((authResult) {
+                        await user
+                            .linkWithCredential(credential)
+                            .then((authResult) {
                           user = authResult.user;
                           if (user != null) {
                             Navigator.push(
@@ -166,7 +168,7 @@ class FirebaseAuthentication {
                             print("Error");
                           }
                         }).catchError((e) {
-                          print(e.message);
+                          print(e.message.toString());
                         });
                       },
                     )
@@ -182,7 +184,7 @@ class FirebaseAuthentication {
     try {
       return await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
-      print(e.message);
+      print(e.message.toString());
     }
   }
 
@@ -199,12 +201,12 @@ class FirebaseAuthentication {
         context, MaterialPageRoute(builder: (context) => LoginScreen())));
   }
 
-  Future<bool> updatePhoneNumber(context, String phoneNumber) async {
+  Future<void> updatePhoneNumber(context, String phoneNumber) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     TextEditingController _codeController = new TextEditingController();
     user = await FirebaseAuth.instance.currentUser();
 
-    _auth.verifyPhoneNumber(
+    await _auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         timeout: Duration(seconds: 60),
         verificationCompleted: null,

@@ -438,7 +438,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "Phone": '+ 91 ' + phoneController.text,
       };
 
-      firebaseAuthentication.signUp(context, emailController, passController,
+      await firebaseAuthentication.signUp(context, emailController, passController,
           '+ 91 ' + phoneController.text.trim());
       await _databaseService.addUserData(userInfo, emailController.text);
       await LocalNotifications.storeFCMToken(emailController.text.trim());
