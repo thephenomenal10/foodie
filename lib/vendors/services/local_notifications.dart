@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -39,18 +40,32 @@ class LocalNotifications {
     );
   }
 
-  // static Future<void> showScheduledNotification() async {
-  //   await _initializeNotiication();
-  //   print('executed now');
-  //   var android = AndroidNotificationDetails(
-  //       'channelId', 'channelName', 'channelDescription');
-  //   var platform = NotificationDetails(android, null);
-  //   await flutterLocalNotificationsPlugin.schedule(
-  //     0,
-  //     'your subscription is going to end tomorrow!',
-  //     'please check your subscription',
-  //     DateTime.now().add(Duration(seconds: 1)),
-  //     platform,
-  //   );
-  // }
+  static Future<void> showScheduledNotification() async {
+    await cancelAllNotification();
+    await _initializeNotiication();
+    print('executed now');
+    final email=(await FirebaseAuth.instance.currentUser()).email;
+    final endDate=(await Firestore.instance.collection('vendor_collection/vendors/registered_vendors').document(email).get());
+    var android = AndroidNotificationDetails(
+        'channelId', 'channelName', 'channelDescription');
+    var platform = NotificationDetails(android, null);
+    await flutterLocalNotificationsPlugin.schedule(
+      1,
+      'your subscription is going to end tomorrow!',
+      'please check your subscription',
+      DateTime.now(),
+      platform,
+    );
+    await flutterLocalNotificationsPlugin.schedule(
+      1,
+      'your subscription is going to end tomorrow!',
+      'please check your subscription',
+      DateTime.now(),
+      platform,
+    );
+  }
+
+  static Future<void> cancelAllNotification() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
+  }
 }

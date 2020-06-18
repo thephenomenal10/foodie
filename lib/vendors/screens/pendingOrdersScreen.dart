@@ -57,7 +57,8 @@ class PendingOrders extends StatelessWidget {
                 child: new StreamBuilder(
                   stream: _firestore
                       .collection(
-                          'tiffen_service_details/${user.email}/acceptedOrders')
+                          'tiffen_service_details/${user.email}/pendingOrders')
+                      .orderBy('startDate', descending: true)
                       .snapshots(),
                   builder: (context, streamSnapshot) {
                     if (streamSnapshot.connectionState ==

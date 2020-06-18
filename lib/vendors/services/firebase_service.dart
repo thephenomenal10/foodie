@@ -157,10 +157,11 @@ class FirebaseAuthentication {
                           user = authResult.user;
                           if (user != null) {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        CreateTiffenCentre()));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CreateTiffenCentre(),
+                              ),
+                            );
                           } else {
                             print("Error");
                           }
@@ -197,10 +198,6 @@ class FirebaseAuthentication {
     return await auth.signOut().then((value) => Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginScreen())));
   }
-
-
-
-    
 
   Future<bool> updatePhoneNumber(context, String phoneNumber) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
@@ -256,8 +253,9 @@ class FirebaseAuthentication {
                         AuthCredential credential =
                             PhoneAuthProvider.getCredential(
                                 verificationId: verificationId, smsCode: code);
-                        user.updatePhoneNumberCredential(credential).then((authResult) {
-                          
+                        user
+                            .updatePhoneNumberCredential(credential)
+                            .then((authResult) {
                           if (user != null) {
                             Navigator.push(
                                 context,
@@ -278,6 +276,4 @@ class FirebaseAuthentication {
         },
         codeAutoRetrievalTimeout: null);
   }
-
-
 }

@@ -21,6 +21,13 @@ class OrderInfo extends StatefulWidget {
 
 class _OrderInfoState extends State<OrderInfo> {
   bool _isLoading = false;
+  int sel = -1;
+  void selectedRadio(value) {
+    setState(() {
+      sel = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -366,7 +373,8 @@ class _OrderInfoState extends State<OrderInfo> {
                             });
                             final email = widget.order['vendorEmail'];
                             final customerUid = widget.order['customerId'];
-                            Map<String, dynamic> updatedOrder = widget.order;
+                            Map<String, dynamic> updatedOrder =
+                                widget.order.data;
                             updatedOrder['orderStatus'] = 'Accepted';
                             await Firestore.instance
                                 .collection(
@@ -408,36 +416,13 @@ class _OrderInfoState extends State<OrderInfo> {
                           isExtended: true,
                           heroTag: "tag2",
                           onPressed: () async {
-                            setState(() {
-                              _isLoading = true;
-                            });
-                            final email = widget.order['vendorEmail'];
-                            final customerUid = widget.order['customerId'];
-                            Map<String, dynamic> updatedOrder = widget.order;
-                            updatedOrder['orderStatus'] = 'Rejected';
-                            await Firestore.instance
-                                .collection(
-                                    'tiffen_service_details/$email/rejectedOrders')
-                                .document(widget.order['orderId'])
-                                .setData(updatedOrder);
-                            await Firestore.instance
-                                .collection(
-                                    'tiffen_service_details/$email/pendingOrders')
-                                .document(widget.order['orderId'])
-                                .delete();
-                            await Firestore.instance
-                                .collection(
-                                    'customer_collection/$customerUid/rejectedOrders')
-                                .document(widget.order['orderId'])
-                                .setData(updatedOrder);
-                            await Firestore.instance
-                                .collection(
-                                    'customer_collection/$customerUid/pendingOrders')
-                                .document(widget.order['orderId'])
-                                .delete();
-                            setState(() {
-                              _isLoading = false;
-                            });
+                            await Navigator.of(context).push(
+                              PageRouteBuilder(
+                                opaque: false,
+                                pageBuilder: (context, _, __) =>
+                                    ModalBottomSheet(widget.order),
+                              ),
+                            );
                             Navigator.of(context).pop();
                           },
                           child: new Text(
@@ -452,6 +437,178 @@ class _OrderInfoState extends State<OrderInfo> {
                 SizedBox(
                   height: 40.0,
                 )
+              ],
+            ),
+    );
+  }
+}
+
+class ModalBottomSheet extends StatefulWidget {
+  final order;
+  ModalBottomSheet(this.order);
+  @override
+  _ModalBottomSheetState createState() => _ModalBottomSheetState();
+}
+
+class _ModalBottomSheetState extends State<ModalBottomSheet> {
+  int sel = -1;
+  String report;
+  bool _isLoading = false;
+  final _textController = TextEditingController();
+  void selectedRadio(value) {
+    setState(() {
+      sel = value;
+    });
+    if (sel == 0) {
+      report = "Payment not received";
+    } else {
+      report = _textController.text.trim();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white60,
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.white,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).primaryColor,
+                ),
+              ),
+            )
+          : Column(
+              children: <Widget>[
+                Expanded(child: SizedBox()),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(45),
+                      topRight: Radius.circular(45),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Tell us the reason :',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Radio(
+                            value: 0,
+                            groupValue: sel,
+                            onChanged: (value) => selectedRadio(value),
+                            activeColor: Theme.of(context).primaryColor,
+                          ),
+                          Text(
+                            'Payment not received',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Radio(
+                            value: 1,
+                            groupValue: sel,
+                            onChanged: (value) => selectedRadio(value),
+                            activeColor: Theme.of(context).primaryColor,
+                          ),
+                          Text(
+                            'Others',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      sel == 1
+                          ? TextField(
+                              controller: _textController,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                fillColor: Theme.of(context).primaryColor,
+                              ),
+                            )
+                          : Container(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          RaisedButton(
+                            color: Theme.of(context).primaryColor,
+                            child: Text('Submit'),
+                            onPressed: () async {
+                              if (sel != -1) {
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                final email = widget.order['vendorEmail'];
+                                final customerUid = widget.order['customerId'];
+                                Map<String, dynamic> updatedOrder =
+                                    widget.order.data;
+                                updatedOrder['orderStatus'] = 'Rejected';
+                                updatedOrder.addAll({'report': report});
+                                await Firestore.instance
+                                    .collection(
+                                        'tiffen_service_details/$email/rejectedOrders')
+                                    .document(widget.order['orderId'])
+                                    .setData(updatedOrder);
+                                print('check one');
+                                await Firestore.instance
+                                    .collection(
+                                        'tiffen_service_details/$email/pendingOrders')
+                                    .document(widget.order['orderId'])
+                                    .delete();
+                                print("check+two");
+                                await Firestore.instance
+                                    .collection(
+                                        'customer_collection/$customerUid/rejectedOrders')
+                                    .document(widget.order['orderId'])
+                                    .setData(updatedOrder);
+                                print("check+three");
+                                await Firestore.instance
+                                    .collection(
+                                        'customer_collection/$customerUid/pendingOrders')
+                                    .document(widget.order['orderId'])
+                                    .delete();
+                                setState(() {
+                                  print("check+four");
+                                  _isLoading = false;
+                                });
+                                Navigator.of(context).pop();
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
     );

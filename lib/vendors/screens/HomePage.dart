@@ -150,7 +150,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       orders: OrdersList(
                         orders: orders,
                         date: DateTime.now().subtract(
-                          Duration(days: 3, hours: DateTime.now().hour),
+                          Duration(
+                            days: 3,
+                            hours: DateTime.now().hour,
+                            minutes: DateTime.now().minute,
+                            seconds: DateTime.now().second,
+                          ),
                         ),
                       ).getDayOrders(),
                     ),
@@ -163,7 +168,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       orders: OrdersList(
                         orders: orders,
                         date: DateTime.now().subtract(
-                          Duration(days: 2, hours: DateTime.now().hour),
+                          Duration(
+                            days: 2,
+                            hours: DateTime.now().hour,
+                            minutes: DateTime.now().minute,
+                            seconds: DateTime.now().second,
+                          ),
                         ),
                       ).getDayOrders(),
                     ),
@@ -176,7 +186,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       orders: OrdersList(
                         orders: orders,
                         date: DateTime.now().subtract(
-                          Duration(days: 1, hours: DateTime.now().hour),
+                          Duration(
+                            days: 1,
+                            hours: DateTime.now().hour,
+                            minutes: DateTime.now().minute,
+                            seconds: DateTime.now().second,
+                          ),
                         ),
                       ).getDayOrders(),
                     ),
@@ -184,8 +199,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       dateTime: DateFormat.yMMMd().format(DateTime.now()),
                       orders: OrdersList(
                         orders: orders,
-                        date: DateTime.now()
-                            .subtract(Duration(hours: DateTime.now().hour)),
+                        date: DateTime.now().subtract(Duration(
+                          hours: DateTime.now().hour,
+                          minutes: DateTime.now().minute,
+                          seconds: DateTime.now().second,
+                        )),
                       ).getDayOrders(),
                     ),
                     Orders(
@@ -197,9 +215,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       orders: OrdersList(
                         orders: orders,
                         date: DateTime.now()
-                            .subtract(Duration(hours: DateTime.now().hour))
+                            .subtract(Duration(
+                              hours: DateTime.now().hour,
+                              minutes: DateTime.now().minute,
+                              seconds: DateTime.now().second,
+                            ))
                             .add(
-                              Duration(days: 1, hours: DateTime.now().hour),
+                              Duration(days: 1),
                             ),
                       ).getDayOrders(),
                     ),
@@ -212,9 +234,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       orders: OrdersList(
                         orders: orders,
                         date: DateTime.now()
-                            .subtract(Duration(hours: DateTime.now().hour))
+                            .subtract(Duration(
+                              hours: DateTime.now().hour,
+                              minutes: DateTime.now().minute,
+                              seconds: DateTime.now().second,
+                            ))
                             .add(
-                              Duration(days: 2, hours: DateTime.now().hour),
+                              Duration(days: 2),
                             ),
                       ).getDayOrders(),
                     ),
@@ -227,7 +253,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       orders: OrdersList(
                         orders: orders,
                         date: DateTime.now()
-                            .subtract(Duration(hours: DateTime.now().hour))
+                            .subtract(Duration(
+                              hours: DateTime.now().hour,
+                              minutes: DateTime.now().minute,
+                              seconds: DateTime.now().second,
+                            ))
                             .add(
                               Duration(days: 3),
                             ),

@@ -134,35 +134,6 @@ class CustomerOrders extends StatefulWidget {
 }
 
 class _CustomerOrdersState extends State<CustomerOrders> {
-  Widget _getOptionButton({
-    String title,
-    IconData icon,
-    Function onPressed,
-    bool selected = false,
-  }) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: Theme.of(context).primaryColor,
-      ),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1,
-        ),
-      ),
-      trailing: IconButton(
-        icon: selected
-            ? Icon(
-                Icons.keyboard_arrow_up,
-                color: Theme.of(context).primaryColor,
-              )
-            : Icon(Icons.keyboard_arrow_down),
-        onPressed: onPressed,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
