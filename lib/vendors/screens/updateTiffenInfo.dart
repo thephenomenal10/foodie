@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:foodieapp/vendors/bottomNavigationBar.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/screens/searchLocalityScree.dart';
@@ -455,8 +456,9 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
           return null;
         },
         decoration: InputDecoration(
-          labelText: labelText,
-        ),
+            labelText: labelText,
+            labelStyle:
+                TextStyle(fontWeight: FontWeight.w600, letterSpacing: 1.2)),
         keyboardType: TextInputType.text,
       ),
     );
@@ -486,793 +488,1000 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body:
-       global.isLoading == true
-      ? Center(child: CircularProgressIndicator(
+      body: global.isLoading == true
+          ? Center(
+              child: CircularProgressIndicator(
                 backgroundColor: Colors.white,
                 valueColor: AlwaysStoppedAnimation<Color>(
                   Theme.of(context).primaryColor,
                 ),
-              ),)
-     :
-       ListView(
-        children: <Widget>[
-          Container(
-            height: 250,
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(40),
               ),
-              color: Theme.of(context).primaryColor,
-            ),
-            child: Column(
+            )
+          : ListView(
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      "Setup your Tiffen Centre",
-                      textScaleFactor: 2,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 10),
+                Container(
+                  height: 250,
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(40),
                     ),
-                  ],
-                ),
-                Stack(
-                  fit: StackFit.loose,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 20,
-                      ),
-                      child: Container(
-                        width: 300,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10.0),
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                "https://scontent.fbek1-1.fna.fbcdn.net/v/t31.0-8/22712358_1445487845569862_704682422345514729_o.jpg?_nc_cat=107&_nc_sid=09cbfe&_nc_ohc=cFNwkNbvrbsAX89FH3M&_nc_ht=scontent.fbek1-1.fna&oh=7e02ebc1165d837a8db900f83e632850&oe=5EF35CD5"),
-                            fit: BoxFit.cover,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            "Setup your Tiffen Centre",
+                            textScaleFactor: 2,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 1.5,
+                                fontSize: 10),
                           ),
-                        ),
+                        ],
                       ),
-                    ),
-                  ],
-                  alignment: Alignment.center,
-                ),
-              ],
-            ),
-          ),
-          Form(
-            key: _formKey,
-            child: Container(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 25),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        Text(
-                          'Tiffen Centre Information',
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    getFormField(
-                      tiffinController,
-                      'enter your tiffin service name',
-                      'Tiffin Service Name',
-                    ),
-                    getFormField(
-                      ownerNameController,
-                      'enter your Name',
-                      'Owner Name',
-                    ),
-                    getFormField(
-                      cityController,
-                      'enter your City',
-                      'City',
-                    ),
-                    getFormField(
-                      addressController,
-                      'enter your address',
-                      'Full address',
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: TextFormField(
-                        // initialValue: email,
-
-                        enabled: false,
-                        decoration: InputDecoration(
-                            labelText: email,
-                            labelStyle: TextStyle(color: Colors.black)),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: TextFormField(
-                        controller: phoneController,
-                        validator: (val) {
-                          if (val.isEmpty) {
-                            return "enter your phone no";
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          labelText: "Phone no.",
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    RaisedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SearchLocality()));
-                      },
-                      child: Text('Select Locality'),
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    global.localityAddress == null
-                        ? Container()
-                        : Padding(
-                            padding: EdgeInsets.all(10),
-                            child: TextFormField(
-                              enabled: false,
-                              initialValue: global.localityAddress,
+                      Stack(
+                        fit: StackFit.loose,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 20,
+                            ),
+                            child: Container(
+                              width: 300,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(10.0),
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                      "https://scontent.fbek1-1.fna.fbcdn.net/v/t31.0-8/22712358_1445487845569862_704682422345514729_o.jpg?_nc_cat=107&_nc_sid=09cbfe&_nc_ohc=cFNwkNbvrbsAX89FH3M&_nc_ht=scontent.fbek1-1.fna&oh=7e02ebc1165d837a8db900f83e632850&oe=5EF35CD5"),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
                           ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: MultiSelectFormField(
-                        autovalidate: false,
-                        titleText: "Food Category",
-                        validator: (val) {
-                          if (val == null || val.length == 0) {
-                            return "Please select one or more options";
-                          }
-                          return null;
-                        },
-                        dataSource: [
-                          {"display": "Veg", "value": "Veg"},
-                          {"display": "Non-Veg", "value": "Non-Veg"}
                         ],
-                        textField: "display",
-                        valueField: "value",
-                        okButtonLabel: "OK",
-                        initialValue: foodCategory,
-                        cancelButtonLabel: "Cancel",
-                        hintText: "Please choose Food category",
-                        onSaved: (val) {
-                          if (val == null) {
-                            return "select your food category";
-                          }
-                          setState(() {
-                            foodCategory = val;
-                          });
-                          return null;
-                        },
+                        alignment: Alignment.center,
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: AddTiffinTypes(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: TextFormField(
-                        controller: costController,
-                        validator: (val) {
-                          if (val.isEmpty) {
-                            return "enter your average Cost per Tiffen ";
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          labelText: "Average Cost per Tiffen(in Rupees)",
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Text(
-                        "Service days",
-                        style: new TextStyle(
-                          color: Colors.green,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Column(
+                    ],
+                  ),
+                ),
+                Form(
+                  key: _formKey,
+                  child: Container(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 25, vertical: 25),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
-                              new Radio(
-                                activeColor: Colors.green,
-                                value: 0,
-                                groupValue: daysValue,
-                                onChanged: _handleServiceDaysValueChange,
-                              ),
-                              new Text(
-                                '7 Days',
-                                style: new TextStyle(
-                                    fontSize: 16.0, color: Colors.green),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              new Radio(
-                                activeColor: Colors.green,
-                                value: 1,
-                                groupValue: daysValue,
-                                onChanged: _handleServiceDaysValueChange,
-                              ),
-                              new Text(
-                                '6 Days(Sunday- Closed)',
-                                style: new TextStyle(
-                                    fontSize: 16.0, color: Colors.green),
+                              Text(
+                                'Tiffen Centre Information',
+                                style: TextStyle(
+                                    fontSize: 22.0,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.5),
                               ),
                             ],
                           ),
                           Divider(
-                            color: Colors.green,
-                            thickness: 1.0,
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Text(
-                        "Add Time Slot",
-                        style:
-                            new TextStyle(color: Colors.green, fontSize: 16.0),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Text("BreakFast",
-                          style: new TextStyle(
-                            color: Colors.green,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                          )),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              showPicker(
-                                context: context,
-                                value: _time,
-                                onChange: breakFastTimeFrom,
-                                is24HrFormat: false,
-                              ),
-                            );
-                          },
-                          child: Text(
-                            "From : $breakFastTimefrom",
-                            style: TextStyle(color: Colors.black),
+                            color: myGreen,
+                            endIndent: 300.0,
+                            indent: 5.0,
+                            height: 8,
+                            thickness: 3.0,
                           ),
-                        ),
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              showPicker(
-                                context: context,
-                                value: _time,
-                                onChange: breakFastTimeTo,
-                                is24HrFormat: false,
-                              ),
-                            );
-                          },
-                          child: Text("To : $breakFastTimeto",
-                              style: TextStyle(color: Colors.black)),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Text("Lunch",
-                          style: new TextStyle(
-                            color: Colors.green,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                          )),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              showPicker(
-                                context: context,
-                                value: _time,
-                                onChange: lunchTimeFrom,
-                                is24HrFormat: false,
-                              ),
-                            );
-                          },
-                          child: Text(
-                            "From : $lunchTimefrom",
-                            style: TextStyle(color: Colors.black),
+                          SizedBox(height: 30.0),
+                          Divider(
+                            color: myGreen,
+                            endIndent: 280.0,
+                            indent: 2.0,
+                            height: 8,
+                            thickness: 3.0,
                           ),
-                        ),
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              showPicker(
-                                context: context,
-                                value: _time,
-                                onChange: lunchTimeTo,
-                                is24HrFormat: false,
-                              ),
-                            );
-                          },
-                          child: Text("To : $lunchTimeto",
-                              style: TextStyle(color: Colors.black)),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Text("Dinner",
-                          style: new TextStyle(
-                            color: Colors.green,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                          )),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              showPicker(
-                                context: context,
-                                value: _time,
-                                onChange: dinnerTimeFrom,
-                                is24HrFormat: false,
-                              ),
-                            );
-                          },
-                          child: Text(
-                            "From : $dinnerTimefrom",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              showPicker(
-                                context: context,
-                                value: _time,
-                                onChange: dinnerTimeTo,
-                                is24HrFormat: false,
-                              ),
-                            );
-                          },
-                          child: Text("To : $dinnerTimeto",
-                              style: TextStyle(color: Colors.black)),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Text(
-                        "Select Logo image for your Tiffen Service",
-                        style:
-                            new TextStyle(color: Colors.green, fontSize: 16.0),
-                      ),
-                    ),
-                    FlatButton(
-                      onPressed: loadLogoImage,
-                      child: new Text(
-                        "select Logo image",
-                        style: new TextStyle(color: Colors.green),
-                      ),
-                    ),
-                    //Code for images
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Text(
-                        "Select Cover images for your Tiffen Service",
-                        style:
-                            new TextStyle(color: Colors.green, fontSize: 16.0),
-                      ),
-                    ),
-                    FlatButton(
-                      onPressed: loadCoverImages,
-                      child: new Text(
-                        "select cover images",
-                        style: new TextStyle(color: Colors.green),
-                      ),
-                    ),
-                    //Meal images code
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Text(
-                        "Select Meal images for your Tiffen Service",
-                        style:
-                            new TextStyle(color: Colors.green, fontSize: 16.0),
-                      ),
-                    ),
-                    FlatButton(
-                      onPressed: loadMenuImages,
-                      child: new Text(
-                        "select Meal images",
-                        style: new TextStyle(color: Colors.green),
-                      ),
-                    ),
 
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Text(
-                        "Do you have FSSAI License?",
-                        style:
-                            new TextStyle(color: Colors.green, fontSize: 16.0),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              new Radio(
-                                activeColor: Colors.green,
-                                value: 0,
-                                groupValue: licenseValue,
-                                onChanged: _handleLicenseValueChange,
+                          /////////////////////BASIC INFO///////////////////////////
+                          ExpansionTile(
+                            title: new Text(
+                              "Basic Info",
+                              style: new TextStyle(
+                                  color: Colors.black,
+                                  letterSpacing: 1.2,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            trailing: Icon(Feather.arrow_down, color: myGreen),
+                            leading:
+                                Icon(Entypo.info_with_circle, color: myGreen),
+                            children: [
+                              getFormField(
+                                tiffinController,
+                                'enter your tiffin service name',
+                                'Tiffin Service Name',
                               ),
-                              new Text(
-                                'No',
-                                style: new TextStyle(
-                                    fontSize: 16.0, color: Colors.green),
+                              getFormField(
+                                ownerNameController,
+                                'enter your Name',
+                                'Owner Name',
                               ),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              new Radio(
-                                activeColor: Colors.green,
-                                value: 1,
-                                groupValue: licenseValue,
-                                onChanged: _handleLicenseValueChange,
+                              getFormField(
+                                cityController,
+                                'enter your City',
+                                'City',
                               ),
-                              new Text(
-                                'Yes',
-                                style: new TextStyle(
-                                    fontSize: 16.0, color: Colors.green),
+                              getFormField(
+                                addressController,
+                                'enter your address',
+                                'Full address',
                               ),
-                            ],
-                          ),
-                          licenseValue == 1
-                              ? TextFormField(
-                                  controller: licenseController,
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: TextFormField(
+                                  // initialValue: email,
+
+                                  enabled: false,
+                                  decoration: InputDecoration(
+                                      labelText: email,
+                                      labelStyle: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.2)),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: TextFormField(
+                                  controller: phoneController,
                                   validator: (val) {
                                     if (val.isEmpty) {
-                                      return "enter your FSSAI License";
+                                      return "enter your phone no";
                                     }
                                     return null;
                                   },
                                   decoration: InputDecoration(
-                                    hintText: "xxxxxxxxxxxxxxxxxxxx",
-                                    border: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    errorBorder: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                  ),
-                                )
-                              : Container(),
+                                      labelText: "Phone no.",
+                                      prefix: Text("+91 "),
+                                      labelStyle: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.2)),
+                                  keyboardType: TextInputType.number,
+                                ),
+                              ),
+                              RaisedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              SearchLocality()));
+                                },
+                                child: Text(
+                                  'Tiffen Center Address',
+                                  style: new TextStyle(color: Colors.white),
+                                ),
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              global.localityAddress == null
+                                  ? Container()
+                                  : Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: TextFormField(
+                                        enabled: false,
+                                        initialValue: global.localityAddress,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 1.2),
+                                      ),
+                                    ),
+                              SizedBox(
+                                height: 20.0,
+                              )
+                            ],
+                          ),
+                          ////////////////////////////////////////////////////////
+                          SizedBox(height: 30.0),
                           Divider(
-                            color: Colors.green,
-                            thickness: 1.0,
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Text(
-                        "Modes of Payment",
-                        style:
-                            new TextStyle(color: Colors.green, fontSize: 16.0),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              new Radio(
-                                activeColor: Colors.green,
-                                value: 0,
-                                groupValue: paymentValue,
-                                onChanged: _handlePaymentValueChange,
+                            color: myGreen,
+                            endIndent: 280.0,
+                            indent: 2.0,
+                            height: 8,
+                            thickness: 3.0,
+                          ),
+                          /////////////////////////////FOOD INFO////////////////////////
+                          ExpansionTile(
+                            title: new Text(
+                              "Food Info",
+                              style: new TextStyle(
+                                  color: Colors.black,
+                                  letterSpacing: 1.2,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            trailing: Icon(Feather.arrow_down, color: myGreen),
+                            leading: Icon(FlutterIcons.food_fork_drink_mco,
+                                color: myGreen),
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: MultiSelectFormField(
+                                  autovalidate: false,
+                                  titleText: "Food Category",
+                                  validator: (val) {
+                                    if (val == null || val.length == 0) {
+                                      return "Please select one or more options";
+                                    }
+                                    return null;
+                                  },
+                                  dataSource: [
+                                    {"display": "Veg", "value": "Veg"},
+                                    {"display": "Non-Veg", "value": "Non-Veg"}
+                                  ],
+                                  textField: "display",
+                                  valueField: "value",
+                                  okButtonLabel: "OK",
+                                  initialValue: foodCategory,
+                                  cancelButtonLabel: "Cancel",
+                                  hintText: "Please choose Food category",
+                                  onSaved: (val) {
+                                    if (val == null) {
+                                      return "select your food category";
+                                    }
+                                    setState(() {
+                                      foodCategory = val;
+                                    });
+                                    return null;
+                                  },
+                                ),
                               ),
-                              new Text(
-                                'Cash On Delivery',
-                                style: new TextStyle(
-                                    fontSize: 16.0, color: Colors.green),
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: AddTiffinTypes(),
                               ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: TextFormField(
+                                  controller: costController,
+                                  validator: (val) {
+                                    if (val.isEmpty) {
+                                      return "enter your average Cost per Tiffen ";
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                      labelText:
+                                          "Average Cost per Tiffen(in Rupees)",
+                                      labelStyle: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.2)),
+                                  keyboardType: TextInputType.number,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20.0,
+                              )
                             ],
                           ),
-                          Row(
-                            children: <Widget>[
-                              new Radio(
-                                activeColor: Colors.green,
-                                value: 1,
-                                groupValue: paymentValue,
-                                onChanged: _handlePaymentValueChange,
-                              ),
-                              new Text(
-                                'Online Payment',
-                                style: new TextStyle(
-                                    fontSize: 16.0, color: Colors.green),
-                              ),
-                            ],
+
+                          /////////////////////////////////////////////////////////
+                          SizedBox(height: 30.0),
+                          Divider(
+                            color: myGreen,
+                            endIndent: 280.0,
+                            indent: 2.0,
+                            height: 8,
+                            thickness: 3.0,
                           ),
-                          Row(
-                            children: <Widget>[
-                              new Radio(
-                                activeColor: Colors.green,
-                                value: 2,
-                                groupValue: paymentValue,
-                                onChanged: _handlePaymentValueChange,
+
+                          ///////////////////////TIFFEN SERVICE TIMING///////////////////////
+                          ExpansionTile(
+                            title: new Text(
+                              "Tiffen Service Timing",
+                              style: new TextStyle(
+                                  color: Colors.black,
+                                  letterSpacing: 1.2,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            trailing: Icon(Feather.arrow_down, color: myGreen),
+                            leading: Icon(Icons.timelapse, color: myGreen),
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Text(
+                                  "Service days",
+                                  style: new TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.2),
+                                ),
                               ),
-                              new Text(
-                                'Both (Cash + Online Payment)',
-                                style: new TextStyle(
-                                    fontSize: 16.0, color: Colors.green),
-                              ),
-                            ],
-                          ),
-                          paymentValue == 1
-                              ? Column(
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Column(
                                   children: <Widget>[
-                                    TextFormField(
-                                      controller: upiController,
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          return "enter your UPI id";
-                                        }
-                                        return null;
-                                      },
-                                      decoration: InputDecoration(
-                                        labelText: "UPI ID",
-                                        border: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        errorBorder: InputBorder.none,
-                                        disabledBorder: InputBorder.none,
-                                      ),
+                                    Row(
+                                      children: <Widget>[
+                                        new Radio(
+                                          activeColor: Colors.green,
+                                          value: 0,
+                                          groupValue: daysValue,
+                                          onChanged:
+                                              _handleServiceDaysValueChange,
+                                        ),
+                                        new Text(
+                                          '7 Days',
+                                          style: new TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.green),
+                                        ),
+                                      ],
                                     ),
-                                    TextFormField(
-                                      controller: bankAccountController,
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          return "enter your Bank Account no";
-                                        }
-                                        return null;
-                                      },
-                                      decoration: InputDecoration(
-                                        labelText: "Bank account no.",
-                                        border: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        errorBorder: InputBorder.none,
-                                        disabledBorder: InputBorder.none,
-                                      ),
+                                    Row(
+                                      children: <Widget>[
+                                        new Radio(
+                                          activeColor: Colors.green,
+                                          value: 1,
+                                          groupValue: daysValue,
+                                          onChanged:
+                                              _handleServiceDaysValueChange,
+                                        ),
+                                        new Text(
+                                          '6 Days(Sunday- Closed)',
+                                          style: new TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.green),
+                                        ),
+                                      ],
                                     ),
-                                    TextFormField(
-                                      controller: ifscController,
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          return "enter your IFSC code";
-                                        }
-                                        return null;
-                                      },
-                                      decoration: InputDecoration(
-                                        labelText: "IFSC Code",
-                                        border: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        errorBorder: InputBorder.none,
-                                        disabledBorder: InputBorder.none,
-                                      ),
+                                    Divider(
+                                      color: Colors.green,
+                                      thickness: 1.0,
                                     )
                                   ],
-                                )
-                              : Container(),
-                          paymentValue == 2
-                              ? Column(
-                                  children: <Widget>[
-                                    TextFormField(
-                                      controller: upiController,
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          return "enter your UPI id";
-                                        }
-                                        return null;
-                                      },
-                                      decoration: InputDecoration(
-                                        labelText: "UPI ID",
-                                        border: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        errorBorder: InputBorder.none,
-                                        disabledBorder: InputBorder.none,
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: bankAccountController,
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          return "enter your Bank Account no";
-                                        }
-                                        return null;
-                                      },
-                                      decoration: InputDecoration(
-                                        labelText: "Bank account no.",
-                                        border: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        errorBorder: InputBorder.none,
-                                        disabledBorder: InputBorder.none,
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: ifscController,
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          return "enter your IFSC code";
-                                        }
-                                        return null;
-                                      },
-                                      decoration: InputDecoration(
-                                        labelText: "IFSC Code",
-                                        border: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        errorBorder: InputBorder.none,
-                                        disabledBorder: InputBorder.none,
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: paytmController,
-                                      validator: (val) {
-                                        if (val.isEmpty) {
-                                          return "enter your Paytm Number";
-                                        }
-                                        return null;
-                                      },
-                                      decoration: InputDecoration(
-                                        labelText: "Paytm No.",
-                                        border: InputBorder.none,
-                                        focusedBorder: InputBorder.none,
-                                        enabledBorder: InputBorder.none,
-                                        errorBorder: InputBorder.none,
-                                        disabledBorder: InputBorder.none,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : Container(),
-                          Divider(
-                            color: Colors.green,
-                            thickness: 1.0,
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Text(
-                        "Do you offer cancellation for subscription with refund?",
-                        style:
-                            new TextStyle(color: Colors.green, fontSize: 16.0),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: new Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              new Radio(
-                                activeColor: Colors.green,
-                                value: 0,
-                                groupValue: subValue,
-                                onChanged: _handleSubValueChange,
+                                ),
                               ),
-                              new Text(
-                                'No',
-                                style: new TextStyle(
-                                    fontSize: 16.0, color: Colors.green),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Text(
+                                  "Add Time Slot",
+                                  style: new TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.2),
+                                ),
                               ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Text("BreakFast",
+                                    style: new TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                    )),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        showPicker(
+                                          context: context,
+                                          value: _time,
+                                          onChange: breakFastTimeFrom,
+                                          is24HrFormat: false,
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      "From : $breakFastTimefrom",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  ),
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        showPicker(
+                                          context: context,
+                                          value: _time,
+                                          onChange: breakFastTimeTo,
+                                          is24HrFormat: false,
+                                        ),
+                                      );
+                                    },
+                                    child: Text("To : $breakFastTimeto",
+                                        style: TextStyle(color: Colors.black)),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Text("Lunch",
+                                    style: new TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                    )),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        showPicker(
+                                          context: context,
+                                          value: _time,
+                                          onChange: lunchTimeFrom,
+                                          is24HrFormat: false,
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      "From : $lunchTimefrom",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  ),
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        showPicker(
+                                          context: context,
+                                          value: _time,
+                                          onChange: lunchTimeTo,
+                                          is24HrFormat: false,
+                                        ),
+                                      );
+                                    },
+                                    child: Text("To : $lunchTimeto",
+                                        style: TextStyle(color: Colors.black)),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Text("Dinner",
+                                    style: new TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                    )),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        showPicker(
+                                          context: context,
+                                          value: _time,
+                                          onChange: dinnerTimeFrom,
+                                          is24HrFormat: false,
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      "From : $dinnerTimefrom",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                  ),
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        showPicker(
+                                          context: context,
+                                          value: _time,
+                                          onChange: dinnerTimeTo,
+                                          is24HrFormat: false,
+                                        ),
+                                      );
+                                    },
+                                    child: Text("To : $dinnerTimeto",
+                                        style: TextStyle(color: Colors.black)),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20.0,
+                              )
                             ],
                           ),
-                          Row(
-                            children: <Widget>[
-                              new Radio(
-                                activeColor: Colors.green,
-                                value: 1,
-                                groupValue: subValue,
-                                onChanged: _handleSubValueChange,
-                              ),
-                              new Text(
-                                'Yes',
-                                style: new TextStyle(
-                                    fontSize: 16.0, color: Colors.green),
-                              ),
-                            ],
-                          ),
-                          Divider(
-                            color: Colors.green,
-                            thickness: 1.0,
-                          )
-                        ],
-                      ),
-                    ),
 
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: height * 0.03),
-                      width: double.infinity,
-                      child: RaisedButton(
-                        elevation: 5.0,
-                        onPressed: () {
-                          return createTiffen();
-                        },
-                        padding: EdgeInsets.all(10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        color: Colors.white,
-                        child: Text(
-                          'Update Tiffen',
-                          textScaleFactor: 1.5,
-                          style: TextStyle(
+                          ////////////////////////////////////////////////////////////////////
+                          SizedBox(height: 30.0),
+                          Divider(
                             color: myGreen,
-                            letterSpacing: 1.8,
-                            fontWeight: FontWeight.bold,
+                            endIndent: 280.0,
+                            indent: 2.0,
+                            height: 8,
+                            thickness: 3.0,
                           ),
-                        ),
+
+                          ////////////////////Tiffen image section/////////////////////////////////
+                          ExpansionTile(
+                            title: new Text(
+                              "Tiffen  Images",
+                              style: new TextStyle(
+                                  color: Colors.black,
+                                  letterSpacing: 1.2,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            trailing: Icon(Feather.arrow_down, color: myGreen),
+                            leading: Icon(FlutterIcons.ios_photos_ion,
+                                color: myGreen),
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Text(
+                                  "Select Logo image for your Tiffen Service",
+                                  style: new TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.2),
+                                ),
+                              ),
+                              FlatButton(
+                                onPressed: loadLogoImage,
+                                color: myGreen,
+                                child: new Text(
+                                  "Select Logo Image",
+                                  style: new TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              //Code for images
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Text(
+                                  "Select Cover images for your Tiffen Service",
+                                  style: new TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.2),
+                                ),
+                              ),
+                              FlatButton(
+                                onPressed: loadCoverImages,
+                                color: myGreen,
+                                child: new Text(
+                                  "Select Cover Images",
+                                  style: new TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              //Meal images code
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Text(
+                                  "Select Meal images for your Tiffen Service",
+                                  style: new TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.2),
+                                ),
+                              ),
+                              FlatButton(
+                                color: myGreen,
+                                onPressed: loadMenuImages,
+                                child: new Text(
+                                  "Select Meal Images",
+                                  style: new TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20.0,
+                              )
+                            ],
+                          ),
+
+                          /////////////////////////////////////////////////////////////////////
+                          SizedBox(height: 30.0),
+                          Divider(
+                            color: myGreen,
+                            endIndent: 280.0,
+                            indent: 2.0,
+                            height: 8,
+                            thickness: 3.0,
+                          ),
+
+                          /////////////////////////////////////////////////////more info sectiom///////////////////
+                          ExpansionTile(
+                            title: new Text(
+                              "More Info",
+                              style: new TextStyle(
+                                  color: Colors.black,
+                                  letterSpacing: 1.2,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            trailing: Icon(Feather.arrow_down, color: myGreen),
+                            leading:
+                                Icon(MaterialIcons.payment, color: myGreen),
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Text(
+                                  "Do you have FSSAI License?",
+                                  style: new TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.2),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Column(
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        new Radio(
+                                          activeColor: Colors.green,
+                                          value: 0,
+                                          groupValue: licenseValue,
+                                          onChanged: _handleLicenseValueChange,
+                                        ),
+                                        new Text(
+                                          'No',
+                                          style: new TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.green),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        new Radio(
+                                          activeColor: Colors.green,
+                                          value: 1,
+                                          groupValue: licenseValue,
+                                          onChanged: _handleLicenseValueChange,
+                                        ),
+                                        new Text(
+                                          'Yes',
+                                          style: new TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.green),
+                                        ),
+                                      ],
+                                    ),
+                                    licenseValue == 1
+                                        ? TextFormField(
+                                            controller: licenseController,
+                                            validator: (val) {
+                                              if (val.isEmpty) {
+                                                return "enter your FSSAI License";
+                                              }
+                                              return null;
+                                            },
+                                            decoration: InputDecoration(
+                                              hintText: "xxxxxxxxxxxxxxxxxxxx",
+                                              border: InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              errorBorder: InputBorder.none,
+                                              disabledBorder: InputBorder.none,
+                                            ),
+                                          )
+                                        : Container(),
+                                    Divider(
+                                      color: Colors.green,
+                                      thickness: 1.0,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Text(
+                                  "Modes of Payment",
+                                  style: new TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.2),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Column(
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        new Radio(
+                                          activeColor: Colors.green,
+                                          value: 0,
+                                          groupValue: paymentValue,
+                                          onChanged: _handlePaymentValueChange,
+                                        ),
+                                        new Text(
+                                          'Cash On Delivery',
+                                          style: new TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.green),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        new Radio(
+                                          activeColor: Colors.green,
+                                          value: 1,
+                                          groupValue: paymentValue,
+                                          onChanged: _handlePaymentValueChange,
+                                        ),
+                                        new Text(
+                                          'Online Payment',
+                                          style: new TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.green),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        new Radio(
+                                          activeColor: Colors.green,
+                                          value: 2,
+                                          groupValue: paymentValue,
+                                          onChanged: _handlePaymentValueChange,
+                                        ),
+                                        new Text(
+                                          'Both (Cash + Online Payment)',
+                                          style: new TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.green),
+                                        ),
+                                      ],
+                                    ),
+                                    paymentValue == 1
+                                        ? Column(
+                                            children: <Widget>[
+                                              TextFormField(
+                                                controller: upiController,
+                                                validator: (val) {
+                                                  if (val.isEmpty) {
+                                                    return "enter your UPI id";
+                                                  }
+                                                  return null;
+                                                },
+                                                decoration: InputDecoration(
+                                                  labelText: "UPI ID",
+                                                  border: InputBorder.none,
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  enabledBorder:
+                                                      InputBorder.none,
+                                                  errorBorder: InputBorder.none,
+                                                  disabledBorder:
+                                                      InputBorder.none,
+                                                ),
+                                              ),
+                                              TextFormField(
+                                                controller:
+                                                    bankAccountController,
+                                                validator: (val) {
+                                                  if (val.isEmpty) {
+                                                    return "enter your Bank Account no";
+                                                  }
+                                                  return null;
+                                                },
+                                                decoration: InputDecoration(
+                                                  labelText: "Bank account no.",
+                                                  border: InputBorder.none,
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  enabledBorder:
+                                                      InputBorder.none,
+                                                  errorBorder: InputBorder.none,
+                                                  disabledBorder:
+                                                      InputBorder.none,
+                                                ),
+                                              ),
+                                              TextFormField(
+                                                controller: ifscController,
+                                                validator: (val) {
+                                                  if (val.isEmpty) {
+                                                    return "enter your IFSC code";
+                                                  }
+                                                  return null;
+                                                },
+                                                decoration: InputDecoration(
+                                                  labelText: "IFSC Code",
+                                                  border: InputBorder.none,
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  enabledBorder:
+                                                      InputBorder.none,
+                                                  errorBorder: InputBorder.none,
+                                                  disabledBorder:
+                                                      InputBorder.none,
+                                                ),
+                                              )
+                                            ],
+                                          )
+                                        : Container(),
+                                    paymentValue == 2
+                                        ? Column(
+                                            children: <Widget>[
+                                              TextFormField(
+                                                controller: upiController,
+                                                validator: (val) {
+                                                  if (val.isEmpty) {
+                                                    return "enter your UPI id";
+                                                  }
+                                                  return null;
+                                                },
+                                                decoration: InputDecoration(
+                                                  labelText: "UPI ID",
+                                                  border: InputBorder.none,
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  enabledBorder:
+                                                      InputBorder.none,
+                                                  errorBorder: InputBorder.none,
+                                                  disabledBorder:
+                                                      InputBorder.none,
+                                                ),
+                                              ),
+                                              TextFormField(
+                                                controller: ifscController,
+                                                validator: (val) {
+                                                  if (val.isEmpty) {
+                                                    return "enter your IFSC code";
+                                                  }
+                                                  return null;
+                                                },
+                                                decoration: InputDecoration(
+                                                  labelText: "IFSC Code",
+                                                  border: InputBorder.none,
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  enabledBorder:
+                                                      InputBorder.none,
+                                                  errorBorder: InputBorder.none,
+                                                  disabledBorder:
+                                                      InputBorder.none,
+                                                ),
+                                              ),
+                                              TextFormField(
+                                                controller: paytmController,
+                                                validator: (val) {
+                                                  if (val.isEmpty) {
+                                                    return "enter your Paytm Number";
+                                                  }
+                                                  return null;
+                                                },
+                                                decoration: InputDecoration(
+                                                  labelText: "Paytm No.",
+                                                  border: InputBorder.none,
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  enabledBorder:
+                                                      InputBorder.none,
+                                                  errorBorder: InputBorder.none,
+                                                  disabledBorder:
+                                                      InputBorder.none,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Container(),
+                                    Divider(
+                                      color: Colors.green,
+                                      thickness: 1.0,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Text(
+                                  "Do you offer Refund policy for subscription with refund?",
+                                  style: new TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.2),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: new Column(
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        new Radio(
+                                          activeColor: Colors.green,
+                                          value: 0,
+                                          groupValue: subValue,
+                                          onChanged: _handleSubValueChange,
+                                        ),
+                                        new Text(
+                                          'No',
+                                          style: new TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.green),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        new Radio(
+                                          activeColor: Colors.green,
+                                          value: 1,
+                                          groupValue: subValue,
+                                          onChanged: _handleSubValueChange,
+                                        ),
+                                        new Text(
+                                          'Yes',
+                                          style: new TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.green),
+                                        ),
+                                      ],
+                                    ),
+                                    Divider(
+                                      color: Colors.green,
+                                      thickness: 1.0,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20.0,
+                              )
+                            ],
+                          ),
+
+                          ///////////////////////////////////////////////////////////////////////////////
+
+                          Container(
+                            padding:
+                                EdgeInsets.symmetric(vertical: height * 0.03),
+                            width: double.infinity,
+                            child: RaisedButton(
+                              elevation: 5.0,
+                              onPressed: () {
+                                createTiffen();
+                              },
+                              padding: EdgeInsets.all(10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              color: Colors.white,
+                              child: Text(
+                                'Update Tiffen',
+                                textScaleFactor: 1.5,
+                                style: TextStyle(
+                                  color: myGreen,
+                                  letterSpacing: 1.8,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -1284,8 +1493,8 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
       print(global.mealDescription.toString());
 
       setState(() {
-            global.isLoading = true;
-          });
+        global.isLoading = true;
+      });
 
       setState(() {
         foodCategoryResult =
