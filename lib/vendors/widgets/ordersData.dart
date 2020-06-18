@@ -47,7 +47,6 @@ class OrdersList {
       final DateTime endDate =
           element.data['endDate'].toDate().add(Duration(days: 1));
       final startDate = element.data['startDate'].toDate();
-      print(date.difference(startDate).inDays);
       if (!endDate.difference(date).isNegative &&
           !date.difference(startDate).isNegative) {
         var paused = false;

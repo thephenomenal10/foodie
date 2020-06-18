@@ -40,7 +40,11 @@ class BottomNavigationScreenState extends State<BottomNavigationScreen> {
         return;
       },
     );
-    LocalNotifications.showScheduledNotification();
+    try {
+      LocalNotifications.showScheduledNotification();
+    } catch (error) {
+      print(error);
+    }
   }
 
   @override
