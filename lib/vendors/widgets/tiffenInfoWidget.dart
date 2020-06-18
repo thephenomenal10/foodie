@@ -30,6 +30,10 @@ Widget tiffenInfo({BuildContext context, String data, String title}) {
 
 Widget mealInfo({BuildContext context, title, desc, cost}) {
   return ExpansionTile(
+    trailing: Icon(
+      Icons.arrow_drop_down,
+      color: Colors.black,
+    ),
     title: new Text(title,
         style: new TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         textAlign: TextAlign.start),

@@ -24,7 +24,7 @@ class DatabaseService {
         .document("vendors")
         .collection("registered_vendors")
         .document(userEmail)
-        .updateData(userData)
+        .setData(userData)
         .catchError((e) {
       print(e.message);
     });

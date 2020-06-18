@@ -34,15 +34,43 @@ exports.newOrderNotification = functions.firestore
     }
   });
 
+exports.orderCancelledNotification = functions.firestore
+  .document("tiffen_service_details/{vendorEmail}/cancelledOrders/{neworder}")
+  .onCreate(async (snapshot, context) => {
+    const vendorEmail = context.params.vendorEmail;
+    const registeredTokens = [
+      ...(
+        await admin
+          .firestore()
+          .collection("vendor_collection/vendors/registered_vendors")
+          .doc(vendorEmail)
+          .get()
+      ).data().fcmTokens,
+    ];
+    const message = {
+      notification: {
+        title: "An order has been cancelled!",
+        body:
+          "Customer name : " +
+          snapshot.data().customerName +
+          "\nPlease check your orders\t🙂",
+        clickAction: "FLUTTER_NOTIFICATION_CLICK",
+      },
+    };
+    try {
+      return admin.messaging().sendToDevice(registeredTokens, message);
+    } catch (error) {
+      return error;
+    }
+  });
+
 exports.mealChangeNotification = functions.firestore
   .document("tiffen_service_details/{vendorEmail}/acceptedOrders/{order}")
   .onUpdate(async (change, context) => {
     const beforeData = change.before.data();
     const afterData = change.after.data();
     var titleMessage;
-    if (beforeData.cancelDate === null && afterData.cancelDate !== null) {
-      titleMessage = "An order has been cancelled!";
-    } else if (beforeData.pauses + 1 === afterData.pauses) {
+    if (beforeData.pauses + 1 === afterData.pauses) {
       titleMessage = "An order has been paused!";
     } else if (beforeData.skips + 1 === afterData.skips) {
       titleMessage = "An order has been skipped!";
@@ -73,7 +101,7 @@ exports.mealChangeNotification = functions.firestore
         return error;
       }
     }
-    return 'no change';
+    return "no change";
   });
 
 exports.vendorSubscriptionNotification = functions.firestore
@@ -102,5 +130,5 @@ exports.vendorSubscriptionNotification = functions.firestore
         return error;
       }
     }
-    return 'no change';
+    return "no change";
   });

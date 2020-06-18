@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/bottomNavigationBar.dart';
@@ -463,10 +464,12 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
 
   String email;
   void getEmail() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      email = prefs.getString("currentUserEmail");
+    await FirebaseAuth.instance.currentUser().then((value) {
+      setState(() {
+        email = value.email;
+      });
     });
+    print(email);
   }
 
   @override
@@ -475,6 +478,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
     super.initState();
     foodCategory = [];
     foodCategoryResult = '';
+    global.isLoading = false;
   }
 
   @override
@@ -482,7 +486,16 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
     double height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: ListView(
+      body:
+       global.isLoading == true
+      ? Center(child: CircularProgressIndicator(
+                backgroundColor: Colors.white,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).primaryColor,
+                ),
+              ),)
+     :
+       ListView(
         children: <Widget>[
           Container(
             height: 250,
@@ -1271,6 +1284,10 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
       print(global.mealDescription.toString());
 
       setState(() {
+            global.isLoading = true;
+          });
+
+      setState(() {
         foodCategoryResult =
             foodCategory.length == 2 ? 'Both' : foodCategory[0].toString();
       });
@@ -1289,7 +1306,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
         "FSSAI License Number": licenseController.text,
         "Payment Mode": payment,
         "UPI ID": upiController.text,
-        "Bank Account No.": bankAccountController.text,
+        // "Bank Account No.": bankAccountController.text,
         "IFSC code": ifscController.text,
         "Paytm Number": paytmController.text,
         "Offer cancellation Subscription": sub,

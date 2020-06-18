@@ -259,7 +259,8 @@ class FirebaseAuthentication {
                         user.updatePhoneNumberCredential(credential).then((authResult) {
                           
                           if (user != null) {
-                            Navigator.push(
+                            Navigator.pop(context);
+                            Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>

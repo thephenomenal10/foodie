@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 
 import 'MyAppBar.dart';
+import 'PaymentSummary.dart';
 
 class POSScreen extends StatelessWidget {
   final String mealType;
@@ -9,7 +10,30 @@ class POSScreen extends StatelessWidget {
   final int totalMeals;
   final double mealCost;
 
-  POSScreen({this.mealCost, this.mealType, this.skippedMeals, this.totalMeals});
+  final String name;
+  final String address;
+  final int subscriptionDays;
+  final String orderId;
+  final double customerLatitude, customerLongitude;
+  final String paymentMode, orderSuggestion, proofOfPayment, mealDescription;
+
+  const POSScreen({
+    Key key,
+    this.mealType,
+    this.skippedMeals,
+    this.totalMeals,
+    this.mealCost,
+    this.name,
+    this.address,
+    this.subscriptionDays,
+    this.orderId,
+    this.customerLatitude,
+    this.customerLongitude,
+    this.paymentMode,
+    this.orderSuggestion,
+    this.proofOfPayment,
+    this.mealDescription,
+  }) : super(key: key);
 
   Widget titleText(String title) {
     return Text(
@@ -46,8 +70,48 @@ class POSScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
+                titleText('Customer Name:'),
+                valueText(name),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                titleText('Customer Address:'),
+                valueText(address),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                titleText('Contact:'),
+                valueText("243523"),
+              ],
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
                 titleText('Meal Type:'),
                 valueText(mealType),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                titleText('Meal Description:'),
+                valueText(mealDescription),
               ],
             ),
             SizedBox(
@@ -68,6 +132,26 @@ class POSScreen extends StatelessWidget {
               children: <Widget>[
                 titleText('Total meals:'),
                 valueText('$totalMeals'),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                titleText('Suggestion:'),
+                valueText(orderSuggestion == "" ? "Nothing" : orderSuggestion),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                titleText('Payment Mode:'),
+                valueText(paymentMode),
               ],
             ),
             SizedBox(
@@ -113,10 +197,15 @@ class POSScreen extends StatelessWidget {
           Expanded(
             child: new MaterialButton(
               padding: EdgeInsets.symmetric(horizontal: 10.0),
-              onPressed: () {},
+              onPressed: () {
+                 Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PaymentSumm( paymentProof: proofOfPayment)));
+              },
               color: primaryColor,
               child: new Text(
-                "POS",
+                "Payment Proof",
                 style: new TextStyle(color: Colors.white, fontSize: 20.0),
               ),
             ),

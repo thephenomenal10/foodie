@@ -94,6 +94,19 @@ Widget _columnOfOrdersWidgets(String path, String email) {
                             mealType: docs[index].data['foodType'],
                             skippedMeals: docs[index].data['skips'],
                             totalMeals: totalMeals.toInt(),
+                            address: docs[index].data['customerAddress'],
+                            customerLatitude:
+                                docs[index].data['customerCoordinates'][0],
+                            customerLongitude:
+                                docs[index].data['customerCoordinates'][1],
+                            mealDescription:
+                                docs[index].data['mealDescription'],
+                            name: docs[index].data['customerName'],
+                            orderSuggestion: docs[index].data['orderNotes'],
+                            paymentMode: docs[index].data['paymentMode'],
+                            proofOfPayment: docs[index].data['proofOfPayment'],
+                            subscriptionDays:
+                                docs[index].data['subscriptionDays'],
                           ),
                         ),
                       );

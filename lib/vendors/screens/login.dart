@@ -218,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
 
-    global.isSignUpLoading = false;
+    global.isLoading = false;
     super.initState();
   }
 
@@ -228,8 +228,13 @@ class _LoginScreenState extends State<LoginScreen> {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: 
-      global.isSignUpLoading == true
-      ? Center(child: CircularProgressIndicator())
+      global.isLoading == true
+      ? Center(child: CircularProgressIndicator(
+                backgroundColor: Colors.white,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).primaryColor,
+                ),
+              ),)
      : SafeArea(
         child: Form(
                 key: _formKey,
@@ -326,7 +331,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _formKey.currentState.save();
 
           setState(() {
-            global.isSignUpLoading = true;
+            global.isLoading = true;
           });
       firebaseAuthentication.signIn(context, emailController, passController);
 

@@ -1,6 +1,6 @@
 library loading.global;
 
-bool isSignUpLoading = false;
+bool isLoading = false;
 
 List<String> mealDescription = [];
 List<double> cost = [];

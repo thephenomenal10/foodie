@@ -33,7 +33,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   List<Asset> proofImages = List<Asset>();
   String proofImageUrl;
   String _error = 'No Error Dectected';
-  bool isUploading = false;
+  bool isUploading = false;       
 
   Future<void> loadProofImages() async {
     List<Asset> resultList = List<Asset>();
@@ -496,7 +496,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               bottom: 10,
             ),
             alignment: Alignment.center,
-            child: proofImages != null
+            child: proofImages.isNotEmpty
                 ? InkWell(
                     onTap: () {
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> PopUpPayment()));
@@ -520,7 +520,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ),
                     ),
                   )
-                : (proofImages == null
+                : (proofImages.isEmpty
                     ? Text(
                         "Please upload the image.",
                         textScaleFactor: 1,

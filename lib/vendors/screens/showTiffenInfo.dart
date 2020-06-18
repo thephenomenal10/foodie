@@ -17,12 +17,15 @@ class ShowTiffenInfo extends StatefulWidget {
 class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
   Firestore firestore = Firestore.instance;
 
-  var currentUserEmail;
+  String currentUserEmail;
 
   Future<void> getCurrentEmail() async {
-    setState(() async{
-      currentUserEmail = (await FirebaseAuth.instance.currentUser()).email;
+    await FirebaseAuth.instance.currentUser().then((value) {
+      setState(() {
+        currentUserEmail = value.email;
+      });
     });
+    print(currentUserEmail);
   }
 
   bool _isEditMode = false;
