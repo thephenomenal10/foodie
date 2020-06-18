@@ -40,10 +40,10 @@ class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
       onTap: () {
         setState(() {
           _isEditMode = !_isEditMode;
-
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => UpdateTiffenInfo()));
         });
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => UpdateTiffenInfo()));
+        // });
       },
     );
   }

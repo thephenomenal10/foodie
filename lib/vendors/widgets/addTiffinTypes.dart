@@ -82,6 +82,7 @@ class _AddTiffinTypesState extends State<AddTiffinTypes> {
                   },
                   decoration: InputDecoration(
                     labelText: 'Meal description',
+                    labelStyle: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 1.2),
                     hintText: 'Ex: 6 chapati\'s + curd',
                   ),
                 ),
@@ -98,7 +99,8 @@ class _AddTiffinTypesState extends State<AddTiffinTypes> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    labelText: 'Enter Cost',
+                    labelText: 'Cost',
+                    labelStyle: TextStyle(fontWeight: FontWeight.w600,),
                     hintText: 'Ex: 49',
                     prefixText: '\u20B9 ',
                   ),
