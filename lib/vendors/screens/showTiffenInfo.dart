@@ -165,7 +165,7 @@ class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
                           tiffenInfo(
                               context: context,
                               title: "Offer Cancellation Subscription",
-                              data: doc['Offer cancellation Subscription']),
+                              data: doc['refundPolicy']),
                           tiffenInfo(
                               context: context,
                               title: "Breakfast Time",
