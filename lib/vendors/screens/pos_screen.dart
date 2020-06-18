@@ -40,7 +40,7 @@ class POSScreen extends StatelessWidget {
       title,
       style: TextStyle(
         fontWeight: FontWeight.bold,
-        fontSize: 20,
+        fontSize: 18,
       ),
     );
   }
@@ -50,7 +50,7 @@ class POSScreen extends StatelessWidget {
       value,
       style: TextStyle(
         fontWeight: FontWeight.w500,
-        fontSize: 18,
+        fontSize: 15,
       ),
     );
   }
@@ -63,7 +63,7 @@ class POSScreen extends StatelessWidget {
         preferredSize: Size.fromHeight(60.0),
       ),
       body: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(15),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -194,22 +194,25 @@ class POSScreen extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: new MaterialButton(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              onPressed: () {
-                 Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PaymentSumm( paymentProof: proofOfPayment)));
-              },
-              color: primaryColor,
-              child: new Text(
-                "Payment Proof",
-                style: new TextStyle(color: Colors.white, fontSize: 20.0),
-              ),
-            ),
-          ),
+          paymentMode != 'Cash On Delivery'
+              ? Expanded(
+                  child: new MaterialButton(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  PaymentSumm(paymentProof: proofOfPayment)));
+                    },
+                    color: primaryColor,
+                    child: new Text(
+                      "Payment Proof",
+                      style: new TextStyle(color: Colors.white, fontSize: 20.0),
+                    ),
+                  ),
+                )
+              : SizedBox(),
         ],
       )),
     );

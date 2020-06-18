@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'dart:io';
 
 import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/widgets/popUpPayment.dart';
@@ -17,8 +17,10 @@ example payment screen
 
 class PaymentScreen extends StatefulWidget {
   final String vendorEmail;
+  final bool isRenewal;
 
-  const PaymentScreen({Key key, this.vendorEmail}) : super(key: key);
+  const PaymentScreen({Key key, this.vendorEmail, this.isRenewal = false})
+      : super(key: key);
   @override
   _PaymentScreenState createState() => _PaymentScreenState();
 }
@@ -33,7 +35,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   List<Asset> proofImages = List<Asset>();
   String proofImageUrl;
   String _error = 'No Error Dectected';
-  bool isUploading = false;       
+  bool isUploading = false;
 
   Future<void> loadProofImages() async {
     List<Asset> resultList = List<Asset>();
@@ -69,7 +71,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     });
   }
 
-  Future uploadProofImages() async {
+  Future<void> uploadProofImages() async {
     try {
       for (int i = 0; i < proofImages.length; i++) {
         final StorageReference storageReference = FirebaseStorage.instance
@@ -87,11 +89,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
         });
 
         await uploadTask.onComplete;
-        streamSubscription.cancel();
+        await streamSubscription.cancel();
 
         String proofImageUrl = await storageReference.getDownloadURL();
 
-        Firestore.instance
+        await Firestore.instance
             .collection("tiffen_service_details")
             .document(widget.vendorEmail)
             .updateData({'Proof of Payment Photos': proofImageUrl});
@@ -153,9 +155,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             CircleAvatar(
               radius: 15.0,
               backgroundColor: Colors.white,
-              child: Icon(AntDesign.bank, color: Colors.black,),
+              child: Icon(
+                AntDesign.bank,
+                color: Colors.black,
+              ),
             ),
-            
             Text(
               "Bank Account Number",
               textScaleFactor: 1.1,
@@ -206,7 +210,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ],
         ),
         SizedBox(height: 5.0),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -265,7 +268,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ],
         ),
         SizedBox(height: 5.0),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -307,8 +309,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
           height: height * 0.01,
         ),
         RaisedButton(
-          onPressed: () {
-            loadProofImages();
+          onPressed: () async {
+            await loadProofImages();
           },
           child: Text(
             "UPLOAD IMAGE",
@@ -406,20 +408,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         )),
                     child: Row(
                       children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.arrow_back),
-                          color: Colors.white,
-                          iconSize: 30.0,
-                          onPressed: () => Navigator.pop(context),
-                        ),
+                        widget.isRenewal
+                            ? SizedBox()
+                            : IconButton(
+                                icon: Icon(Icons.arrow_back),
+                                color: Colors.white,
+                                iconSize: 30.0,
+                                onPressed: () => Navigator.pop(context),
+                              ),
                         Text(
                           "SUBSCRIPTION PAYMENT",
                           textScaleFactor: 1.5,
                           style: TextStyle(
-                            color: Colors.white,
-                            letterSpacing: 1.1,
-                            fontWeight: FontWeight.bold
-                          ),
+                              color: Colors.white,
+                              letterSpacing: 1.1,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -498,8 +501,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
             alignment: Alignment.center,
             child: proofImages.isNotEmpty
                 ? InkWell(
-                    onTap: () {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> PopUpPayment()));
+                    onTap: () async {
+                      if (widget.isRenewal) {
+                        final email =
+                            (await FirebaseAuth.instance.currentUser()).email;
+                        await Firestore.instance
+                            .collection('tiffen_service_details')
+                            .document(email)
+                            .updateData({
+                          'SubscriptionEndDate': DateTime.now()
+                              .add(Duration(days: 364))
+                              .toIso8601String()
+                        });
+                      }
+                      await uploadProofImages();
+                      print(widget.isRenewal);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PopUpPayment(
+                                    isRenewal: widget.isRenewal,
+                                  )));
                     },
                     child: Container(
                       height: height * 0.067,
@@ -532,7 +554,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       )
                     : InkWell(
                         onTap: () async {
-                          PopUpPayment();
+                          PageRouteBuilder(
+                            pageBuilder: (context, _, __) =>
+                                PopUpPayment(isRenewal: widget.isRenewal),
+                            opaque: false,
+                          );
                         },
                         child: Container(
                           height: height * 0.067,

@@ -16,7 +16,7 @@ FirebaseUser user;
 var currentUserUid;
 
 class FirebaseAuthentication {
-  void signIn(context, emailController, passwordController) async {
+  Future<void> signIn(context, emailController, passwordController) async {
     try {
       AuthResult result = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
@@ -27,7 +27,7 @@ class FirebaseAuthentication {
       print(result.user);
       if (auth.currentUser() != null) {
         await LocalNotifications.storeFCMToken(emailController.text.trim());
-        Navigator.pushReplacement(context,
+        await Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
         DialogBox()
             .information(context, "Success", "Your have Login successfully");
@@ -42,7 +42,9 @@ class FirebaseAuthentication {
           ),
           actions: <Widget>[
             FlatButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
               child: Text(
                 'OK',
                 style: TextStyle(
@@ -53,7 +55,7 @@ class FirebaseAuthentication {
           ],
         ),
       );
-      return (e.message);
+      return e;
     }
   }
 

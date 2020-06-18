@@ -48,13 +48,13 @@ class Orders extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: EdgeInsets.only(left: 20),
                     child: new Text(
                       "ACCEPTED ORDERS",
                       style: new TextStyle(
                           color: secondaryColor,
                           fontWeight: FontWeight.w500,
-                          fontSize: 25.0),
+                          fontSize: 20.0),
                     ),
                   ),
                   Container(

@@ -35,7 +35,7 @@ class _AccountScreenState extends State<AccountScreen> {
   Uint8List imageFile;
   File _image;
 
-  saveImageToFirebase(a) {
+  void saveImageToFirebase(a) {
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
         .child("vendor_images")
@@ -47,27 +47,35 @@ class _AccountScreenState extends State<AccountScreen> {
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    setState(() {
+    setState(() async {
       _image = image;
       saveImageToFirebase(user.email);
-      fetchImageFromFirebase(user.email);
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
+      try {
+        await fetchImageFromFirebase(user.email);
+      } catch (error) {}
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BottomNavigationScreen(
+            index: 3,
+          ),
+        ),
+      );
     });
   }
 
-  fetchImageFromFirebase(a) {
-    StorageReference storageReference = FirebaseStorage.instance
-        .ref()
-        .child("vendor_images")
-        .child("user_profile")
-        .child(a);
-    int maxSize = 5 * 1024 * 1024;
-    storageReference.child("image_$a.jpg").getData(maxSize).then((value) {
-      setState(() {
-        imageFile = value;
-      });
-    });
+  Future<void> fetchImageFromFirebase(a) async {
+    try {
+      StorageReference storageReference = FirebaseStorage.instance
+          .ref()
+          .child("vendor_images")
+          .child("user_profile")
+          .child(a);
+      int maxSize = 5 * 1024 * 1024;
+      imageFile = await storageReference.child("image_$a.jpg").getData(maxSize);
+    } catch (error) {
+      print(error);
+    }
   }
 
   TextEditingController nameController = new TextEditingController();
@@ -151,16 +159,17 @@ class _AccountScreenState extends State<AccountScreen> {
     userName = data['Name'];
     email = data['Email'];
     phone = data['Phone'];
+    await fetchImageFromFirebase(email);
   }
 
-  @override
-  void initState() {
-    getUserInfo().whenComplete(() {
-      fetchImageFromFirebase(email);
-    });
+  // @override
+  // void initState() {
+  //   getUserInfo().whenComplete(() {
+  //     fetchImageFromFirebase(email);
+  //   });
 
-    super.initState();
-  }
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -372,7 +381,7 @@ class _AccountScreenState extends State<AccountScreen> {
     Navigator.push(context, route);
   }
 
-  void updateUserInfo() async {
+  Future<void> updateUserInfo() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       Map<String, String> userInfo = {
@@ -380,7 +389,7 @@ class _AccountScreenState extends State<AccountScreen> {
         "Phone": phoneController.text,
       };
       email = (await FirebaseAuth.instance.currentUser()).email;
-      databaseService.addUserData(userInfo, email);
+      await databaseService.addUserData(userInfo, email);
 
       await FirebaseAuthentication()
           .updatePhoneNumber(context, '+ 91 ' + phoneController.text.trim());

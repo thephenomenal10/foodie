@@ -11,6 +11,8 @@ import 'package:foodieapp/vendors/screens/customer_orders_screen.dart';
 import 'package:foodieapp/vendors/services/local_notifications.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
+  final index;
+  BottomNavigationScreen({this.index=0});
   @override
   State<StatefulWidget> createState() {
     return BottomNavigationScreenState();
@@ -23,6 +25,7 @@ class BottomNavigationScreenState extends State<BottomNavigationScreen> {
   @override
   void initState() {
     super.initState();
+    _currentIndex=widget.index;
     final fbm = FirebaseMessaging();
     fbm.requestNotificationPermissions();
     fbm.configure(
@@ -40,11 +43,7 @@ class BottomNavigationScreenState extends State<BottomNavigationScreen> {
         return;
       },
     );
-    try {
-      LocalNotifications.showScheduledNotification();
-    } catch (error) {
-      print(error);
-    }
+    LocalNotifications.showScheduledNotification();
   }
 
   @override

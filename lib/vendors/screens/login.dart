@@ -39,6 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   validator: validateEmail,
                   textAlign: TextAlign.left,
                   style: TextStyle(fontSize: 12),
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     fillColor: Color(0xFF00B712),
                     filled: true,
@@ -162,7 +163,7 @@ class _LoginScreenState extends State<LoginScreen> {
         elevation: 5.0,
         onPressed: () {
           return signInMe();
-        }, 
+        },
         padding: EdgeInsets.all(10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -180,7 +181,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
 
   Widget _buildSignupBtn() {
     return GestureDetector(
@@ -217,7 +217,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-
     global.isLoading = false;
     super.initState();
   }
@@ -227,115 +226,119 @@ class _LoginScreenState extends State<LoginScreen> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: 
-      global.isLoading == true
-      ? Center(child: CircularProgressIndicator(
+      body: global.isLoading == true
+          ? Center(
+              child: CircularProgressIndicator(
                 backgroundColor: Colors.white,
                 valueColor: AlwaysStoppedAnimation<Color>(
                   Theme.of(context).primaryColor,
                 ),
-              ),)
-     : SafeArea(
-        child: Form(
-                key: _formKey,
-                  child: Container(
-            padding: EdgeInsets.all(25),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF5AFF15),
-                  Color(0xFF5AFF15),
-                  Color(0xFF00B712),
-                  Color(0xFF00B712),
-                ],
-                stops: [0.1, 0.4, 0.7, 0.9],
               ),
-            ),
-            child: AnnotatedRegion<SystemUiOverlayStyle>(
-              value: SystemUiOverlayStyle.light,
-              child: GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child: Stack(
-                  children: <Widget>[
-                    Container(
-                      height: double.infinity,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Color(0xFF5AFF15),
-                              Color(0xFF5AFF15),
-                              Color(0xFF00B712),
-                              Color(0xFF00B712),
-                            ],
-                            stops: [0.1, 0.4, 0.7, 0.9],
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black.withOpacity(.3),
-                                //offset: Offset(0.0, 8.0),
-                                blurRadius: 8.0)
-                          ]),
+            )
+          : SafeArea(
+              child: Form(
+                key: _formKey,
+                child: Container(
+                  padding: EdgeInsets.all(25),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFF5AFF15),
+                        Color(0xFF5AFF15),
+                        Color(0xFF00B712),
+                        Color(0xFF00B712),
+                      ],
+                      stops: [0.1, 0.4, 0.7, 0.9],
                     ),
-                    Container(
-                      height: double.infinity,
-                      child: SingleChildScrollView(
-                        physics: AlwaysScrollableScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: width * 0.1,
-                          vertical: height * 0.05,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              'Sign In',
-                              textScaleFactor: 2,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                  ),
+                  child: AnnotatedRegion<SystemUiOverlayStyle>(
+                    value: SystemUiOverlayStyle.light,
+                    child: GestureDetector(
+                      onTap: () => FocusScope.of(context).unfocus(),
+                      child: Stack(
+                        children: <Widget>[
+                          Container(
+                            height: double.infinity,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Color(0xFF5AFF15),
+                                    Color(0xFF5AFF15),
+                                    Color(0xFF00B712),
+                                    Color(0xFF00B712),
+                                  ],
+                                  stops: [0.1, 0.4, 0.7, 0.9],
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black.withOpacity(.3),
+                                      //offset: Offset(0.0, 8.0),
+                                      blurRadius: 8.0)
+                                ]),
+                          ),
+                          Container(
+                            height: double.infinity,
+                            child: SingleChildScrollView(
+                              physics: AlwaysScrollableScrollPhysics(),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: width * 0.1,
+                                vertical: height * 0.05,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    'Sign In',
+                                    textScaleFactor: 2,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: height * 0.05,
+                                  ),
+                                  _buildEmailTF(),
+                                  SizedBox(
+                                    height: height * 0.01,
+                                  ),
+                                  _buildPasswordTF(),
+                                  _buildForgotPasswordBtn(),
+                                  _buildRememberMeCheckbox(),
+                                  _buildLoginBtn(height),
+                                  _buildSignupBtn(),
+                                ],
                               ),
                             ),
-                            SizedBox(
-                              height: height * 0.05,
-                            ),
-                            _buildEmailTF(),
-                            SizedBox(
-                              height: height * 0.01,
-                            ),
-                            _buildPasswordTF(),
-                            _buildForgotPasswordBtn(),
-                            _buildRememberMeCheckbox(),
-                            _buildLoginBtn(height),
-                            _buildSignupBtn(),
-                          ],
-                        ),
+                          )
+                        ],
                       ),
-                    )
-                  ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
-  signInMe() {
+  signInMe() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-
-          setState(() {
-            global.isLoading = true;
-          });
-      firebaseAuthentication.signIn(context, emailController, passController);
-
+      setState(() {
+        global.isLoading = true;
+      });
+      await firebaseAuthentication.signIn(
+          context, emailController, passController);
+      setState(() {
+        global.isLoading = false;
+      });
+      emailController.clear();
+      passController.clear();
     }
-
   }
 }

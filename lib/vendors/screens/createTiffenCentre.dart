@@ -58,12 +58,12 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   var now = new DateTime.now();
   var dt = DateTime.now();
 
-  var breakFastTimefrom = "09:00";
-  var breakFastTimeto = "11:00";
-  var lunchTimefrom = "01:00";
+  var breakFastTimefrom = "06:30";
+  var breakFastTimeto = "09:30";
+  var lunchTimefrom = "12:00";
   var lunchTimeto = "03:00";
-  var dinnerTimefrom = "08:00";
-  var dinnerTimeto = "10:00";
+  var dinnerTimefrom = "07:30";
+  var dinnerTimeto = "10:30";
   var format;
 
 ///////////////////////////////////////      this function will set the time into HH:MM am///////////////////////////////////////////////////////////
@@ -1396,7 +1396,19 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
           await uploadLogoImage();
         });
       });
-      Navigator.pushReplacement(
+      tiffinController.clear();
+      addressController.clear();
+      ownerNameController.clear();
+      phoneController.clear();
+      licenseController.clear();
+      costController.clear();
+      bankAccountController.clear();
+      cityController.clear();
+      ifscController.clear();
+      paytmController.clear();
+      upiController.clear();
+      print(email);
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => PaymentScreen(

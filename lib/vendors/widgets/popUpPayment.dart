@@ -4,6 +4,8 @@ import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:flutter/material.dart';
 
 class PopUpPayment extends StatelessWidget {
+  final isRenewal;
+  PopUpPayment({this.isRenewal=false});
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -32,10 +34,10 @@ class PopUpPayment extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Image.asset(
-                  "assets/popup_payment.png",
-                  width: width * 0.5,
-                ),
+                // Image.asset(
+                //   "assets/popup_payment.png",
+                //   width: width * 0.5,
+                // ),
                 SizedBox(
                   height: height * 0.035,
                 ),
@@ -70,7 +72,9 @@ class PopUpPayment extends StatelessWidget {
                     ),
                     backgroundColor: myGreen,
                     onPressed: () {
-                      Navigator.pop(context);
+                      if (!isRenewal) {
+                        Navigator.of(context).pop();
+                      }
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

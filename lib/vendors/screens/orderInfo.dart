@@ -5,6 +5,7 @@ import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/screens/customerAddressNavigationScreen.dart';
 import 'package:foodieapp/vendors/utils/primaryColor.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'MyAppBar.dart';
@@ -250,6 +251,30 @@ class _OrderInfoState extends State<OrderInfo> {
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     new Text(
+                                      "Start Date",
+                                      style: new TextStyle(
+                                        color: secondaryColor,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15.0,
+                                      ),
+                                    ),
+                                    new Text(
+                                      DateFormat.yMMMd().format(widget.order['startDate'].toDate()).toString(),
+                                      style: new TextStyle(
+                                        color: secondaryColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15.0,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    new Text(
                                       "Subscription Days",
                                       style: new TextStyle(
                                         color: secondaryColor,
@@ -350,28 +375,30 @@ class _OrderInfoState extends State<OrderInfo> {
                     ),
                     widget.accepted == true
                         ? SizedBox()
-                        : Container(
-                            padding: EdgeInsets.symmetric(horizontal: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                RaisedButton(
-                                  color: primaryColor,
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => PaymentSumm(
-                                          order: widget.order,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: new Text("Payment Proof"),
+                        : widget.order['paymentMode'] == 'Cash On Delivery'
+                            ? SizedBox()
+                            : Container(
+                                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    RaisedButton(
+                                      color: primaryColor,
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => PaymentSumm(
+                                              order: widget.order,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: new Text("Payment Proof"),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          )
+                              ),
                   ],
                 ),
                 Container(
@@ -381,25 +408,27 @@ class _OrderInfoState extends State<OrderInfo> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       widget.accepted == true
-                          ? Container(
-                              width: 150,
-                              child: FloatingActionButton(
-                                  backgroundColor: primaryColor,
-                                  hoverColor: Colors.white,
-                                  splashColor: secondaryColor,
-                                  heroTag: "tag3",
-                                  isExtended: true,
-                                  child: new Text("Find Customer", style: new TextStyle(fontSize: 20),),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                CustomerAddressNavigate(
-                                                  customerAddress: widget.order['customerAddress'].toString(),
-                                                )));
-                                  }),
-                            )
+                          ? FloatingActionButton.extended(
+                              backgroundColor: primaryColor,
+                              hoverColor: Colors.white,
+                              splashColor: secondaryColor,
+                              heroTag: "tag3",
+                              isExtended: true,
+                              label: new Text(
+                                "Find Customer",
+                                style: new TextStyle(fontSize: 20),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            CustomerAddressNavigate(
+                                              customerAddress: widget
+                                                  .order['customerAddress']
+                                                  .toString(),
+                                            )));
+                              })
                           : Container(
                               width: 150.0,
                               child: FloatingActionButton(
@@ -638,7 +667,7 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
                                 Map<String, dynamic> updatedOrder =
                                     widget.order.data;
                                 updatedOrder['orderStatus'] = 'Rejected';
-                                updatedOrder.addAll({'report': report});
+                                updatedOrder.addAll({'rejectionReason': report});
                                 await Firestore.instance
                                     .collection(
                                         'tiffen_service_details/$email/rejectedOrders')

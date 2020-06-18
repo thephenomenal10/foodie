@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:foodieapp/vendors/bottomNavigationBar.dart';
 import 'package:foodieapp/vendors/screens/login.dart';
-import 'package:intl/intl.dart';
+import 'package:foodieapp/vendors/screens/subPaymentScreen.dart';
 
 class IsUserLoggedIn extends StatefulWidget {
   @override
@@ -12,60 +12,99 @@ class IsUserLoggedIn extends StatefulWidget {
 
 class _IsUserLoggedInState extends State<IsUserLoggedIn> {
   FirebaseUser user;
-
-  Future<void> getUserData() async {
-    FirebaseUser userData = await FirebaseAuth.instance.currentUser();
-    setState(() {
-      user = userData;
-    });
-  }
-
-  String startDate;
-  String endDate;
+  Map<String, dynamic> centerData;
+  Map<String, dynamic> vendorData;
+  String proofOfPayment;
+  DateTime currentDate;
+  DateTime endDate;
+  bool exists = true;
 
   Future<void> getVendorData() async {
-    final currentEmail = (await FirebaseAuth.instance.currentUser()).email;
-
-    final data = await Firestore.instance
-        .collection("tiffen_service_details")
-        .document(currentEmail)
-        .get();
-    setState(() {
-      startDate = data['SubscriptionStartDate'];
-      endDate = data['SubscriptionEndDate'];
-    });
-
-    print(startDate);
-    print(endDate);
+    user = await FirebaseAuth.instance.currentUser();
+    centerData = (await Firestore.instance
+            .collection('tiffen_service_details')
+            .document(user.email)
+            .get())
+        .data;
+    vendorData = (await Firestore.instance
+            .collection("vendor_collection/vendors/registered_vendors")
+            .document(user.email)
+            .get())
+        .data;
+    if (centerData != null) {
+      endDate = DateTime.parse(centerData['SubscriptionEndDate']);
+      proofOfPayment = centerData['Proof of Payment Photos'];
+    }
+    if (user.phoneNumber == null || endDate == null || proofOfPayment == null) {
+      try {
+        await Firestore.instance
+            .collection('tiffen_service_details')
+            .document(user.email)
+            .delete();
+      } catch (error) {
+        print(error);
+      }
+      try {
+        await Firestore.instance
+            .collection('vendor_collection/vendors/registered_vendors')
+            .document(user.email)
+            .delete();
+      } catch (error) {
+        print(error);
+      }
+      try {
+        await user.delete();
+      } catch (error) {
+        print(error);
+      }
+    }
+    print('got data');
   }
 
   @override
   void initState() {
-    getUserData();
-    getVendorData();
+    currentDate = DateTime.now();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-
-    if (firebaseAuth.currentUser() != null && user != null) {
-      if (user.phoneNumber == null || user.phoneNumber == '') {
-        if(startDate.compareTo(endDate).isNegative){
-          print("negative");
-
+    return FutureBuilder(
+      future: getVendorData(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.white,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).primaryColor,
+                ),
+              ),
+            ),
+          );
+        }
+        if (firebaseAuth.currentUser() != null && user != null) {
+          if (user.phoneNumber == null ||
+              endDate == null ||
+              proofOfPayment == null) {
+            print('no data but exists');
+            return LoginScreen();
+          }
+          if (endDate.difference(currentDate).isNegative) {
+            print('subscription over');
+            return PaymentScreen(
+              isRenewal: true,
+            );
+          }
+          print('user exists');
+          return BottomNavigationScreen();
+        } else {
+          print('no user');
           return LoginScreen();
         }
-        print(user.phoneNumber);
-        print(user.email);
-        user.delete().catchError((error) {});
-        return LoginScreen();
-      }
-      print(user.phoneNumber);
-      return BottomNavigationScreen();
-    } else {
-      return LoginScreen();
-    }
+      },
+    );
   }
 }

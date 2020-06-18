@@ -148,30 +148,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Flexible(
               flex: 2,
               child: TextFormField(
-                  controller: emailController,
-                  validator: validateEmail,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 12),
-                  decoration: InputDecoration(
-                    fillColor: Color(0xFF00B712),
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.all(0.0),
-                      child: Icon(
-                        Icons.email,
-                        color: Colors.white,
-                      ),
-                    ),
-                    hintText: 'Enter your email',
-                    hintStyle: TextStyle(
-                      fontSize: 12,
+                controller: emailController,
+                validator: validateEmail,
+                textAlign: TextAlign.left,
+                keyboardType: TextInputType.emailAddress,
+                style: TextStyle(fontSize: 12),
+                decoration: InputDecoration(
+                  fillColor: Color(0xFF00B712),
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.all(0.0),
+                    child: Icon(
+                      Icons.email,
                       color: Colors.white,
-                      fontWeight: FontWeight.w500,
                     ),
-                  )),
+                  ),
+                  hintText: 'Enter your email',
+                  hintStyle: TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -459,8 +461,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "Phone": '+ 91 ' + phoneController.text,
       };
 
-      await firebaseAuthentication.signUp(context, emailController, passController,
-          '+ 91 ' + phoneController.text.trim());
+      await firebaseAuthentication.signUp(context, emailController,
+          passController, '+ 91 ' + phoneController.text.trim());
       await _databaseService.addUserData(userInfo, emailController.text);
       await LocalNotifications.storeFCMToken(emailController.text.trim());
     }
