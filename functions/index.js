@@ -107,8 +107,12 @@ exports.mealChangeNotification = functions.firestore
 exports.vendorSubscriptionNotification = functions.firestore
   .document("tiffen_service_details/{newVendor}")
   .onUpdate(async (change, context) => {
+    const before = change.before.data();
     const after = change.after.data();
-    if (after["Proof of Payment Photos"] !== null) {
+    if (
+      before["Proof of Payment Photos"] === null &&
+      after["Proof of Payment Photos"] !== null
+    ) {
       const registeredTokens = [
         ...(
           await admin
@@ -123,6 +127,36 @@ exports.vendorSubscriptionNotification = functions.firestore
           notification: {
             title: "Thank you for subscribing to us.",
             body: "we will notify you soon...\nHave a nice Day\t🙂",
+            clickAction: "FLUTTER_NOTIFICATION_CLICK",
+          },
+        });
+      } catch (error) {
+        return error;
+      }
+    }
+    return "no change";
+  });
+
+exports.vendorSubscriptionRenewalNotification = functions.firestore
+  .document("tiffen_service_details/{updatedVendor}")
+  .onUpdate(async (change, context) => {
+    const before = change.before.data();
+    const after = change.after.data();
+    if (before.SubscriptionEndDate !== after.SubscriptionEndDate) {
+      const registeredTokens = [
+        ...(
+          await admin
+            .firestore()
+            .collection("vendor_collection/vendors/registered_vendors")
+            .doc(after.Email)
+            .get()
+        ).data().fcmTokens,
+      ];
+      try {
+        return admin.messaging().sendToDevice(registeredTokens, {
+          notification: {
+            title: "Your subscription has been renewed!",
+            body: "Thank you for renewal.\nHave a nice Day\t🙂",
             clickAction: "FLUTTER_NOTIFICATION_CLICK",
           },
         });

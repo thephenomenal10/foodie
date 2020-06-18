@@ -451,18 +451,16 @@ class ModalBottomSheet extends StatefulWidget {
 }
 
 class _ModalBottomSheetState extends State<ModalBottomSheet> {
+  final _formKey = GlobalKey<FormState>();
   int sel = -1;
   String report;
   bool _isLoading = false;
-  final _textController = TextEditingController();
   void selectedRadio(value) {
     setState(() {
       sel = value;
     });
     if (sel == 0) {
       report = "Payment not received";
-    } else {
-      report = _textController.text.trim();
     }
   }
 
@@ -546,13 +544,27 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
                         ],
                       ),
                       sel == 1
-                          ? TextField(
-                              controller: _textController,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(15),
+                          ? Form(
+                              key: _formKey,
+                              child: TextFormField(
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'enter a message';
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  fillColor: Theme.of(context).primaryColor,
                                 ),
-                                fillColor: Theme.of(context).primaryColor,
+                                onChanged: (value) {
+                                  report = value;
+                                },
+                                onSaved: (newValue) {
+                                  report = newValue;
+                                },
                               ),
                             )
                           : Container(),
@@ -563,6 +575,16 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
                             color: Theme.of(context).primaryColor,
                             child: Text('Submit'),
                             onPressed: () async {
+                              if (sel == 0 ||
+                                  _formKey.currentState.validate()) {
+                                print('saved');
+                                if (sel != 0) {
+                                  _formKey.currentState.save();
+                                  sel = 1;
+                                }
+                              } else {
+                                sel = -1;
+                              }
                               if (sel != -1) {
                                 setState(() {
                                   _isLoading = true;
