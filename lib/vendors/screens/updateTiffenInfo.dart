@@ -482,6 +482,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -524,12 +525,12 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Text(
-                                "Setup your Tiffen Centre",
+                                "Setup your Tiffin Centre",
                                 textScaleFactor: 2,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
-                                    letterSpacing: 1.5,
+                                    letterSpacing: 1,
                                     fontSize: 10),
                               ),
                             ],
@@ -549,9 +550,13 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                     color: Colors.red,
                                     borderRadius: BorderRadius.circular(10.0),
                                     image: DecorationImage(
-                                      image: NetworkImage(
-                                          "https://scontent.fbek1-1.fna.fbcdn.net/v/t31.0-8/22712358_1445487845569862_704682422345514729_o.jpg?_nc_cat=107&_nc_sid=09cbfe&_nc_ohc=cFNwkNbvrbsAX89FH3M&_nc_ht=scontent.fbek1-1.fna&oh=7e02ebc1165d837a8db900f83e632850&oe=5EF35CD5"),
+                                      image: AssetImage(
+                                        "assets/food1.png",
+                                      ),
                                       fit: BoxFit.cover,
+                                      // image: NetworkImage(
+                                      //     "https://scontent.fbek1-1.fna.fbcdn.net/v/t31.0-8/22712358_1445487845569862_704682422345514729_o.jpg?_nc_cat=107&_nc_sid=09cbfe&_nc_ohc=cFNwkNbvrbsAX89FH3M&_nc_ht=scontent.fbek1-1.fna&oh=7e02ebc1165d837a8db900f83e632850&oe=5EF35CD5"),
+                                      // fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
@@ -578,26 +583,26 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: <Widget>[
                                   Text(
-                                    'Tiffen Centre Information',
+                                    'Tiffin Centre Information',
                                     style: TextStyle(
-                                        fontSize: 22.0,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        letterSpacing: 1.5),
+                                        letterSpacing: 1),
                                   ),
                                 ],
                               ),
                               Divider(
                                 color: myGreen,
-                                endIndent: 300.0,
-                                indent: 5.0,
+                                endIndent: width * 0.7,
+                                indent: width * 0.005,
                                 height: 8,
                                 thickness: 3.0,
                               ),
                               SizedBox(height: 30.0),
                               Divider(
                                 color: myGreen,
-                                endIndent: 280.0,
-                                indent: 2.0,
+                                endIndent: width * 0.75,
+                                indent: width * 0.005,
                                 height: 8,
                                 thickness: 3.0,
                               ),
@@ -678,7 +683,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                                   SearchLocality()));
                                     },
                                     child: Text(
-                                      'Tiffen Center Address',
+                                      'Tiffin Center Address',
                                       style: new TextStyle(color: Colors.white),
                                     ),
                                     color: Theme.of(context).primaryColor,
@@ -705,8 +710,8 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                               SizedBox(height: 30.0),
                               Divider(
                                 color: myGreen,
-                                endIndent: 280.0,
-                                indent: 2.0,
+                                endIndent: width * 0.75,
+                                indent: width * 0.005,
                                 height: 8,
                                 thickness: 3.0,
                               ),
@@ -775,7 +780,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                       },
                                       decoration: InputDecoration(
                                           labelText:
-                                              "Average Cost per Tiffen(in Rupees)",
+                                              "Average Cost per Tiffin (in Rupees)",
                                           labelStyle: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               letterSpacing: 1.2)),
@@ -792,8 +797,8 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                               SizedBox(height: 30.0),
                               Divider(
                                 color: myGreen,
-                                endIndent: 280.0,
-                                indent: 2.0,
+                                endIndent: width * 0.75,
+                                indent: width * 0.005,
                                 height: 8,
                                 thickness: 3.0,
                               ),
@@ -801,7 +806,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                               ///////////////////////TIFFEN SERVICE TIMING///////////////////////
                               ExpansionTile(
                                 title: new Text(
-                                  "Tiffen Service Timing",
+                                  "Tiffin Service Timing",
                                   style: new TextStyle(
                                       color: Colors.black,
                                       letterSpacing: 1.2,
@@ -1026,8 +1031,8 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                               SizedBox(height: 30.0),
                               Divider(
                                 color: myGreen,
-                                endIndent: 280.0,
-                                indent: 2.0,
+                                endIndent: width * 0.75,
+                                indent: width * 0.005,
                                 height: 8,
                                 thickness: 3.0,
                               ),
@@ -1035,7 +1040,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                               ////////////////////Tiffen image section/////////////////////////////////
                               ExpansionTile(
                                 title: new Text(
-                                  "Tiffen  Images",
+                                  "Tiffin  Images",
                                   style: new TextStyle(
                                       color: Colors.black,
                                       letterSpacing: 1.2,
@@ -1049,7 +1054,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                   Padding(
                                     padding: EdgeInsets.all(10),
                                     child: new Text(
-                                      "Select Logo image for your Tiffen Service",
+                                      "Select Logo image for your Tiffin Service",
                                       style: new TextStyle(
                                           color: Colors.black,
                                           fontSize: 16.0,
@@ -1069,7 +1074,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                   Padding(
                                     padding: EdgeInsets.all(10),
                                     child: new Text(
-                                      "Select Cover images for your Tiffen Service",
+                                      "Select Cover images for your Tiffin Service",
                                       style: new TextStyle(
                                           color: Colors.black,
                                           fontSize: 16.0,
@@ -1089,7 +1094,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                   Padding(
                                     padding: EdgeInsets.all(10),
                                     child: new Text(
-                                      "Select Meal images for your Tiffen Service",
+                                      "Select Meal images for your Tiffin Service",
                                       style: new TextStyle(
                                           color: Colors.black,
                                           fontSize: 16.0,
@@ -1115,8 +1120,8 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                               SizedBox(height: 30.0),
                               Divider(
                                 color: myGreen,
-                                endIndent: 280.0,
-                                indent: 2.0,
+                                endIndent: width * 0.75,
+                                indent: width * 0.005,
                                 height: 8,
                                 thickness: 3.0,
                               ),
@@ -1147,7 +1152,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(10),
+                                    padding: EdgeInsets.all(8),
                                     child: new Column(
                                       children: <Widget>[
                                         Row(
@@ -1226,7 +1231,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(10),
+                                    padding: EdgeInsets.all(8), //////
                                     child: new Column(
                                       children: <Widget>[
                                         Row(
@@ -1241,7 +1246,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                             new Text(
                                               'Cash On Delivery',
                                               style: new TextStyle(
-                                                  fontSize: 16.0,
+                                                  fontSize: 14,
                                                   color: Colors.green),
                                             ),
                                           ],
@@ -1258,7 +1263,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                             new Text(
                                               'Online Payment',
                                               style: new TextStyle(
-                                                  fontSize: 16.0,
+                                                  fontSize: 14,
                                                   color: Colors.green),
                                             ),
                                           ],
@@ -1275,7 +1280,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                             new Text(
                                               'Both (Cash + Online Payment)',
                                               style: new TextStyle(
-                                                  fontSize: 16.0,
+                                                  fontSize: 14,
                                                   color: Colors.green),
                                             ),
                                           ],
@@ -1439,7 +1444,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.all(10),
+                                    padding: EdgeInsets.all(8),
                                     child: new Column(
                                       children: <Widget>[
                                         Row(
@@ -1504,7 +1509,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                   ),
                                   color: Colors.white,
                                   child: Text(
-                                    'Update Tiffen',
+                                    'Update Tiffin',
                                     textScaleFactor: 1.5,
                                     style: TextStyle(
                                       color: myGreen,

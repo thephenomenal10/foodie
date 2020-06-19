@@ -53,9 +53,9 @@ Widget mealInfo({BuildContext context, title, desc, cost}) {
                       margin: EdgeInsets.only(left: 16.0),
                       child: new Text(desc[index].toString()),
                     ),
-                    // SizedBox(height:20.0),
+                    Expanded(child: SizedBox()),
                     Container(
-                      // margin: EdgeInsets.only(right: 16.0),
+                      margin: EdgeInsets.only(right: 16.0),
                       child: new Text(cost[index].toString()),
                     ),
                     SizedBox(height: 20.0),

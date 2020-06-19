@@ -64,8 +64,8 @@ class POSScreen extends StatelessWidget {
       ),
       body: Container(
         padding: EdgeInsets.all(15),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: ListView(
+          // mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

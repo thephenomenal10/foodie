@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
-import 'package:foodieapp/vendors/screens/createTiffenCentre.dart';
+// import 'package:foodieapp/vendors/screens/createTiffenCentre.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
 
 class CustomerAddressNavigate extends StatefulWidget {
-  final String customerAddress;
+  final List<dynamic> customerAddress;
 
   const CustomerAddressNavigate({Key key, this.customerAddress})
       : super(key: key);
@@ -77,7 +77,11 @@ class CustomerAddressNavigateState extends State<CustomerAddressNavigate> {
 
   void searchNavigate() {
     print(widget.customerAddress);
-    Geolocator().placemarkFromAddress(widget.customerAddress).then((value) {
+    Geolocator()
+        .placemarkFromCoordinates(
+            widget.customerAddress[0], widget.customerAddress[1])
+        // Geolocator().placemarkFromAddress(widget.customerAddress)
+        .then((value) {
       mapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(
           target:
@@ -92,8 +96,9 @@ class CustomerAddressNavigateState extends State<CustomerAddressNavigate> {
           position:
               LatLng(value[0].position.latitude, value[0].position.longitude),
           infoWindow: InfoWindow(
-              title: "tap on direction button",
-              snippet: widget.customerAddress,),
+            title: "tap on direction button",
+            // snippet: widget.customerAddress,
+          ),
           icon: BitmapDescriptor.defaultMarker,
         ));
         global.localityAddress = widget.customerAddress.toString();

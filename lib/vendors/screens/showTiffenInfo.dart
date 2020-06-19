@@ -89,11 +89,10 @@ class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 20.0),
-                        child: new Text("Tiffene Information",
+                        padding: EdgeInsets.all(10.0),
+                        child: new Text("Tiffin Information",
                             style: new TextStyle(
-                              fontSize: 28.0,
+                              fontSize: 26.0,
                               color: myGreen,
                               fontWeight: FontWeight.w600,
                             )),
@@ -113,7 +112,7 @@ class _ShowTiffenInfoState extends State<ShowTiffenInfo> {
                       children: <Widget>[
                         tiffenInfo(
                             context: context,
-                            title: "Tiffen Name",
+                            title: "Tiffin Name",
                             data: doc['Tiffen Name']),
                         tiffenInfo(
                             context: context,

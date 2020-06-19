@@ -34,6 +34,7 @@ class _OrderInfoState extends State<OrderInfo> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: PreferredSize(
         child: MyAppBar(),
@@ -108,16 +109,18 @@ class _OrderInfoState extends State<OrderInfo> {
                                 new Text(
                                   "Name",
                                   style: new TextStyle(
-                                      color: secondaryColor,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 15.0),
+                                    color: secondaryColor,
+                                    fontWeight: FontWeight.w400,
+                                    // fontSize: 15.0,
+                                  ),
                                 ),
                                 new Text(
                                   widget.order['customerName'],
                                   style: new TextStyle(
-                                      color: secondaryColor,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15.0),
+                                    color: secondaryColor,
+                                    fontWeight: FontWeight.w500,
+                                    // fontSize: 15.0,
+                                  ),
                                 )
                               ],
                             ),
@@ -129,16 +132,17 @@ class _OrderInfoState extends State<OrderInfo> {
                                 new Text(
                                   "Contact no",
                                   style: new TextStyle(
-                                      color: secondaryColor,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 15.0),
+                                    color: secondaryColor,
+                                    fontWeight: FontWeight.w400,
+                                    // fontSize: 15.0,
+                                  ),
                                 ),
                                 new Text(
                                   widget.phoneNumber,
                                   style: new TextStyle(
                                     color: secondaryColor,
                                     fontWeight: FontWeight.w500,
-                                    fontSize: 15.0,
+                                    // fontSize: 15.0,
                                   ),
                                 )
                               ],
@@ -151,16 +155,21 @@ class _OrderInfoState extends State<OrderInfo> {
                                 new Text(
                                   "Address",
                                   style: new TextStyle(
-                                      color: secondaryColor,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 15.0),
-                                ),
-                                new Text(
-                                  widget.order['customerAddress'],
-                                  style: new TextStyle(
                                     color: secondaryColor,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w400,
+                                    // fontSize: 15.0,
+                                  ),
+                                ),
+                                Flexible(
+                                  fit: FlexFit.tight,
+                                  child: new Text(
+                                    widget.order['customerAddress'],
+                                    style: new TextStyle(
+                                      color: secondaryColor,
+                                      fontWeight: FontWeight.w500,
+                                      // fontSize: 15.0,
+                                    ),
+                                    textAlign: TextAlign.end,
                                   ),
                                 )
                               ],
@@ -207,7 +216,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 15.0,
+                                        // fontSize: 15.0,
                                       ),
                                     ),
                                     new Text(
@@ -215,7 +224,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 15.0,
+                                        // fontSize: 15.0,
                                       ),
                                     )
                                   ],
@@ -231,15 +240,19 @@ class _OrderInfoState extends State<OrderInfo> {
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 15.0,
+                                        // fontSize: 15.0,
                                       ),
                                     ),
-                                    new Text(
-                                      widget.order['mealDescription'],
-                                      style: new TextStyle(
-                                        color: secondaryColor,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15.0,
+                                    Flexible(
+                                      fit: FlexFit.tight,
+                                      child: new Text(
+                                        widget.order['mealDescription'],
+                                        style: new TextStyle(
+                                          color: secondaryColor,
+                                          fontWeight: FontWeight.w500,
+                                          // fontSize: 15.0,
+                                        ),
+                                        textAlign: TextAlign.end,
                                       ),
                                     )
                                   ],
@@ -255,15 +268,18 @@ class _OrderInfoState extends State<OrderInfo> {
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 15.0,
+                                        // fontSize: 15.0,
                                       ),
                                     ),
                                     new Text(
-                                      DateFormat.yMMMd().format(widget.order['startDate'].toDate()).toString(),
+                                      DateFormat.yMMMd()
+                                          .format(widget.order['startDate']
+                                              .toDate())
+                                          .toString(),
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 15.0,
+                                        // fontSize: 15.0,
                                       ),
                                     )
                                   ],
@@ -279,7 +295,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 15.0,
+                                        // fontSize: 15.0,
                                       ),
                                     ),
                                     new Text(
@@ -288,7 +304,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 15.0,
+                                        // fontSize: 15.0,
                                       ),
                                     )
                                   ],
@@ -304,15 +320,19 @@ class _OrderInfoState extends State<OrderInfo> {
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 15.0,
+                                        // fontSize: 15.0,
                                       ),
                                     ),
-                                    new Text(
-                                      widget.order['paymentMode'],
-                                      style: new TextStyle(
-                                        color: secondaryColor,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15.0,
+                                    Flexible(
+                                      fit: FlexFit.tight,
+                                      child: new Text(
+                                        widget.order['paymentMode'],
+                                        style: new TextStyle(
+                                          color: secondaryColor,
+                                          fontWeight: FontWeight.w500,
+                                          // fontSize: 15.0,
+                                        ),
+                                        textAlign: TextAlign.end,
                                       ),
                                     )
                                   ],
@@ -328,17 +348,21 @@ class _OrderInfoState extends State<OrderInfo> {
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 15.0,
+                                        // fontSize: 15.0,
                                       ),
                                     ),
-                                    new Text(
-                                      widget.order['orderNotes'] == ""
-                                          ? "no suggestions"
-                                          : widget.order['orderNotes'],
-                                      style: new TextStyle(
-                                        color: secondaryColor,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15.0,
+                                    Flexible(
+                                      fit: FlexFit.tight,
+                                      child: new Text(
+                                        widget.order['orderNotes'] == ""
+                                            ? "no suggestions"
+                                            : widget.order['orderNotes'],
+                                        style: new TextStyle(
+                                          color: secondaryColor,
+                                          fontWeight: FontWeight.w500,
+                                          // fontSize: 15.0,
+                                        ),
+                                        textAlign: TextAlign.end,
                                       ),
                                     )
                                   ],
@@ -354,7 +378,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w400,
-                                        fontSize: 15.0,
+                                        // fontSize: 15.0,
                                       ),
                                     ),
                                     new Text(
@@ -362,7 +386,7 @@ class _OrderInfoState extends State<OrderInfo> {
                                       style: new TextStyle(
                                         color: secondaryColor,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 15.0,
+                                        // fontSize: 15.0,
                                       ),
                                     )
                                   ],
@@ -389,7 +413,8 @@ class _OrderInfoState extends State<OrderInfo> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => PaymentSumm(
-                                              order: widget.order,
+                                              paymentProof: widget
+                                                  .order['proofOfPayment'],
                                             ),
                                           ),
                                         );
@@ -420,17 +445,19 @@ class _OrderInfoState extends State<OrderInfo> {
                               ),
                               onPressed: () {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            CustomerAddressNavigate(
-                                              customerAddress: widget
-                                                  .order['customerAddress']
-                                                  .toString(),
-                                            )));
-                              })
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        CustomerAddressNavigate(
+                                      customerAddress: widget
+                                          .order['customerCoordinates']
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
                           : Container(
-                              width: 150.0,
+                              width: width * 0.40,
                               child: FloatingActionButton(
                                 backgroundColor: primaryColor,
                                 hoverColor: Colors.white,
@@ -481,7 +508,7 @@ class _OrderInfoState extends State<OrderInfo> {
                       widget.accepted == true
                           ? SizedBox()
                           : Container(
-                              width: 150,
+                              width: width * 0.40,
                               child: FloatingActionButton(
                                 backgroundColor: primaryColor,
                                 hoverColor: Colors.white,
@@ -667,7 +694,8 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
                                 Map<String, dynamic> updatedOrder =
                                     widget.order.data;
                                 updatedOrder['orderStatus'] = 'Rejected';
-                                updatedOrder.addAll({'rejectionReason': report});
+                                updatedOrder
+                                    .addAll({'rejectionReason': report});
                                 await Firestore.instance
                                     .collection(
                                         'tiffen_service_details/$email/rejectedOrders')

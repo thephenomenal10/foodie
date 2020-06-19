@@ -21,13 +21,19 @@ DatabaseService _databaseService = new DatabaseService();
 class FirebaseAuthentication {
   Future<void> signIn(context, emailController, passwordController) async {
     try {
-      AuthResult result = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: emailController.text, password: passwordController.text)
-          .catchError((e) {
-        print(e);
-      });
-      print(result.user);
+      final id = Firestore.instance
+          .collection('vendor_collection/vendors/registered_vendors')
+          .document(emailController.text)
+          .documentID;
+      if (id == emailController.text) {
+        AuthResult result = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+                email: emailController.text, password: passwordController.text)
+            .catchError((e) {
+          print(e);
+        });
+        print(result.user);
+      }
       if (auth.currentUser() != null) {
         await LocalNotifications.storeFCMToken(emailController.text.trim());
         await Navigator.pushReplacement(context,
@@ -336,6 +342,7 @@ class _ShowDialogState extends State<ShowDialog> {
                     authResult = await FirebaseAuth.instance
                         .createUserWithEmailAndPassword(
                             email: widget.email, password: widget.password);
+                    print(authResult.toString());
                     print('check three');
                     AuthResult result =
                         await authResult.user.linkWithCredential(credential);
@@ -349,7 +356,9 @@ class _ShowDialogState extends State<ShowDialog> {
                     await LocalNotifications.storeFCMToken(widget.email);
                     print('chech seven');
                   } on PlatformException catch (error) {
-                    await authResult.user.delete();
+                    if (authResult != null) {
+                      await authResult.user.delete();
+                    }
                     Navigator.of(context).pop();
                     showDialog(
                       context: context,
@@ -365,7 +374,7 @@ class _ShowDialogState extends State<ShowDialog> {
                         ],
                       ),
                     );
-                  }
+                  } catch (error) {}
                   setState(() {
                     _isLoading = false;
                   });

@@ -357,7 +357,7 @@ class _AccountScreenState extends State<AccountScreen> {
                         ),
                         color: Colors.white,
                         child: Text(
-                          'Show Tiffen Details',
+                          'Show Tiffin Details',
                           textScaleFactor: 1.5,
                           style: TextStyle(
                             color: myGreen,

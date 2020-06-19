@@ -4,9 +4,8 @@ import 'MyAppBar.dart';
 
 class PaymentSumm extends StatefulWidget {
   final String paymentProof;
-  final order;
 
-  PaymentSumm({this.paymentProof, this.order});
+  PaymentSumm({this.paymentProof});
   @override
   _PaymentSummState createState() => _PaymentSummState();
 }
@@ -19,21 +18,36 @@ class _PaymentSummState extends State<PaymentSumm> {
         child: MyAppBar(),
         preferredSize: Size.fromHeight(60.0),
       ),
-      body: new ListView(
-        children: [
-          widget.paymentProof != null
-              ? Container(
-                  margin: EdgeInsets.all(20.0),
-                  height: MediaQuery.of(context).size.height / 1,
-                  child: Image(
-                    image: NetworkImage(
-                      widget.paymentProof,
+      body: widget.paymentProof != null
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    'Proof of Payment',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w600
                     ),
                   ),
-                )
-              : Container(),
-        ],
-      ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(20.0),
+                    height: MediaQuery.of(context).size.height / 1,
+                    child: Image(
+                      image: NetworkImage(
+                        widget.paymentProof,
+                      ),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : Container(),
     );
   }
 }

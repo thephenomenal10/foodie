@@ -23,15 +23,17 @@ class Orders extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                  child: new Text(
-                    "Welcome UserName,  have a good day",
-                    style: new TextStyle(
-                      fontSize: 18.0,
-                      color: secondaryColor,
-                      fontWeight: FontWeight.w600,
+                Flexible(
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                    child: new Text(
+                      "Welcome UserName,  have a good day",
+                      style: new TextStyle(
+                        fontSize: 18.0,
+                        color: secondaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -44,35 +46,32 @@ class Orders extends StatelessWidget {
               color: Colors.grey.shade300,
             ),
             Container(
+              padding: EdgeInsets.symmetric(horizontal: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(left: 20),
-                    child: new Text(
-                      "ACCEPTED ORDERS",
-                      style: new TextStyle(
-                          color: secondaryColor,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20.0),
+                  new Text(
+                    "ACCEPTED ORDERS",
+                    style: new TextStyle(
+                      color: secondaryColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18.0,
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: new Text(
-                      dateTime.toString(),
-                      style: new TextStyle(
-                        fontSize: 20.0,
-                        color: primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  new Text(
+                    dateTime.toString(),
+                    style: new TextStyle(
+                      fontSize: 18.0,
+                      color: primaryColor,
+                      fontWeight: FontWeight.bold,
                     ),
                   )
                 ],
               ),
             ),
             SizedBox(
-              height: 30.0,
+              height: 20.0,
             ),
             orders.length == 0
                 ? Column(

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
-import 'package:foodieapp/vendors/screens/createTiffenCentre.dart';
+import 'package:geocoder/geocoder.dart';
+// import 'package:foodieapp/vendors/screens/createTiffenCentre.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
+import 'package:location/location.dart';
 
 class SearchLocality extends StatefulWidget {
   @override
@@ -13,77 +15,148 @@ class SearchLocality extends StatefulWidget {
 class SearchLocalityState extends State<SearchLocality> {
   GoogleMapController mapController;
   String searchAddr;
-  final Set<Marker> _marker = {};
+  LatLng selectedPosition = LatLng(28.38, 77.13);
+  LocationData locData;
+
+  Future<void> getDeviceLocation() async {
+    try {
+      locData = await Location().getLocation();
+      _setLocation(
+        LatLng(locData.latitude, locData.longitude),
+      );
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  void _setLocation(LatLng location) {
+    setState(() {
+      selectedPosition = location;
+      mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: selectedPosition,
+            zoom: 20.0,
+          ),
+        ),
+      );
+      print(location.toJson());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: new AppBar(
-          title: new Text("Find Address"),
-          centerTitle: true,
-        ),
-        body: new Stack(
-          children: <Widget>[
-            GoogleMap(
-              initialCameraPosition: CameraPosition(
-                  target: LatLng(28.667856, 77.449791), zoom: 15.0),
-              onMapCreated: onMapCreated,
-              myLocationButtonEnabled: true,
-              myLocationEnabled: true,
-              mapToolbarEnabled: true,
-              indoorViewEnabled: true,
-              trafficEnabled: true,
-              markers: _marker,
+      appBar: new AppBar(
+        title: new Text("Find Address"),
+        centerTitle: true,
+      ),
+      body: new Stack(
+        children: <Widget>[
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: selectedPosition,
+              zoom: 15.0,
             ),
-            Positioned(
-              top: 30.0,
-              right: 15.0,
-              left: 15.0,
-              child: Container(
-                height: 50.0,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Colors.white),
-                child: TextField(
-                  decoration: InputDecoration(
-                      hintText: 'Enter Address',
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
-                      suffixIcon: IconButton(
-                          icon: Icon(Icons.search),
-                          onPressed: searchNavigate,
-                          iconSize: 30.0)),
-                  onChanged: (val) {
-                    setState(() {
-                      searchAddr = val;
-                    });
-                  },
-                ),
+            onTap: _setLocation,
+            onMapCreated: onMapCreated,
+            myLocationButtonEnabled: false,
+            myLocationEnabled: true,
+            mapToolbarEnabled: true,
+            indoorViewEnabled: true,
+            trafficEnabled: true,
+            markers: {
+              Marker(
+                markerId: MarkerId('m1'),
+                position: selectedPosition,
               ),
-            ),
-            Positioned(
-              bottom: 30,
-              left: 30,
-              child: FloatingActionButton.extended(
-                label: Text(
-                  'SET',
-                  textScaleFactor: 1.2,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.5,
+            },
+          ),
+          Positioned(
+            top: 30.0,
+            right: 15.0,
+            left: 15.0,
+            child: Container(
+              height: 50.0,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  color: Colors.white),
+              child: TextField(
+                textInputAction: TextInputAction.search,
+                onSubmitted: (_) => searchNavigate(),
+                decoration: InputDecoration(
+                  hintText: 'Enter Address',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: searchNavigate,
+                    iconSize: 30.0,
                   ),
                 ),
-                backgroundColor: myGreen,
-                onPressed: () {
-                  if (searchAddr.isNotEmpty) {
-                    Navigator.pop(context);
-                  }
+                onChanged: (val) {
+                  setState(() {
+                    searchAddr = val;
+                  });
                 },
               ),
-            )
-          ],
-        ));
+            ),
+          ),
+          Positioned(
+            bottom: 110,
+            right: 5,
+            child: IconButton(
+              icon: Icon(
+                Icons.gps_fixed,
+                size: 30,
+                color: Colors.black87,
+              ),
+              onPressed: getDeviceLocation,
+            ),
+          ),
+          Positioned(
+            bottom: 30,
+            left: 30,
+            child: FloatingActionButton.extended(
+              label: Text(
+                'SET',
+                textScaleFactor: 1.2,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              backgroundColor: myGreen,
+              onPressed: () async {
+                List<Address> address;
+                try {
+                  address = await Geocoder.google(
+                          "AIzaSyALrsCZAZx7UIjBr30OBP4XQdSX7Hllf6o")
+                      .findAddressesFromCoordinates(
+                    Coordinates(
+                      selectedPosition.latitude,
+                      selectedPosition.longitude,
+                    ),
+                  );
+                  // searchAddr=address.toString();
+                } catch (error) {
+                  print("this error" + error.toString());
+                }
+                print(address);
+                print(searchAddr);
+                global.localityAddress = searchAddr.toString();
+                global.tiffenCentreLatitude =
+                    selectedPosition.latitude.toDouble();
+                global.tiffenCentreLongitude =
+                    selectedPosition.longitude.toDouble();
+                Navigator.pop(context);
+              },
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -93,29 +166,31 @@ class SearchLocalityState extends State<SearchLocality> {
   }
 
   void searchNavigate() {
-    Geolocator().placemarkFromAddress(searchAddr).then((value) {
-      mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target:
-              LatLng(value[0].position.latitude, value[0].position.longitude),
-          zoom: 20.0,
-        ),
-      ));
-
-      setState(() {
-        _marker.add(Marker(
-          markerId: MarkerId("my marker"),
-          position:
-              LatLng(value[0].position.latitude, value[0].position.longitude),
-          infoWindow: InfoWindow(title: "Address", snippet: searchAddr),
-          icon: BitmapDescriptor.defaultMarker,
-        ));
-        global.localityAddress = searchAddr.toString();
-        global.tiffenCentreLatitude = value[0].position.latitude.toDouble();
-        global.tiffenCentreLongitude = value[0].position.longitude.toDouble();
+    Geolocator().placemarkFromAddress(searchAddr).then(
+      (value) {
+        print(value[0].position.toJson());
+        mapController.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(
+                value[0].position.latitude,
+                value[0].position.longitude,
+              ),
+              zoom: 20.0,
+            ),
+          ),
+        );
+        setState(
+          () {
+            selectedPosition = LatLng(
+              value[0].position.latitude,
+              value[0].position.longitude,
+            );
+          },
+        );
         print(value[0].position.latitude);
         print(value[0].position.longitude);
-      });
-    });
+      },
+    );
   }
 }

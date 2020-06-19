@@ -18,7 +18,7 @@ Widget _getOptionButton({
     title: Text(
       title,
       style: TextStyle(
-        color: selected?Theme.of(context).primaryColor:Colors.black,
+        color: selected ? Theme.of(context).primaryColor : Colors.black,
         fontWeight: FontWeight.bold,
         letterSpacing: 1,
       ),
@@ -98,13 +98,17 @@ Widget _columnOfOrdersWidgets(String path, String email) {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text('SUBSCRIPTION:'),
-                        Text(
-                          '${DateFormat('MMM d, yyyy').format(docs[index].data['startDate'].toDate())}\t' +
-                              'to' +
-                              '\t${DateFormat('MMM d, yyyy').format(docs[index].data['endDate'].toDate())}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
+                        Expanded(child: Text('SUBSCRIPTION:')),
+                        Flexible(
+                          fit: FlexFit.tight,
+                          child: Text(
+                            '${DateFormat('MMM d, yyyy').format(docs[index].data['startDate'].toDate())}\t' +
+                                'to' +
+                                '\t${DateFormat('MMM d, yyyy').format(docs[index].data['endDate'].toDate())}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.end,
                           ),
                         ),
                       ],
