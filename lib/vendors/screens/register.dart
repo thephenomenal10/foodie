@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
-import 'package:foodieapp/vendors/services/databaseService.dart';
+import 'package:foodieapp/vendors/screens/login.dart';
 import 'package:foodieapp/vendors/services/firebase_service.dart';
-import 'package:foodieapp/vendors/services/local_notifications.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
-import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
-
-import 'HomePage.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -18,7 +14,6 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   FirebaseAuthentication firebaseAuthentication = new FirebaseAuthentication();
-  DatabaseService _databaseService = new DatabaseService();
 
   //bool _rememberMe = false;
 
@@ -307,7 +302,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget _buildSignupBtn() {
     return GestureDetector(
-      onTap: () => Navigator.pop(context),
+      onTap: () => Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+        ),
+      ),
       child: RichText(
         text: TextSpan(
           children: [
@@ -347,7 +346,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: global.isLoading == true
           ? Center(
               child: CircularProgressIndicator(
-                backgroundColor: Colors.white,
                 valueColor: AlwaysStoppedAnimation<Color>(
                   Theme.of(context).primaryColor,
                 ),
@@ -460,11 +458,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "Name": nameController.text,
         "Phone": '+ 91 ' + phoneController.text,
       };
-
-      await firebaseAuthentication.signUp(context, emailController,
-          passController, '+ 91 ' + phoneController.text.trim());
-      await _databaseService.addUserData(userInfo, emailController.text);
-      await LocalNotifications.storeFCMToken(emailController.text.trim());
+      try {
+        await firebaseAuthentication.signUp(
+          context,
+          emailController,
+          passController,
+          '+ 91 ' + phoneController.text.trim(),
+          userInfo,
+        );
+        setState(() {
+          global.isLoading = false;
+        });
+      } on PlatformException catch (error) {
+        print(error.message);
+        setState(() {
+          global.isLoading = false;
+        });
+        showDialog(
+          context: context,
+          child: AlertDialog(
+            title: Text('Alert'),
+            content: Text(
+              error.message,
+            ),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      } catch (error) {
+        setState(() {
+          global.isLoading = false;
+        });
+        print(error);
+      }
     }
   }
 }

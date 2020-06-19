@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:foodieapp/vendors/screens/updateTiffenInfo.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
+// import 'package:foodieapp/vendors/screens/updateTiffenInfo.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
 
 class DatabaseService {
   Firestore firestore = Firestore.instance;
 
-  Future<void> updateUserData(userData, userEmail) {
-    firestore
+  Future<void> updateUserData(userData, userEmail) async {
+    await firestore
         .collection("vendor_collection")
         .document("vendors")
         .collection("registered_vendors")
@@ -18,8 +18,8 @@ class DatabaseService {
     });
   }
 
-  Future<void> addUserData(userData, userEmail) {
-    firestore
+  Future<void> addUserData(userData, userEmail) async{
+    await firestore
         .collection("vendor_collection")
         .document("vendors")
         .collection("registered_vendors")
@@ -30,8 +30,8 @@ class DatabaseService {
     });
   }
 
-  Future<void> createTiffen(tiffenData, userEmail) {
-    firestore
+  Future<void> createTiffen(tiffenData, userEmail) async{
+    await firestore
         .collection("tiffen_service_details")
         .document(userEmail)
         .setData(tiffenData)

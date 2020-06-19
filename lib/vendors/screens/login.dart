@@ -199,7 +199,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildSignupBtn() {
     return GestureDetector(
-      onTap: () => Navigator.push(
+      onTap: () => Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => RegisterScreen(),
@@ -292,7 +292,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 boxShadow: [
                                   BoxShadow(
                                       color: Colors.black.withOpacity(.3),
-                                      //offset: Offset(0.0, 8.0),
                                       blurRadius: 8.0)
                                 ]),
                           ),
