@@ -445,7 +445,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   signMeUp() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-
       setState(() {
         global.isLoading = true;
       });
@@ -498,7 +497,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         setState(() {
           global.isLoading = false;
         });
-        print(error);
+        print(error + " runs");
       }
     }
   }
