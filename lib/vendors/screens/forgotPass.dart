@@ -24,7 +24,7 @@ class _ForgotPassState extends State<ForgotPass> {
           Form(
             key: _formKey,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.3,
+              height: MediaQuery.of(context).size.height * 0.4,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
               decoration: BoxDecoration(
                 color: Colors.white,

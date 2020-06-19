@@ -69,16 +69,29 @@ class FirebaseAuthentication {
     phoneControlloer,
     Map<String, String> userInfo,
   ) async {
-    AuthResult result;
+    // AuthResult result;
     try {
-      TextEditingController _codeController = new TextEditingController();
+      // TextEditingController _codeController = new TextEditingController();
       int resendingCode;
       await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: phoneControlloer.trim(),
         timeout: Duration(seconds: 60),
         verificationCompleted: null,
         verificationFailed: (AuthException exception) {
-          print(exception.toString() + "auth exception");
+          print(exception.message.toString() + "auth exception");
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Alert'),
+              content: Text('Something went wrong, try using other number'),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('ok'),
+                ),
+              ],
+            ),
+          );
         },
         codeSent: (String verificationId, [int forceResendingToken]) async {
           resendingCode = forceResendingToken;
@@ -86,76 +99,84 @@ class FirebaseAuthentication {
             context: context,
             barrierDismissible: false,
             builder: (context) {
-              return AlertDialog(
-                title: Text("Enter the 6-digit code "),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    TextField(
-                      controller: _codeController,
-                    ),
-                  ],
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Confirm"),
-                    textColor: Colors.white,
-                    color: myGreen,
-                    onPressed: () async {
-                      AuthCredential credential;
-                      print("check one");
-                      final code = _codeController.text.trim();
-                      credential = PhoneAuthProvider.getCredential(
-                          verificationId: verificationId, smsCode: code);
-                      print("check two");
-                      AuthResult authResult;
-                      try {
-                        authResult = await FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                                email: emailController.text,
-                                password: passwordController.text);
-                        print('check three');
-                        result = await authResult.user.linkWithCredential(credential);
-                        print('chech four');
-                        await result.user.sendEmailVerification();
-                        print('chech five');
-                        await _databaseService.addUserData(
-                            userInfo, emailController.text);
-                        print('chech six');
-                        await LocalNotifications.storeFCMToken(
-                            emailController.text.trim());
-                        print('chech seven');
-                        user = result.user;
-                      } on PlatformException catch (error) {
-                        await authResult.user.delete();
-                        Navigator.of(context).pop();
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            content: Text(error.message),
-                            actions: <Widget>[
-                              FlatButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('ok'),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                      if (user != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CreateTiffenCentre(),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ],
+              return ShowDialog(
+                context: context,
+                email: emailController.text,
+                password: passwordController.text,
+                info: userInfo,
+                verificationId: verificationId,
               );
+              // return AlertDialog(
+              //   title: Text("Enter the 6-digit code "),
+              //   content: Column(
+              //     mainAxisSize: MainAxisSize.min,
+              //     children: <Widget>[
+              //       TextField(
+              //         controller: _codeController,
+              //       ),
+              //     ],
+              //   ),
+              //   actions: <Widget>[
+              //     FlatButton(
+              //       child: Text("Confirm"),
+              //       textColor: Colors.white,
+              //       color: myGreen,
+              //       onPressed: () async {
+              //         AuthCredential credential;
+              //         print("check one");
+              //         final code = _codeController.text.trim();
+              //         credential = PhoneAuthProvider.getCredential(
+              //             verificationId: verificationId, smsCode: code);
+              //         print("check two");
+              //         AuthResult authResult;
+              //         try {
+              //           authResult = await FirebaseAuth.instance
+              //               .createUserWithEmailAndPassword(
+              //                   email: emailController.text,
+              //                   password: passwordController.text);
+              //           print('check three');
+              //           result = await authResult.user
+              //               .linkWithCredential(credential);
+              //           user = result.user;
+              //           if (user != null) {
+              //             Navigator.pushReplacement(
+              //               context,
+              //               MaterialPageRoute(
+              //                 builder: (context) => CreateTiffenCentre(),
+              //               ),
+              //             );
+              //           }
+              //           print('chech four');
+              //           await result.user.sendEmailVerification();
+              //           print('chech five');
+              //           await _databaseService.addUserData(
+              //               userInfo, emailController.text);
+              //           print('chech six');
+              //           await LocalNotifications.storeFCMToken(
+              //               emailController.text.trim());
+              //           print('chech seven');
+              //         } on PlatformException catch (error) {
+              //           await authResult.user.delete();
+              //           Navigator.of(context).pop();
+              //           showDialog(
+              //             context: context,
+              //             builder: (context) => AlertDialog(
+              //               content: Text(error.message),
+              //               actions: <Widget>[
+              //                 FlatButton(
+              //                   onPressed: () {
+              //                     Navigator.of(context).pop();
+              //                   },
+              //                   child: Text('ok'),
+              //                 ),
+              //               ],
+              //             ),
+              //           );
+              //         }
+              //       },
+              //     ),
+              //   ],
+              // );
             },
           );
         },
@@ -195,59 +216,170 @@ class FirebaseAuthentication {
     user = await FirebaseAuth.instance.currentUser();
 
     await _auth.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
-        timeout: Duration(seconds: 60),
-        verificationCompleted: null,
-        verificationFailed: (AuthException exception) {
-          print(exception);
-        },
-        codeSent: (String verificationId, [int forceResendingToken]) {
-          showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text("Enter the 6-digit code "),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      TextField(
-                        controller: _codeController,
-                      ),
-                    ],
+      phoneNumber: phoneNumber,
+      timeout: Duration(seconds: 60),
+      verificationCompleted: null,
+      verificationFailed: (AuthException exception) {
+        print(exception);
+      },
+      codeSent: (String verificationId, [int forceResendingToken]) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Enter the 6-digit code "),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextField(
+                    controller: _codeController,
                   ),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text("Confirm"),
-                      textColor: Colors.white,
-                      color: myGreen,
-                      onPressed: () async {
-                        final code = _codeController.text.trim();
-                        AuthCredential credential =
-                            PhoneAuthProvider.getCredential(
-                                verificationId: verificationId, smsCode: code);
-                        user
-                            .updatePhoneNumberCredential(credential)
-                            .then((authResult) {
-                          if (user != null) {
-                            Navigator.pop(context);
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        BottomNavigationScreen()));
-                          } else {
-                            print("Error");
-                          }
-                        }).catchError((e) {
-                          print(e.message);
-                        });
-                      },
-                    )
-                  ],
-                );
-              });
-        },
-        codeAutoRetrievalTimeout: null);
+                ],
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Confirm"),
+                  textColor: Colors.white,
+                  color: myGreen,
+                  onPressed: () async {
+                    final code = _codeController.text.trim();
+                    AuthCredential credential = PhoneAuthProvider.getCredential(
+                        verificationId: verificationId, smsCode: code);
+                    user
+                        .updatePhoneNumberCredential(credential)
+                        .then((authResult) {
+                      if (user != null) {
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BottomNavigationScreen(),
+                          ),
+                        );
+                      } else {
+                        print("Error");
+                      }
+                    }).catchError((e) {
+                      print(e.message);
+                    });
+                  },
+                )
+              ],
+            );
+          },
+        );
+      },
+      codeAutoRetrievalTimeout: null,
+    );
+  }
+}
+
+class ShowDialog extends StatefulWidget {
+  final context;
+  final email;
+  final password;
+  final verificationId;
+  final Map<String, String> info;
+  ShowDialog(
+      {this.context,
+      this.email,
+      this.password,
+      this.verificationId,
+      this.info});
+  @override
+  _ShowDialogState createState() => _ShowDialogState();
+}
+
+class _ShowDialogState extends State<ShowDialog> {
+  bool _isLoading = false;
+  final _codeController = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return _isLoading
+        ? AlertDialog(
+            title: Text('Please wait...'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                CircularProgressIndicator(),
+              ],
+            ),
+          )
+        : AlertDialog(
+            title: Text("Enter the 6-digit code "),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextField(
+                  controller: _codeController,
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Confirm"),
+                textColor: Colors.white,
+                color: myGreen,
+                onPressed: () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  AuthCredential credential;
+                  print("check one");
+                  final code = _codeController.text.trim();
+                  credential = PhoneAuthProvider.getCredential(
+                      verificationId: widget.verificationId, smsCode: code);
+                  print("check two");
+                  AuthResult authResult;
+                  try {
+                    authResult = await FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(
+                            email: widget.email, password: widget.password);
+                    print('check three');
+                    AuthResult result =
+                        await authResult.user.linkWithCredential(credential);
+                    user = result.user;
+                    print('chech four');
+                    await result.user.sendEmailVerification();
+                    print('chech five');
+                    await _databaseService.addUserData(
+                        widget.info, widget.email);
+                    print('chech six');
+                    await LocalNotifications.storeFCMToken(widget.email);
+                    print('chech seven');
+                  } on PlatformException catch (error) {
+                    await authResult.user.delete();
+                    Navigator.of(context).pop();
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        content: Text(error.message),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('ok'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  if (user != null) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CreateTiffenCentre(),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          );
   }
 }
