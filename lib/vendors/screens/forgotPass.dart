@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
-import 'package:foodieapp/vendors/utils/primaryColor.dart';
-import 'package:foodieapp/vendors/validation/validate.dart';
-import 'package:foodieapp/vendors/widgets/dialogBox.dart';
-
-
-
+import 'package:foodieapp/vendors/screens/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPass extends StatefulWidget {
   @override
@@ -13,53 +9,145 @@ class ForgotPass extends StatefulWidget {
 }
 
 class _ForgotPassState extends State<ForgotPass> {
+  TextEditingController emailController = new TextEditingController();
 
-    TextEditingController _emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body:  ListView(
-          children: <Widget>[
-            Center(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                      alignment: Alignment.centerLeft,
-                      decoration: kBoxDecorationStyle,
-                      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height/4, bottom: 5),
-                      height: 60,
-                      width: 330,
+      backgroundColor: Colors.white24,
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: SizedBox(),
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height * 0.3,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+            ),
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 10.0),
+                Row(
+                  children: <Widget>[
+                    Flexible(
+                      flex: 2,
                       child: TextFormField(
-                          controller: _emailController,
-                          validator: validateEmail,
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(15.0),
-                              hintText: 'Enter your email',
-                              hintStyle: kHintTextStyle,
-                          ),
-                      ),
-                  ),
-                    SizedBox(height: 30.0,),
-                    RaisedButton(
-                        elevation: 10,
-                        onPressed: () {
-                            DialogBox().information(
-                                context, "Success", "Your have registered successfully");
-                        },
-                        child: Padding(
-                            padding: const EdgeInsets.only(left: 80.0,right: 80.0,top: 10.0,bottom: 10.0),
-                            child: Text('Submit',style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.white),),
-                        ),
-                        color: primaryColor,
-                    ),
-                ],
-              ),
+                          controller: emailController,
+                          validator: (value) {
+                            Pattern pattern =
+                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
 
+                            RegExp regex = new RegExp(pattern);
+                            if (!regex.hasMatch(value)) {
+                              return 'Please enter a valid email id';
+                            }
+                            return null;
+                          },
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 12),
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            fillColor: Color(0xFF00B712),
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            prefixIcon: Padding(
+                              padding: EdgeInsets.all(0.0),
+                              child: Icon(
+                                Icons.email,
+                                color: Colors.white,
+                              ),
+                            ),
+                            hintText: 'Enter your email',
+                            hintStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                InkWell(
+                  child: Container(
+                    width: 150,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(6.0),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Color(0xFF6078ea).withOpacity(.3),
+                              offset: Offset(0.0, 8.0),
+                              blurRadius: 8.0)
+                        ]),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () async {
+                          await resetPassword(emailController.text);
+                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text('Alert'),
+                              content: Text(
+                                  'A password reset mail is sent to your Mail-Id'),
+                              actions: <Widget>[
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Login'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: Center(
+                          child: Text("Reset",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  letterSpacing: 1.0)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-          ],
-        ),
     );
+  }
+
+  Future resetPassword(String email) async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    try {
+      return await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print(e.message);
+    }
+  }
+}
+
+String validateEmail(String value) {
+  Pattern pattern =
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  RegExp regex = new RegExp(pattern);
+  if (!regex.hasMatch(value)) {
+    return 'Enter Valid Email';
+  } else {
+    return null;
   }
 }

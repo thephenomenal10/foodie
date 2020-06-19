@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
+import 'package:foodieapp/vendors/screens/forgotPass.dart';
 import 'package:foodieapp/vendors/screens/register.dart';
 import 'package:foodieapp/vendors/services/firebase_service.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
@@ -36,7 +37,16 @@ class _LoginScreenState extends State<LoginScreen> {
               flex: 2,
               child: TextFormField(
                   controller: emailController,
-                  validator: validateEmail,
+                  validator: (value) {
+                    Pattern pattern =
+                        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
+                    RegExp regex = new RegExp(pattern);
+                    if (!regex.hasMatch(value)) {
+                      return 'Please enter a valid email id';
+                    }
+                    return null;
+                  },
                   textAlign: TextAlign.left,
                   style: TextStyle(fontSize: 12),
                   keyboardType: TextInputType.emailAddress,
@@ -117,7 +127,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       alignment: Alignment.centerRight,
       child: FlatButton(
-        onPressed: () => print('Forgot Password Button Pressed'),
+        onPressed: () => Navigator.of(context).push(
+          PageRouteBuilder(
+            pageBuilder: (context, _, __) => ForgotPass(),
+            opaque: false,
+          ),
+        ),
         child: Text(
           'Forgot Password?',
           textScaleFactor: 0.7,
