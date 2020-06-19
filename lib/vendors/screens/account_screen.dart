@@ -240,9 +240,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             radius: 70,
                             backgroundColor: Colors.white,
                             backgroundImage: imageFile == null
-                                ? NetworkImage(
-                                    'https://www.shareicon.net/data/512x512/2016/07/26/802043_man_512x512.png',
-                                  )
+                                ? AssetImage("assets/avatar.png")
                                 : MemoryImage(imageFile),
                           ),
                         ),

@@ -74,6 +74,10 @@ flutter:
     - assets/Google-Pay.png
     - assets/paytm.png
     - assets/phone-pe.png
+    - assets/empty_sub.png
+    - assets/food1.png
+    - assets/popup_payment.png
+    - assets/avatar.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

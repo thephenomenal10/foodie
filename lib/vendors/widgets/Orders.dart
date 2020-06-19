@@ -74,102 +74,131 @@ class Orders extends StatelessWidget {
             SizedBox(
               height: 30.0,
             ),
-            Container(
-              child: ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: orders.length,
-                itemBuilder: (context, index) {
-                  return FutureBuilder(
-                    future: Firestore.instance
-                        .collection('customer_collection')
-                        .document(orders[index]['customerId'])
-                        .get(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container();
-                      }
-                      return Container(
-                        child: Card(
-                          elevation: 6.0,
-                          child: new Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10.0,
-                              vertical: 10.0,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Image(
-                                  image: snapshot.data['image'] != null
-                                      ? NetworkImage(snapshot.data['image'])
-                                      : AssetImage("assets/my1.png"),
-                                  height: 85.0,
-                                  width: 65.0,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      "ORDER No: #${index + 1}",
-                                      style: new TextStyle(
-                                          color: secondaryColor, fontSize: 15),
-                                    ),
-                                    Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 5.0),
-                                      child: new Text(
-                                        orders[index]['customerName'],
-                                        style: new TextStyle(
-                                            color: secondaryColor,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18.0),
-                                      ),
-                                    ),
-                                    Container(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 5.0),
-                                      child: new Text(
-                                        orders[index]['customerAddress'],
-                                        style: new TextStyle(
-                                          color: secondaryColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 18.0,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Container(
-                                  child: RaisedButton(
-                                    color: primaryColor,
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => OrderInfo(
-                                            index,
-                                            orders[index],
-                                            snapshot.data['phone'],
-                                            true,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Text("Order Info"),
-                                  ),
-                                ),
-                              ],
-                            ),
+            orders.length == 0
+                ? Column(
+                    children: <Widget>[
+                      SizedBox(
+                        child: Image.asset(
+                          "assets/empty_sub.png",
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      Container(
+                        height: 30,
+                        alignment: Alignment.center,
+                        child: Text(
+                          'No Orders!',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1,
                           ),
                         ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
+                      ),
+                    ],
+                  )
+                : Container(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: orders.length,
+                      itemBuilder: (context, index) {
+                        return FutureBuilder(
+                          future: Firestore.instance
+                              .collection('customer_collection')
+                              .document(orders[index]['customerId'])
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Container();
+                            }
+                            return Container(
+                              child: Card(
+                                elevation: 6.0,
+                                child: new Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 10.0,
+                                    vertical: 10.0,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Image(
+                                        image: snapshot.data['image'] != null
+                                            ? NetworkImage(
+                                                snapshot.data['image'])
+                                            : AssetImage("assets/my1.png"),
+                                        height: 85.0,
+                                        width: 65.0,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            "ORDER No: #${index + 1}",
+                                            style: new TextStyle(
+                                                color: secondaryColor,
+                                                fontSize: 15),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 5.0),
+                                            child: new Text(
+                                              orders[index]['customerName'],
+                                              style: new TextStyle(
+                                                  color: secondaryColor,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 18.0),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 5.0),
+                                            child: new Text(
+                                              orders[index]['customerAddress'],
+                                              style: new TextStyle(
+                                                color: secondaryColor,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 18.0,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      Container(
+                                        child: RaisedButton(
+                                          color: primaryColor,
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => OrderInfo(
+                                                  index,
+                                                  orders[index],
+                                                  snapshot.data['phone'],
+                                                  true,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Text("Order Info"),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
             SizedBox(
               height: 20.0,
             )

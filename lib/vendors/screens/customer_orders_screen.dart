@@ -10,6 +10,7 @@ class CustomerOrdersScreen extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         child: MyAppBar(),
         preferredSize: Size.fromHeight(60.0),
@@ -28,6 +29,30 @@ class CustomerOrdersScreen extends StatelessWidget {
             );
           }
           final customers = snapshot.data;
+          if (customers.length == 0) {
+            return Column(
+              children: <Widget>[
+                SizedBox(
+                  child: Image.asset(
+                    "assets/empty_sub.png",
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                Container(
+                  height: 30,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'No Customers!',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
           return ListView.builder(
             padding: EdgeInsets.symmetric(
               vertical: 5,

@@ -29,6 +29,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: new AppBar(
         automaticallyImplyLeading: false,
         title: new Image(

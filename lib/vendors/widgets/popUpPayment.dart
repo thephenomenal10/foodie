@@ -34,10 +34,10 @@ class PopUpPayment extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // Image.asset(
-                //   "assets/popup_payment.png",
-                //   width: width * 0.5,
-                // ),
+                Image.asset(
+                  "assets/popup_payment.png",
+                  width: width * 0.5,
+                ),
                 SizedBox(
                   height: height * 0.035,
                 ),

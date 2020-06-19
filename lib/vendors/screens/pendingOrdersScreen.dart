@@ -12,6 +12,7 @@ class PendingOrders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         child: MyAppBar(),
         preferredSize: Size.fromHeight(60.0),
@@ -37,7 +38,10 @@ class PendingOrders extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                        vertical: 10,
+                      ),
                       child: new Text(
                         "Pending Orders",
                         style: new TextStyle(
@@ -51,7 +55,7 @@ class PendingOrders extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 30.0,
+                height: 10.0,
               ),
               Container(
                 child: new StreamBuilder(
@@ -73,6 +77,30 @@ class PendingOrders extends StatelessWidget {
                       );
                     }
                     final docs = streamSnapshot.data.documents;
+                    if (docs.length == 0) {
+                      return Column(
+                        children: <Widget>[
+                          SizedBox(
+                            child: Image.asset(
+                              "assets/empty_sub.png",
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          Container(
+                            height: 30,
+                            alignment: Alignment.center,
+                            child: Text(
+                              'No Pending Orders!',
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
                     return ListView.builder(
                       shrinkWrap: true,
                       itemBuilder: (context, index) => FutureBuilder(

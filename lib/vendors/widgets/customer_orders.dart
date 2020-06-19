@@ -18,6 +18,7 @@ Widget _getOptionButton({
     title: Text(
       title,
       style: TextStyle(
+        color: selected?Theme.of(context).primaryColor:Colors.black,
         fontWeight: FontWeight.bold,
         letterSpacing: 1,
       ),
@@ -42,12 +43,16 @@ Widget _columnOfOrdersWidgets(String path, String email) {
         return Container();
       }
       final List<DocumentSnapshot> docs = snapshot.data.documents;
-      return ListView.builder(
-        shrinkWrap: true,
-        itemCount: docs.length,
-        itemBuilder: (context, index) {
-          if (docs.length == 0) {
-            return Container(
+      if (docs.length == 0) {
+        return Column(
+          children: <Widget>[
+            SizedBox(
+              child: Image.asset(
+                "assets/empty_sub.png",
+                fit: BoxFit.contain,
+              ),
+            ),
+            Container(
               height: 30,
               alignment: Alignment.center,
               child: Text(
@@ -58,8 +63,14 @@ Widget _columnOfOrdersWidgets(String path, String email) {
                   letterSpacing: 1,
                 ),
               ),
-            );
-          }
+            ),
+          ],
+        );
+      }
+      return ListView.builder(
+        shrinkWrap: true,
+        itemCount: docs.length,
+        itemBuilder: (context, index) {
           if (docs[index].data['vendorEmail'] == email) {
             final double totalMeals =
                 docs[index].data['totalCost'] / docs[index].data['mealCost'];
