@@ -46,6 +46,20 @@ Widget _columnOfOrdersWidgets(String path, String email) {
         shrinkWrap: true,
         itemCount: docs.length,
         itemBuilder: (context, index) {
+          if (docs.length == 0) {
+            return Container(
+              height: 30,
+              alignment: Alignment.center,
+              child: Text(
+                'No Orders!',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1,
+                ),
+              ),
+            );
+          }
           if (docs[index].data['vendorEmail'] == email) {
             final double totalMeals =
                 docs[index].data['totalCost'] / docs[index].data['mealCost'];
@@ -147,7 +161,6 @@ class CustomerOrders extends StatefulWidget {
 }
 
 class _CustomerOrdersState extends State<CustomerOrders> {
-
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
