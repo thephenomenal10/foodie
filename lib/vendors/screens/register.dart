@@ -349,6 +349,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 valueColor: AlwaysStoppedAnimation<Color>(
                   Theme.of(context).primaryColor,
                 ),
+                backgroundColor: Colors.transparent,
               ),
             )
           : SafeArea(
@@ -463,6 +464,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           emailController,
           passController,
           '+ 91 ' + phoneController.text.trim(),
+          nameController.text,
           userInfo,
         );
         setState(() {

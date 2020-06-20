@@ -131,19 +131,16 @@ class SearchLocalityState extends State<SearchLocality> {
               onPressed: () async {
                 List<Address> address;
                 try {
-                  address = await Geocoder.google(
-                          "AIzaSyALrsCZAZx7UIjBr30OBP4XQdSX7Hllf6o")
-                      .findAddressesFromCoordinates(
+                  address = await Geocoder.local.findAddressesFromCoordinates(
                     Coordinates(
                       selectedPosition.latitude,
                       selectedPosition.longitude,
                     ),
                   );
-                  // searchAddr=address.toString();
+                  searchAddr = address.first.addressLine;
                 } catch (error) {
                   print("this error" + error.toString());
                 }
-                print(address);
                 print(searchAddr);
                 global.localityAddress = searchAddr.toString();
                 global.tiffenCentreLatitude =

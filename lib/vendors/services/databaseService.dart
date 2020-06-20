@@ -40,8 +40,8 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateTiffenInfo(tiffenData, userEmail) {
-    firestore
+  Future<void> updateTiffenInfo(tiffenData, userEmail) async{
+    await firestore
         .collection("tiffen_service_details")
         .document(userEmail)
         .updateData(tiffenData)

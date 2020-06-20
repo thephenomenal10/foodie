@@ -677,10 +677,12 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                   RaisedButton(
                                     onPressed: () {
                                       Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SearchLocality()));
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              SearchLocality(),
+                                        ),
+                                      );
                                     },
                                     child: Text(
                                       'Tiffin Center Address',
@@ -1545,47 +1547,71 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
         foodCategoryResult =
             foodCategory.length == 2 ? 'Both' : foodCategory[0].toString();
       });
-      print(foodCategoryResult);
-      Map<String, dynamic> tiffenInfo = {
-        "Tiffen Name": tiffinController.text,
-        "Email": email,
-        "OwnerName": ownerNameController.text,
-        "Address": addressController.text,
-        "Phone": phoneController.text,
-        "City": cityController.text,
-        "CostPerMeal": double.parse(costController.text),
-        "Food Category": foodCategoryResult,
-        "Service Days": days,
-        "FSSAI License": license,
-        "FSSAI License Number": licenseController.text,
-        "Payment Mode": payment,
-        "UPI ID": upiController.text,
-        // "Bank Account No.": bankAccountController.text,
-        "IFSC code": ifscController.text,
-        "Paytm Number": paytmController.text,
-        "refundPolicy": sub,
-        "BreakFast Time": "$breakFastTimefrom" + "-" "$breakFastTimeto",
-        "Lunch Time": "$lunchTimefrom" + "-" "$lunchTimeto",
-        "Dinner Time": "$dinnerTimefrom" + "-" "$dinnerTimeto",
-        "Meal Description": global.mealDescription,
-        "Meal Cost": global.cost,
-        "Locality": [global.tiffenCentreLatitude, global.tiffenCentreLongitude],
-        "Tiffen Service Address": global.localityAddress,
-      };
-      _databaseService.updateTiffenInfo(tiffenInfo, email);
-      await uploadCoverImages().whenComplete(() async {
-        await uploadMenuImages().whenComplete(() async {
-          await uploadLogoImage();
+
+      if (global.mealDescription.length == 0 || global.cost.length == 0) {
+        setState(() {
+          global.isLoading = false;
         });
-      });
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BottomNavigationScreen(
-            index: 3,
+        DialogBox().information(
+            context, 'Alert', 'Meal Description or Cost is not provided');
+      } else if (logoImage.length != 0 ||
+          coverImages.length != 4 ||
+          menuImages.length < 4) {
+        setState(() {
+          global.isLoading = false;
+        });
+        DialogBox().information(context, 'Alert - Images missing',
+            'Provide atleast 1 Logo image, 4 Cover Images, 4 Menu images');
+      } else {
+        if (license == "No") {
+          licenseController.clear();
+        }
+
+        print(foodCategoryResult);
+        Map<String, dynamic> tiffenInfo = {
+          "Tiffen Name": tiffinController.text,
+          "Email": email,
+          "OwnerName": ownerNameController.text,
+          "Address": addressController.text,
+          "Phone": phoneController.text,
+          "City": cityController.text,
+          "CostPerMeal": double.parse(costController.text),
+          "Food Category": foodCategoryResult,
+          "Service Days": days,
+          "FSSAI License": license,
+          "FSSAI License Number": licenseController.text,
+          "Payment Mode": payment,
+          "UPI ID": upiController.text,
+          // "Bank Account No.": bankAccountController.text,
+          "IFSC code": ifscController.text,
+          "Paytm Number": paytmController.text,
+          "refundPolicy": sub,
+          "BreakFast Time": "$breakFastTimefrom" + "-" "$breakFastTimeto",
+          "Lunch Time": "$lunchTimefrom" + "-" "$lunchTimeto",
+          "Dinner Time": "$dinnerTimefrom" + "-" "$dinnerTimeto",
+          "Meal Description": global.mealDescription,
+          "Meal Cost": global.cost,
+          "Locality": [
+            global.tiffenCentreLatitude,
+            global.tiffenCentreLongitude
+          ],
+          "Tiffen Service Address": global.localityAddress,
+        };
+        _databaseService.updateTiffenInfo(tiffenInfo, email);
+        await uploadCoverImages().whenComplete(() async {
+          await uploadMenuImages().whenComplete(() async {
+            await uploadLogoImage();
+          });
+        });
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BottomNavigationScreen(
+              index: 3,
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 }

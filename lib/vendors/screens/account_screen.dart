@@ -49,9 +49,9 @@ class _AccountScreenState extends State<AccountScreen> {
 
     setState(() async {
       _image = image;
-      saveImageToFirebase(user.email);
+      saveImageToFirebase(email);//
       try {
-        await fetchImageFromFirebase(user.email);
+        await fetchImageFromFirebase(email);//
       } catch (error) {}
       Navigator.push(
         context,

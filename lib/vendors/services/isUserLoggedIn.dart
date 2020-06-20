@@ -13,21 +13,16 @@ class IsUserLoggedIn extends StatefulWidget {
 class _IsUserLoggedInState extends State<IsUserLoggedIn> {
   FirebaseUser user;
   Map<String, dynamic> centerData;
-  Map<String, dynamic> vendorData;
   String proofOfPayment;
   DateTime currentDate;
   DateTime endDate;
   bool exists = true;
 
   Future<void> getVendorData() async {
+    currentDate = DateTime.now();
     user = await FirebaseAuth.instance.currentUser();
     centerData = (await Firestore.instance
             .collection('tiffen_service_details')
-            .document(user.email)
-            .get())
-        .data;
-    vendorData = (await Firestore.instance
-            .collection("vendor_collection/vendors/registered_vendors")
             .document(user.email)
             .get())
         .data;
@@ -35,29 +30,29 @@ class _IsUserLoggedInState extends State<IsUserLoggedIn> {
       endDate = DateTime.parse(centerData['SubscriptionEndDate']);
       proofOfPayment = centerData['Proof of Payment Photos'];
     }
-    if (user.phoneNumber == null || endDate == null || proofOfPayment == null) {
-      try {
-        await Firestore.instance
-            .collection('tiffen_service_details')
-            .document(user.email)
-            .delete();
-      } catch (error) {
-        print(error);
-      }
-      try {
-        await Firestore.instance
-            .collection('vendor_collection/vendors/registered_vendors')
-            .document(user.email)
-            .delete();
-      } catch (error) {
-        print(error);
-      }
-      try {
-        await user.delete();
-      } catch (error) {
-        print(error);
-      }
-    }
+    // if (user.phoneNumber == null) {
+    //   try {
+    //     await Firestore.instance
+    //         .collection('tiffen_service_details')
+    //         .document(user.email)
+    //         .delete();
+    //   } catch (error) {
+    //     print(error);
+    //   }
+    //   try {
+    //     await Firestore.instance
+    //         .collection('vendor_collection/vendors/registered_vendors')
+    //         .document(user.email)
+    //         .delete();
+    //   } catch (error) {
+    //     print(error);
+    //   }
+    //   try {
+    //     await user.delete();
+    //   } catch (error) {
+    //     print(error);
+    //   }
+    // }
     print('got data');
   }
 
@@ -75,27 +70,29 @@ class _IsUserLoggedInState extends State<IsUserLoggedIn> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
+            backgroundColor: Theme.of(context).primaryColor,
             body: Center(
               child: CircularProgressIndicator(
-                backgroundColor: Colors.white,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).primaryColor,
+                  Colors.white,
                 ),
               ),
             ),
           );
         }
         if (firebaseAuth.currentUser() != null && user != null) {
-          if (user.phoneNumber == null ||
-              endDate == null ||
-              proofOfPayment == null) {
+          if (centerData == null) {
             print('no data but exists');
             return LoginScreen();
-          }
-          if (endDate.difference(currentDate).isNegative) {
+          } else if (endDate.difference(currentDate).isNegative) {
             print('subscription over');
             return PaymentScreen(
               isRenewal: true,
+            );
+          } else if (proofOfPayment == null) {
+            print('not subscribed');
+            return PaymentScreen(
+              vendorEmail: user.email,
             );
           }
           print('user exists');

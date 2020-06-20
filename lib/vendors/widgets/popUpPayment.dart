@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class PopUpPayment extends StatelessWidget {
   final isRenewal;
-  PopUpPayment({this.isRenewal=false});
+  PopUpPayment({this.isRenewal = false});
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -72,9 +72,10 @@ class PopUpPayment extends StatelessWidget {
                     ),
                     backgroundColor: myGreen,
                     onPressed: () {
-                      if (!isRenewal) {
-                        Navigator.of(context).pop();
-                      }
+                      // if (!isRenewal) {
+                      //   Navigator.of(context).pop();
+                      // }
+                      // Navigator.of(context).pop();
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

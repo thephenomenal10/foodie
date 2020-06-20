@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 import 'package:foodieapp/vendors/constants/constants.dart';
+import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 import 'package:foodieapp/vendors/widgets/popUpPayment.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -99,7 +100,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             .updateData({'Proof of Payment Photos': proofImageUrl});
       }
     } catch (e) {
-      print(e.message);
+      print(e.toString());
     }
   }
 
@@ -435,6 +436,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        if (widget.isRenewal)
+                          Container(
+                            child: Text(
+                              'Subscription ended!\nPlease subscribe again.',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
                         textPlusUnderline(
                           'Subscription Details',
                           height,
@@ -517,11 +529,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       await uploadProofImages();
                       print(widget.isRenewal);
                       Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PopUpPayment(
-                                    isRenewal: widget.isRenewal,
-                                  )));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PopUpPayment(
+                            isRenewal: widget.isRenewal,
+                          ),
+                        ),
+                      );
                     },
                     child: Container(
                       height: height * 0.067,

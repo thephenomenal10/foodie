@@ -12,6 +12,8 @@ import 'package:foodieapp/vendors/services/local_notifications.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 import 'package:foodieapp/vendors/screens/createTiffenCentre.dart';
 import 'package:foodieapp/vendors/bottomNavigationBar.dart';
+import 'package:foodieapp/vendors/screens/subPaymentScreen.dart';
+import 'package:foodieapp/vendors/widgets/globalVariable.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
@@ -21,27 +23,50 @@ DatabaseService _databaseService = new DatabaseService();
 class FirebaseAuthentication {
   Future<void> signIn(context, emailController, passwordController) async {
     try {
-      final id = Firestore.instance
-          .collection('vendor_collection/vendors/registered_vendors')
-          .document(emailController.text)
-          .documentID;
-      if (id == emailController.text) {
-        AuthResult result = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
-                email: emailController.text, password: passwordController.text)
-            .catchError((e) {
-          print(e);
-        });
-        print(result.user);
+      AuthResult result = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text);
+      print(result.user.toString() +
+          "  check one" +
+          " ${result.user.isEmailVerified}");
+      if (auth.currentUser() != null && result.user.isEmailVerified) {
+        await LocalNotifications.storeFCMToken(result.user.email);
+        final docSnap = await Firestore.instance
+            .collection('tiffen_service_details')
+            .document(result.user.email)
+            .get();
+        if (docSnap.data == null) {
+          await Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => CreateTiffenCentre(),
+            ),
+          );
+          await DialogBox()
+              .information(context, "Alert", "Create your tiffin center!");
+        } else if (docSnap.data['Proof of Payment'] == null) {
+          await Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => PaymentScreen(
+                vendorEmail: result.user.email,
+              ),
+            ),
+          );
+          DialogBox().information(
+              context, "Alert", "Subscription pending!\nSubscribe to us.");
+        } else {
+          await Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BottomNavigationScreen(),
+            ),
+          );
+          DialogBox()
+              .information(context, "Success", "Your have Login successfully");
+        }
       }
-      if (auth.currentUser() != null) {
-        await LocalNotifications.storeFCMToken(emailController.text.trim());
-        await Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => BottomNavigationScreen()));
-        DialogBox()
-            .information(context, "Success", "Your have Login successfully");
-      }
+      DialogBox().information(context, "Alert", "Please verify your account!");
     } catch (e) {
+      print(e.toString());
       showDialog(
         context: context,
         child: AlertDialog(
@@ -73,6 +98,7 @@ class FirebaseAuthentication {
     emailController,
     passwordController,
     phoneControlloer,
+    userName,
     Map<String, String> userInfo,
   ) async {
     // AuthResult result;
@@ -353,8 +379,8 @@ class _ShowDialogState extends State<ShowDialog> {
                     await _databaseService.addUserData(
                         widget.info, widget.email);
                     print('chech six');
-                    await LocalNotifications.storeFCMToken(widget.email);
-                    print('chech seven');
+                    // await LocalNotifications.storeFCMToken(widget.email);
+                    // print('chech seven');
                   } on PlatformException catch (error) {
                     if (authResult != null) {
                       await authResult.user.delete();
@@ -374,15 +400,49 @@ class _ShowDialogState extends State<ShowDialog> {
                         ],
                       ),
                     );
-                  } catch (error) {}
+                  } catch (error) {
+                    Navigator.of(context).pop();
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        content: Text("something went wrong!"),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('ok'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                   setState(() {
                     _isLoading = false;
                   });
                   if (user != null) {
+                    await showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Message'),
+                        content: Text(
+                            "A verification link is sent to your Email, Please verify"),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('ok'),
+                          ),
+                        ],
+                      ),
+                    );
+                    Navigator.of(context).pop();
+                    await FirebaseAuth.instance.signOut();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreateTiffenCentre(),
+                        builder: (context) => LoginScreen(),
                       ),
                     );
                   }
