@@ -36,11 +36,15 @@ class CustomerSubscriptionsScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
-                  '$customerName',
-                  style: TextStyle(
-                    fontSize: height * 0.03,
-                    fontWeight: FontWeight.w600,
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Text(
+                    '$customerName',
+                    style: TextStyle(
+                      fontSize: height * 0.03,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.end,
                   ),
                 ),
               ],
