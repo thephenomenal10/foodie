@@ -60,12 +60,12 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
   var now = new DateTime.now();
   var dt = DateTime.now();
 
-  var breakFastTimefrom = "09:00";
-  var breakFastTimeto = "11:00";
-  var lunchTimefrom = "01:00";
-  var lunchTimeto = "03:00";
-  var dinnerTimefrom = "08:00";
-  var dinnerTimeto = "10:00";
+  var breakFastTimefrom = "07:00 AM";
+  var breakFastTimeto = "09:00 AM";
+  var lunchTimefrom = "01:00 PM";
+  var lunchTimeto = "03:00 PM";
+  var dinnerTimefrom = "08:00 PM";
+  var dinnerTimeto = "10:00 PM";
   var format;
 
 ///////////////////////////////////////      this function will set the time into HH:MM am///////////////////////////////////////////////////////////
@@ -1554,7 +1554,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
         });
         DialogBox().information(
             context, 'Alert', 'Meal Description or Cost is not provided');
-      } else if (logoImage.length != 0 ||
+      } else if (logoImage.length == 0 ||
           coverImages.length != 4 ||
           menuImages.length < 4) {
         setState(() {

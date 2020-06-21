@@ -59,12 +59,12 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   var now = new DateTime.now();
   var dt = DateTime.now();
 
-  var breakFastTimefrom = "06:30";
-  var breakFastTimeto = "09:30";
-  var lunchTimefrom = "12:00";
-  var lunchTimeto = "03:00";
-  var dinnerTimefrom = "07:30";
-  var dinnerTimeto = "10:30";
+  var breakFastTimefrom = "06:30 AM";
+  var breakFastTimeto = "09:30 PM";
+  var lunchTimefrom = "12:00 AM";
+  var lunchTimeto = "03:00 PM";
+  var dinnerTimefrom = "07:30 AM";
+  var dinnerTimeto = "10:30 PM";
   var format;
 
 ///////////////////////////////////////      this function will set the time into HH:MM am///////////////////////////////////////////////////////////
