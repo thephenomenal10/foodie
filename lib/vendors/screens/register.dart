@@ -457,6 +457,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         "Email": emailController.text,
         "Name": nameController.text,
         "Phone": '+ 91 ' + phoneController.text,
+        "userType": "vendor",
       };
       try {
         await firebaseAuthentication.signUp(

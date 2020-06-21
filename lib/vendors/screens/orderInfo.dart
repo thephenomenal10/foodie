@@ -510,7 +510,7 @@ class _OrderInfoState extends State<OrderInfo> {
                           : Container(
                               width: width * 0.40,
                               child: FloatingActionButton(
-                                backgroundColor: primaryColor,
+                                backgroundColor: Colors.red,
                                 hoverColor: Colors.white,
                                 splashColor: Colors.white,
                                 isExtended: true,

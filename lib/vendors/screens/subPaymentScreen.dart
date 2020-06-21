@@ -384,218 +384,248 @@ class _PaymentScreenState extends State<PaymentScreen> {
         indent: width * 0.01,
         endIndent: width * 0.78,
       );
-
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     final height =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    height: 150,
-                    padding: EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                        color: myGreen,
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(40),
-                          bottomRight: Radius.circular(40),
-                        )),
-                    child: Row(
-                      children: <Widget>[
-                        widget.isRenewal
-                            ? SizedBox()
-                            : IconButton(
-                                icon: Icon(Icons.arrow_back),
-                                color: Colors.white,
-                                iconSize: 30.0,
-                                onPressed: () => Navigator.pop(context),
-                              ),
-                        Text(
-                          "SUBSCRIPTION PAYMENT",
-                          textScaleFactor: 1.5,
-                          style: TextStyle(
-                              color: Colors.white,
-                              letterSpacing: 1.1,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: height * 0.01,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: width * 0.07),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.white,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).primaryColor,
+                ),
+              ),
+            )
+          : Column(
+              children: <Widget>[
+                Expanded(
+                  child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        if (widget.isRenewal)
-                          Container(
-                            child: Text(
-                              'Subscription ended!\nPlease subscribe again.',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.red,
+                        Container(
+                          height: 150,
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                              color: myGreen,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(40),
+                                bottomRight: Radius.circular(40),
+                              )),
+                          child: Row(
+                            children: <Widget>[
+                              widget.isRenewal
+                                  ? SizedBox()
+                                  : IconButton(
+                                      icon: Icon(Icons.arrow_back),
+                                      color: Colors.white,
+                                      iconSize: 30.0,
+                                      onPressed: () => Navigator.pop(context),
+                                    ),
+                              Text(
+                                "SUBSCRIPTION PAYMENT",
+                                textScaleFactor: 1.5,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    letterSpacing: 1.1,
+                                    fontWeight: FontWeight.bold),
                               ),
-                            ),
+                            ],
                           ),
-                        textPlusUnderline(
-                          'Subscription Details',
-                          height,
                         ),
-                        greenDivider(width),
                         SizedBox(
                           height: height * 0.01,
                         ),
-                        payOption("Cancellation Policy", "No"),
-                        payOption("Total Cost", "₹ " + "199"),
-                        payOption("Subscription", "364" + " days"),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Start Date",
-                              textScaleFactor: 1.1,
-                              style: TextStyle(
-                                color: Colors.black54,
-                                letterSpacing: 1.1,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Text(
-                                  DateFormat.yMMMd().format(DateTime.now()),
-                                  textScaleFactor: 1,
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.w600,
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: width * 0.07),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              if (widget.isRenewal)
+                                Container(
+                                  child: Text(
+                                    'Subscription ended!\nPlease subscribe again.',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.red,
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
+                              textPlusUnderline(
+                                'Subscription Details',
+                                height,
+                              ),
+                              greenDivider(width),
+                              SizedBox(
+                                height: height * 0.01,
+                              ),
+                              payOption("Cancellation Policy", "No"),
+                              payOption("Total Cost", "₹ " + "199"),
+                              payOption("Subscription", "364" + " days"),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    "Start Date",
+                                    textScaleFactor: 1.1,
+                                    style: TextStyle(
+                                      color: Colors.black54,
+                                      letterSpacing: 1.1,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        DateFormat.yMMMd()
+                                            .format(DateTime.now()),
+                                        textScaleFactor: 1,
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                          letterSpacing: 1.2,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              textPlusUnderline(
+                                'Payment Options',
+                                height,
+                              ),
+                              greenDivider(width),
+                              SizedBox(
+                                height: height * 0.01,
+                              ),
+                              paymentOption(),
+                              onlinePayment(),
+                            ],
+                          ),
                         ),
-                        textPlusUnderline(
-                          'Payment Options',
-                          height,
-                        ),
-                        greenDivider(width),
-                        SizedBox(
-                          height: height * 0.01,
-                        ),
-                        paymentOption(),
-                        onlinePayment(),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(
-              left: width * 0.07,
-              top: height * 0.01,
-            ),
-            margin: EdgeInsets.only(
-              bottom: 10,
-            ),
-            alignment: Alignment.center,
-            child: proofImages.isNotEmpty
-                ? InkWell(
-                    onTap: () async {
-                      if (widget.isRenewal) {
-                        final email =
-                            (await FirebaseAuth.instance.currentUser()).email;
-                        await Firestore.instance
-                            .collection('tiffen_service_details')
-                            .document(email)
-                            .updateData({
-                          'SubscriptionEndDate': DateTime.now()
-                              .add(Duration(days: 364))
-                              .toIso8601String()
-                        });
-                      }
-                      await uploadProofImages();
-                      print(widget.isRenewal);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PopUpPayment(
-                            isRenewal: widget.isRenewal,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      height: height * 0.067,
-                      width: width * 0.39,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: myGreen,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Text(
-                        'CONFIRM',
-                        style: TextStyle(
-                          letterSpacing: 0.3,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: height * 0.021,
-                        ),
-                      ),
-                    ),
-                  )
-                : (proofImages.isEmpty
-                    ? Text(
-                        "Please upload the image.",
-                        textScaleFactor: 1,
-                        style: TextStyle(
-                          letterSpacing: 1.2,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      )
-                    : InkWell(
-                        onTap: () async {
-                          PageRouteBuilder(
-                            pageBuilder: (context, _, __) =>
-                                PopUpPayment(isRenewal: widget.isRenewal),
-                            opaque: false,
-                          );
-                        },
-                        child: Container(
-                          height: height * 0.067,
-                          width: width * 0.39,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: myGreen,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Text(
-                            'CONFIRM',
-                            style: TextStyle(
-                              letterSpacing: 0.3,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: height * 0.021,
+                ),
+                Container(
+                  padding: EdgeInsets.only(
+                    left: width * 0.07,
+                    top: height * 0.01,
+                  ),
+                  margin: EdgeInsets.only(
+                    bottom: 10,
+                  ),
+                  alignment: Alignment.center,
+                  child: proofImages.isNotEmpty
+                      ? InkWell(
+                          onTap: () async {
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            final email =
+                                (await FirebaseAuth.instance.currentUser())
+                                    .email;
+                            if (widget.isRenewal) {
+                              await Firestore.instance
+                                  .collection('tiffen_service_details')
+                                  .document(email)
+                                  .updateData({
+                                'SubscriptionEndDate': DateTime.now()
+                                    .add(Duration(days: 364))
+                                    .toIso8601String()
+                              });
+                            } else {
+                              await Firestore.instance
+                                  .collection('tiffen_service_details')
+                                  .document(email)
+                                  .updateData({
+                                "SubscriptionStartDate":
+                                    DateTime.now().toIso8601String(),
+                                'SubscriptionEndDate': DateTime.now()
+                                    .add(Duration(days: 364))
+                                    .toIso8601String(),
+                              });
+                            }
+                            await uploadProofImages();
+                            setState(() {
+                              _isLoading = false;
+                            });
+                            print(widget.isRenewal);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PopUpPayment(
+                                  isRenewal: widget.isRenewal,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: height * 0.067,
+                            width: width * 0.39,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: myGreen,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Text(
+                              'CONFIRM',
+                              style: TextStyle(
+                                letterSpacing: 0.3,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: height * 0.021,
+                              ),
                             ),
                           ),
-                        ),
-                      )),
-          ),
-        ],
-      ),
+                        )
+                      : (proofImages.isEmpty
+                          ? Text(
+                              "Please upload the image.",
+                              textScaleFactor: 1,
+                              style: TextStyle(
+                                letterSpacing: 1.2,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            )
+                          : InkWell(
+                              onTap: () async {
+                                PageRouteBuilder(
+                                  pageBuilder: (context, _, __) =>
+                                      PopUpPayment(isRenewal: widget.isRenewal),
+                                  opaque: false,
+                                );
+                              },
+                              child: Container(
+                                height: height * 0.067,
+                                width: width * 0.39,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: myGreen,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Text(
+                                  'CONFIRM',
+                                  style: TextStyle(
+                                    letterSpacing: 0.3,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: height * 0.021,
+                                  ),
+                                ),
+                              ),
+                            )),
+                ),
+              ],
+            ),
     );
   }
 }

@@ -23,6 +23,15 @@ DatabaseService _databaseService = new DatabaseService();
 class FirebaseAuthentication {
   Future<void> signIn(context, emailController, passwordController) async {
     try {
+      final String userType = (await Firestore.instance
+              .collection('vendor_collection/vendors/registered_vendors')
+              .document(emailController.text.trim())
+              .get())
+          .data['userType'];
+      if (userType != "vendor") {
+        throw PlatformException(
+            code: "NOT_REGISTERED", message: "Not registered as vendor");
+      }
       AuthResult result = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
               email: emailController.text, password: passwordController.text);
@@ -65,6 +74,8 @@ class FirebaseAuthentication {
         }
       }
       DialogBox().information(context, "Alert", "Please verify your account!");
+    } on PlatformException catch (error) {
+      DialogBox().information(context, "Alert", error.message);
     } catch (e) {
       print(e.toString());
       showDialog(
