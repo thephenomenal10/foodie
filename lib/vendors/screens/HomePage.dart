@@ -14,10 +14,21 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   TabController tabController;
-  var email;
-
+  String email;
+  String vendorName;
+  bool isSunday;
   Future<void> getCurrentUser() async {
     email = (await FirebaseAuth.instance.currentUser()).email;
+    vendorName = (await Firestore.instance
+        .collection('vendor_collection/vendors/registered_vendors')
+        .document(email)
+        .get())['Name'];
+    isSunday = (await Firestore.instance
+                .collection('tiffen_service_details')
+                .document(email)
+                .get())
+            .data['Service Days'] ==
+        '6 Days(Sunday Closed)';
   }
 
   @override
@@ -151,6 +162,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 return TabBarView(
                   children: [
                     Orders(
+                      vendorName: vendorName,
+                      isSunday: isSunday
+                          ? DateTime.now()
+                                  .subtract(Duration(days: 3))
+                                  .weekday ==
+                              7
+                          : false,
                       dateTime: DateFormat.yMMMd().format(
                         DateTime.now().subtract(
                           Duration(
@@ -171,6 +189,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ).getDayOrders(),
                     ),
                     Orders(
+                      vendorName: vendorName,
+                      isSunday: isSunday
+                          ? DateTime.now()
+                                  .subtract(Duration(days: 2))
+                                  .weekday ==
+                              7
+                          : false,
                       dateTime: DateFormat.yMMMd().format(
                         DateTime.now().subtract(
                           Duration(days: 2),
@@ -189,6 +214,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ).getDayOrders(),
                     ),
                     Orders(
+                      vendorName: vendorName,
+                      isSunday: isSunday
+                          ? DateTime.now()
+                                  .subtract(Duration(days: 1))
+                                  .weekday ==
+                              7
+                          : false,
                       dateTime: DateFormat.yMMMd().format(
                         DateTime.now().subtract(
                           Duration(days: 1),
@@ -207,6 +239,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ).getDayOrders(),
                     ),
                     Orders(
+                      vendorName: vendorName,
+                      isSunday: isSunday ? DateTime.now().weekday == 7 : false,
                       dateTime: DateFormat.yMMMd().format(DateTime.now()),
                       orders: OrdersList(
                         orders: orders,
@@ -218,6 +252,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ).getDayOrders(),
                     ),
                     Orders(
+                      vendorName: vendorName,
+                      isSunday: isSunday
+                          ? DateTime.now().add(Duration(days: 1)).weekday == 7
+                          : false,
                       dateTime: DateFormat.yMMMd().format(
                         DateTime.now().add(
                           Duration(days: 1),
@@ -237,6 +275,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ).getDayOrders(),
                     ),
                     Orders(
+                      vendorName: vendorName,
+                      isSunday: isSunday
+                          ? DateTime.now().add(Duration(days: 2)).weekday == 7
+                          : false,
                       dateTime: DateFormat.yMMMd().format(
                         DateTime.now().add(
                           Duration(days: 2),
@@ -256,6 +298,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       ).getDayOrders(),
                     ),
                     Orders(
+                      vendorName: vendorName,
+                      isSunday: isSunday
+                          ? DateTime.now().add(Duration(days: 3)).weekday == 7
+                          : false,
                       dateTime: DateFormat.yMMMd().format(
                         DateTime.now().add(
                           Duration(days: 3),
