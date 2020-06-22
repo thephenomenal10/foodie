@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/screens/login.dart';
+import 'package:foodieapp/vendors/screens/verify_phone_screen.dart';
 import 'package:foodieapp/vendors/services/firebase_service.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -43,6 +44,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   validator: (val) {
                     if (val.isEmpty) {
                       return "Enter your name";
+                    } else if (val.length > 20) {
+                      return "Name is too long!";
                     }
                     return null;
                   },
@@ -90,7 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               flex: 2,
               child: TextFormField(
                 controller: phoneController,
-                keyboardType: TextInputType.phone,
+                keyboardType: TextInputType.number,
                 validator: (val) {
                   if (val.isEmpty) {
                     return "enter your phone number";
@@ -332,176 +335,188 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  @override
-  void initState() {
-    global.isLoading = false;
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   global.isLoading = false;
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: global.isLoading == true
-          ? Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).primaryColor,
-                ),
-                backgroundColor: Colors.transparent,
+      // body: global.isLoading == true
+      //     ? Center(
+      //         child: CircularProgressIndicator(
+      //           valueColor: AlwaysStoppedAnimation<Color>(
+      //             Theme.of(context).primaryColor,
+      //           ),
+      //           backgroundColor: Colors.transparent,
+      //         ),
+      //       )
+      // :
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: Container(
+            padding: EdgeInsets.all(25),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF5AFF15),
+                  Color(0xFF5AFF15),
+                  Color(0xFF00B712),
+                  Color(0xFF00B712),
+                ],
+                stops: [0.1, 0.4, 0.7, 0.9],
               ),
-            )
-          : SafeArea(
-              child: Form(
-                key: _formKey,
-                child: Container(
-                  padding: EdgeInsets.all(25),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0xFF5AFF15),
-                        Color(0xFF5AFF15),
-                        Color(0xFF00B712),
-                        Color(0xFF00B712),
-                      ],
-                      stops: [0.1, 0.4, 0.7, 0.9],
-                    ),
-                  ),
-                  child: AnnotatedRegion<SystemUiOverlayStyle>(
-                    value: SystemUiOverlayStyle.light,
-                    child: GestureDetector(
-                      onTap: () => FocusScope.of(context).unfocus(),
-                      child: Stack(
-                        children: <Widget>[
-                          Container(
-                            height: double.infinity,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Color(0xFF5AFF15),
-                                    Color(0xFF5AFF15),
-                                    Color(0xFF00B712),
-                                    Color(0xFF00B712),
-                                  ],
-                                  stops: [0.1, 0.4, 0.7, 0.9],
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.black.withOpacity(.3),
-                                      //offset: Offset(0.0, 8.0),
-                                      blurRadius: 8.0)
-                                ]),
+            ),
+            child: AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle.light,
+              child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      height: double.infinity,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color(0xFF5AFF15),
+                              Color(0xFF5AFF15),
+                              Color(0xFF00B712),
+                              Color(0xFF00B712),
+                            ],
+                            stops: [0.1, 0.4, 0.7, 0.9],
                           ),
-                          Container(
-                            height: double.infinity,
-                            child: SingleChildScrollView(
-                              physics: AlwaysScrollableScrollPhysics(),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: width * 0.1,
-                                vertical: height * 0.02,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    'Sign Up',
-                                    textScaleFactor: 2,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: height * 0.01),
-                                  _buildNameTF(),
-                                  SizedBox(height: height * 0.005),
-                                  _buildPhoneTF(),
-                                  SizedBox(height: height * 0.005),
-                                  _buildEmailTF(),
-                                  SizedBox(height: height * 0.005),
-                                  _buildPasswordTF(),
-                                  SizedBox(height: height * 0.005),
-                                  _buildConfirmPasswordTF(),
-                                  _buildRegisterBtn(height),
-                                  _buildSignupBtn(),
-                                ],
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withOpacity(.3),
+                                //offset: Offset(0.0, 8.0),
+                                blurRadius: 8.0)
+                          ]),
+                    ),
+                    Container(
+                      height: double.infinity,
+                      child: SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: width * 0.1,
+                          vertical: height * 0.02,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'Sign Up',
+                              textScaleFactor: 2,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          )
-                        ],
+                            SizedBox(height: height * 0.01),
+                            _buildNameTF(),
+                            SizedBox(height: height * 0.005),
+                            _buildPhoneTF(),
+                            SizedBox(height: height * 0.005),
+                            _buildEmailTF(),
+                            SizedBox(height: height * 0.005),
+                            _buildPasswordTF(),
+                            SizedBox(height: height * 0.005),
+                            _buildConfirmPasswordTF(),
+                            _buildRegisterBtn(height),
+                            _buildSignupBtn(),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
+                    )
+                  ],
                 ),
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 
   signMeUp() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      setState(() {
-        global.isLoading = true;
-      });
+      // setState(() {
+      //   global.isLoading = true;
+      // });
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString("currentUserEmail", emailController.text);
-      await prefs.setString("currentUserName", emailController.text);
-      Map<String, String> userInfo = {
-        "Email": emailController.text,
-        "Name": nameController.text,
-        "Phone": '+ 91 ' + phoneController.text,
-        "userType": "vendor",
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // await prefs.setString("currentUserEmail", emailController.text);
+      // await prefs.setString("currentUserName", emailController.text);
+      final Map<String, String> accountInfo = {
+        'email': emailController.text.trim(),
+        'password': passController.text.trim(),
+        'name': nameController.text.trim(),
+        'phone': '+ 91 ' + phoneController.text.trim(),
       };
-      try {
-        await firebaseAuthentication.signUp(
-          context,
-          emailController,
-          passController,
-          '+ 91 ' + phoneController.text.trim(),
-          nameController.text,
-          userInfo,
-        );
-        setState(() {
-          global.isLoading = false;
-        });
-      } on PlatformException catch (error) {
-        print(error.message);
-        setState(() {
-          global.isLoading = false;
-        });
-        showDialog(
-          context: context,
-          child: AlertDialog(
-            title: Text('Alert'),
-            content: Text(
-              error.message,
-            ),
-            actions: <Widget>[
-              FlatButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(
-                  'OK',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-              )
-            ],
-          ),
-        );
-      } catch (error) {
-        setState(() {
-          global.isLoading = false;
-        });
-        print(error + " runs");
-      }
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => VerifyPhoneScreen(accountInfo),
+        ),
+      );
+      // Map<String, String> userInfo = {
+      //   "Email": emailController.text.trim(),
+      //   "Name": nameController.text.trim(),
+      //   "Phone": '+ 91 ' + phoneController.text.trim(),
+      //   "userType": "vendor",
+      // };
+      // try {
+      //   await firebaseAuthentication.signUp(
+      //     context,
+      //     emailController,
+      //     passController,
+      //     '+ 91 ' + phoneController.text.trim(),
+      //     nameController.text,
+      //     userInfo,
+      //   );
+      //   setState(() {
+      //     global.isLoading = false;
+      //   });
+      // } on PlatformException catch (error) {
+      //   print(error.message);
+      //   setState(() {
+      //     global.isLoading = false;
+      //   });
+      //   showDialog(
+      //     context: context,
+      //     child: AlertDialog(
+      //       title: Text('Alert'),
+      //       content: Text(
+      //         error.message,
+      //       ),
+      //       actions: <Widget>[
+      //         FlatButton(
+      //           onPressed: () => Navigator.of(context).pop(),
+      //           child: Text(
+      //             'OK',
+      //             style: TextStyle(
+      //               color: Theme.of(context).primaryColor,
+      //             ),
+      //           ),
+      //         )
+      //       ],
+      //     ),
+      //   );
+      // } catch (error) {
+      //   setState(() {
+      //     global.isLoading = false;
+      //   });
+      //   print(error + " runs");
+      // }
     }
   }
 }

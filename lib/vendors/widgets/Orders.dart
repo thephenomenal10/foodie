@@ -134,6 +134,7 @@ class Orders extends StatelessWidget {
                                         height: 85.0,
                                         width: 65.0,
                                       ),
+                                      SizedBox(width: 5,),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -147,6 +148,10 @@ class Orders extends StatelessWidget {
                                           Container(
                                             padding: EdgeInsets.symmetric(
                                                 vertical: 5.0),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.50,
                                             child: new Text(
                                               orders[index]['customerName'],
                                               style: new TextStyle(
@@ -158,8 +163,13 @@ class Orders extends StatelessWidget {
                                           Container(
                                             padding: EdgeInsets.symmetric(
                                                 vertical: 5.0),
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.5,
                                             child: new Text(
-                                              orders[index]['customerAddress'],
+                                              orders[index]
+                                                  ['customerAddress'],
                                               style: new TextStyle(
                                                 color: secondaryColor,
                                                 fontWeight: FontWeight.w600,

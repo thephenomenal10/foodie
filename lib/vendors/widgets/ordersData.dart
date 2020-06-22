@@ -68,31 +68,17 @@ class CustomerOrderDetails {
     List<String> ids = [];
     List<DocumentSnapshot> orderDocs = [];
     final email = (await FirebaseAuth.instance.currentUser()).email;
+    final path =
+        Firestore.instance.collection('tiffen_service_details').document(email);
     orderDocs += [
-      ...(await Firestore.instance
-              .collection('tiffen_service_details/$email/acceptedOrders')
-              .getDocuments())
-          .documents
-    ];
-    orderDocs += [
-      ...(await Firestore.instance
-              .collection('tiffen_service_details/$email/pendingOrders')
-              .getDocuments())
-          .documents
-    ];
-    orderDocs += [
-      ...(await Firestore.instance
-              .collection('tiffen_service_details/$email/rejectedOrders')
-              .getDocuments())
-          .documents
-    ];
-    orderDocs += [
-      ...(await Firestore.instance
-              .collection('tiffen_service_details/$email/canceledOrders')
-              .getDocuments())
-          .documents
-    ];
-    orderDocs.forEach((element) {
+          ...(await path.collection('acceptedOrders').getDocuments()).documents
+        ] +
+        [...(await path.collection('pendingOrders').getDocuments()).documents] +
+        [
+          ...(await path.collection('rejectedOrders').getDocuments()).documents
+        ] +
+        [...(await path.collection('canceledOrders').getDocuments()).documents];
+    orderDocs.forEach((element) async {
       final data = {
         'customerId': element.data['customerId'],
         'customerName': element.data['customerName'],

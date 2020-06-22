@@ -8,30 +8,21 @@ import 'package:foodieapp/vendors/constants/constants.dart';
 import 'package:foodieapp/vendors/screens/login.dart';
 // import 'package:foodieapp/vendors/screens/otpVerificationScreen.dart';
 import 'package:foodieapp/vendors/services/databaseService.dart';
-import 'package:foodieapp/vendors/services/local_notifications.dart';
+// import 'package:foodieapp/vendors/services/local_notifications.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 import 'package:foodieapp/vendors/screens/createTiffenCentre.dart';
 import 'package:foodieapp/vendors/bottomNavigationBar.dart';
 import 'package:foodieapp/vendors/screens/subPaymentScreen.dart';
-import 'package:foodieapp/vendors/widgets/globalVariable.dart';
+// import 'package:foodieapp/vendors/widgets/globalVariable.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
 var currentUserUid;
-DatabaseService _databaseService = new DatabaseService();
+// DatabaseService _databaseService = new DatabaseService();
 
 class FirebaseAuthentication {
   Future<void> signIn(context, emailController, passwordController) async {
     try {
-      final String userType = (await Firestore.instance
-              .collection('vendor_collection/vendors/registered_vendors')
-              .document(emailController.text.trim())
-              .get())
-          .data['userType'];
-      if (userType != "vendor") {
-        throw PlatformException(
-            code: "NOT_REGISTERED", message: "Not registered as vendor");
-      }
       AuthResult result = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
               email: emailController.text, password: passwordController.text);
@@ -39,12 +30,24 @@ class FirebaseAuthentication {
           "  check one" +
           " ${result.user.isEmailVerified}");
       if (auth.currentUser() != null && result.user.isEmailVerified) {
-        await LocalNotifications.storeFCMToken(result.user.email);
+        final String userType = (await Firestore.instance
+                .collection('vendor_collection/vendors/registered_vendors')
+                .document(emailController.text.trim())
+                .get())
+            .data['userType'];
+        if (userType != 'vendor') {
+          print('not a vendor');
+          await FirebaseAuth.instance.signOut();
+          throw PlatformException(
+              code: "NOT_REGISTERED", message: "Not registered as vendor");
+        }
+        await DatabaseService.storeFCMToken(result.user.email);
         final docSnap = await Firestore.instance
             .collection('tiffen_service_details')
             .document(result.user.email)
             .get();
         if (docSnap.data == null) {
+          print("data null");
           await Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => CreateTiffenCentre(),
@@ -53,6 +56,7 @@ class FirebaseAuthentication {
           await DialogBox()
               .information(context, "Alert", "Create your tiffin center!");
         } else if (docSnap.data['Proof of Payment'] == null) {
+          print('payment null');
           await Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => PaymentScreen(
@@ -72,164 +76,187 @@ class FirebaseAuthentication {
           DialogBox()
               .information(context, "Success", "Your have Login successfully");
         }
+      } else {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text(
+              'Email not verified!',
+              style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: Text(
+              'Please verify your mail-id, a verification link is already sent!',
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            actions: <Widget>[
+              Text('Did not get Email?'),
+              FlatButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  DialogBox().information(context, 'Success',
+                      'A verification email is sent to your mail\nPlease verify and Login again!');
+                  await result.user.sendEmailVerification();
+                  await FirebaseAuth.instance.signOut();
+                },
+                child: Text(
+                  'Resend',
+                  style: TextStyle(color: Theme.of(context).primaryColor),
+                ),
+              ),
+              FlatButton(
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pop(context);
+                },
+                child: Text('Close'),
+              ),
+            ],
+          ),
+        );
       }
-      DialogBox().information(context, "Alert", "Please verify your account!");
     } on PlatformException catch (error) {
       DialogBox().information(context, "Alert", error.message);
     } catch (e) {
       print(e.toString());
-      showDialog(
-        context: context,
-        child: AlertDialog(
-          title: Text('Alert'),
-          content: Text(
-            'Your email id or password is wrong',
-          ),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'OK',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-            )
-          ],
-        ),
-      );
+      DialogBox()
+          .information(context, 'Alert', 'Your email id or password is wrong');
       return e;
     }
   }
 
-  Future<void> signUp(
-    context,
-    emailController,
-    passwordController,
-    phoneControlloer,
-    userName,
-    Map<String, String> userInfo,
-  ) async {
-    // AuthResult result;
-    try {
-      // TextEditingController _codeController = new TextEditingController();
-      int resendingCode;
-      await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: phoneControlloer.trim(),
-        timeout: Duration(seconds: 60),
-        verificationCompleted: null,
-        verificationFailed: (AuthException exception) {
-          print(exception.message.toString() + "auth exception");
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text('Alert'),
-              content: Text('Something went wrong, try using other number'),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text('ok'),
-                ),
-              ],
-            ),
-          );
-        },
-        codeSent: (String verificationId, [int forceResendingToken]) async {
-          resendingCode = forceResendingToken;
-          await showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return ShowDialog(
-                context: context,
-                email: emailController.text,
-                password: passwordController.text,
-                info: userInfo,
-                verificationId: verificationId,
-              );
-              // return AlertDialog(
-              //   title: Text("Enter the 6-digit code "),
-              //   content: Column(
-              //     mainAxisSize: MainAxisSize.min,
-              //     children: <Widget>[
-              //       TextField(
-              //         controller: _codeController,
-              //       ),
-              //     ],
-              //   ),
-              //   actions: <Widget>[
-              //     FlatButton(
-              //       child: Text("Confirm"),
-              //       textColor: Colors.white,
-              //       color: myGreen,
-              //       onPressed: () async {
-              //         AuthCredential credential;
-              //         print("check one");
-              //         final code = _codeController.text.trim();
-              //         credential = PhoneAuthProvider.getCredential(
-              //             verificationId: verificationId, smsCode: code);
-              //         print("check two");
-              //         AuthResult authResult;
-              //         try {
-              //           authResult = await FirebaseAuth.instance
-              //               .createUserWithEmailAndPassword(
-              //                   email: emailController.text,
-              //                   password: passwordController.text);
-              //           print('check three');
-              //           result = await authResult.user
-              //               .linkWithCredential(credential);
-              //           user = result.user;
-              //           if (user != null) {
-              //             Navigator.pushReplacement(
-              //               context,
-              //               MaterialPageRoute(
-              //                 builder: (context) => CreateTiffenCentre(),
-              //               ),
-              //             );
-              //           }
-              //           print('chech four');
-              //           await result.user.sendEmailVerification();
-              //           print('chech five');
-              //           await _databaseService.addUserData(
-              //               userInfo, emailController.text);
-              //           print('chech six');
-              //           await LocalNotifications.storeFCMToken(
-              //               emailController.text.trim());
-              //           print('chech seven');
-              //         } on PlatformException catch (error) {
-              //           await authResult.user.delete();
-              //           Navigator.of(context).pop();
-              //           showDialog(
-              //             context: context,
-              //             builder: (context) => AlertDialog(
-              //               content: Text(error.message),
-              //               actions: <Widget>[
-              //                 FlatButton(
-              //                   onPressed: () {
-              //                     Navigator.of(context).pop();
-              //                   },
-              //                   child: Text('ok'),
-              //                 ),
-              //               ],
-              //             ),
-              //           );
-              //         }
-              //       },
-              //     ),
-              //   ],
-              // );
-            },
-          );
-        },
-        codeAutoRetrievalTimeout: null,
-        forceResendingToken: resendingCode,
-      );
-    } catch (error) {
-      throw error;
-    }
-  }
+  // Future<void> signUp(
+  //   context,
+  //   emailController,
+  //   passwordController,
+  //   phoneControlloer,
+  //   userName,
+  //   Map<String, String> userInfo,
+  // ) async {
+  //   // AuthResult result;
+  //   try {
+  //     // TextEditingController _codeController = new TextEditingController();
+  //     int resendingCode;
+  //     await FirebaseAuth.instance.verifyPhoneNumber(
+  //       phoneNumber: phoneControlloer.trim(),
+  //       timeout: Duration(seconds: 60),
+  //       verificationCompleted: null,
+  //       verificationFailed: (AuthException exception) {
+  //         print(exception.message.toString() + "auth exception");
+  //         showDialog(
+  //           context: context,
+  //           builder: (context) => AlertDialog(
+  //             title: Text('Alert'),
+  //             content: Text('Something went wrong, try using other number'),
+  //             actions: <Widget>[
+  //               FlatButton(
+  //                 onPressed: () => Navigator.of(context).pop(),
+  //                 child: Text('ok'),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       },
+  //       codeSent: (String verificationId, [int forceResendingToken]) async {
+  //         resendingCode = forceResendingToken;
+  //         await showDialog(
+  //           context: context,
+  //           barrierDismissible: false,
+  //           builder: (context) {
+  //             return ShowDialog(
+  //               context: context,
+  //               email: emailController.text,
+  //               password: passwordController.text,
+  //               info: userInfo,
+  //               verificationId: verificationId,
+  //             );
+  // return AlertDialog(
+  //   title: Text("Enter the 6-digit code "),
+  //   content: Column(
+  //     mainAxisSize: MainAxisSize.min,
+  //     children: <Widget>[
+  //       TextField(
+  //         controller: _codeController,
+  //       ),
+  //     ],
+  //   ),
+  //   actions: <Widget>[
+  //     FlatButton(
+  //       child: Text("Confirm"),
+  //       textColor: Colors.white,
+  //       color: myGreen,
+  //       onPressed: () async {
+  //         AuthCredential credential;
+  //         print("check one");
+  //         final code = _codeController.text.trim();
+  //         credential = PhoneAuthProvider.getCredential(
+  //             verificationId: verificationId, smsCode: code);
+  //         print("check two");
+  //         AuthResult authResult;
+  //         try {
+  //           authResult = await FirebaseAuth.instance
+  //               .createUserWithEmailAndPassword(
+  //                   email: emailController.text,
+  //                   password: passwordController.text);
+  //           print('check three');
+  //           result = await authResult.user
+  //               .linkWithCredential(credential);
+  //           user = result.user;
+  //           if (user != null) {
+  //             Navigator.pushReplacement(
+  //               context,
+  //               MaterialPageRoute(
+  //                 builder: (context) => CreateTiffenCentre(),
+  //               ),
+  //             );
+  //           }
+  //           print('chech four');
+  //           await result.user.sendEmailVerification();
+  //           print('chech five');
+  //           await _databaseService.addUserData(
+  //               userInfo, emailController.text);
+  //           print('chech six');
+  //           await LocalNotifications.storeFCMToken(
+  //               emailController.text.trim());
+  //           print('chech seven');
+  //         } on PlatformException catch (error) {
+  //           await authResult.user.delete();
+  //           Navigator.of(context).pop();
+  //           showDialog(
+  //             context: context,
+  //             builder: (context) => AlertDialog(
+  //               content: Text(error.message),
+  //               actions: <Widget>[
+  //                 FlatButton(
+  //                   onPressed: () {
+  //                     Navigator.of(context).pop();
+  //                   },
+  //                   child: Text('ok'),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         }
+  //       },
+  //     ),
+  //   ],
+  // );
+  //           },
+  //         );
+  //       },
+  //       codeAutoRetrievalTimeout: null,
+  //       forceResendingToken: resendingCode,
+  //     );
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   Future resetPassword(String email) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
@@ -318,148 +345,148 @@ class FirebaseAuthentication {
   }
 }
 
-class ShowDialog extends StatefulWidget {
-  final context;
-  final email;
-  final password;
-  final verificationId;
-  final Map<String, String> info;
-  ShowDialog(
-      {this.context,
-      this.email,
-      this.password,
-      this.verificationId,
-      this.info});
-  @override
-  _ShowDialogState createState() => _ShowDialogState();
-}
-
-class _ShowDialogState extends State<ShowDialog> {
-  bool _isLoading = false;
-  final _codeController = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    return _isLoading
-        ? AlertDialog(
-            title: Text('Please wait...'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                CircularProgressIndicator(),
-              ],
-            ),
-          )
-        : AlertDialog(
-            title: Text("Enter the 6-digit code "),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextField(
-                  controller: _codeController,
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Confirm"),
-                textColor: Colors.white,
-                color: myGreen,
-                onPressed: () async {
-                  setState(() {
-                    _isLoading = true;
-                  });
-                  AuthCredential credential;
-                  print("check one");
-                  final code = _codeController.text.trim();
-                  credential = PhoneAuthProvider.getCredential(
-                      verificationId: widget.verificationId, smsCode: code);
-                  print("check two");
-                  AuthResult authResult;
-                  try {
-                    authResult = await FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
-                            email: widget.email, password: widget.password);
-                    print(authResult.toString());
-                    print('check three');
-                    AuthResult result =
-                        await authResult.user.linkWithCredential(credential);
-                    user = result.user;
-                    print('chech four');
-                    await result.user.sendEmailVerification();
-                    print('chech five');
-                    await _databaseService.addUserData(
-                        widget.info, widget.email);
-                    print('chech six');
-                    // await LocalNotifications.storeFCMToken(widget.email);
-                    // print('chech seven');
-                  } on PlatformException catch (error) {
-                    if (authResult != null) {
-                      await authResult.user.delete();
-                    }
-                    Navigator.of(context).pop();
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        content: Text(error.message),
-                        actions: <Widget>[
-                          FlatButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('ok'),
-                          ),
-                        ],
-                      ),
-                    );
-                  } catch (error) {
-                    Navigator.of(context).pop();
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        content: Text("something went wrong!"),
-                        actions: <Widget>[
-                          FlatButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('ok'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  setState(() {
-                    _isLoading = false;
-                  });
-                  if (user != null) {
-                    await showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Message'),
-                        content: Text(
-                            "A verification link is sent to your Email, Please verify"),
-                        actions: <Widget>[
-                          FlatButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('ok'),
-                          ),
-                        ],
-                      ),
-                    );
-                    Navigator.of(context).pop();
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginScreen(),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ],
-          );
-  }
-}
+// class ShowDialog extends StatefulWidget {
+//   final context;
+//   final email;
+//   final password;
+//   final verificationId;
+//   final Map<String, String> info;
+//   ShowDialog(
+//       {this.context,
+//       this.email,
+//       this.password,
+//       this.verificationId,
+//       this.info});
+//   @override
+//   _ShowDialogState createState() => _ShowDialogState();
+// }
+//
+// class _ShowDialogState extends State<ShowDialog> {
+//   bool _isLoading = false;
+//   final _codeController = TextEditingController();
+//   @override
+//   Widget build(BuildContext context) {
+//     return _isLoading
+//         ? AlertDialog(
+//             title: Text('Please wait...'),
+//             content: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: <Widget>[
+//                 CircularProgressIndicator(),
+//               ],
+//             ),
+//           )
+//         : AlertDialog(
+//             title: Text("Enter the 6-digit code "),
+//             content: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: <Widget>[
+//                 TextField(
+//                   controller: _codeController,
+//                 ),
+//               ],
+//             ),
+//             actions: <Widget>[
+//               FlatButton(
+//                 child: Text("Confirm"),
+//                 textColor: Colors.white,
+//                 color: myGreen,
+//                 onPressed: () async {
+//                   setState(() {
+//                     _isLoading = true;
+//                   });
+//                   AuthCredential credential;
+//                   print("check one");
+//                   final code = _codeController.text.trim();
+//                   credential = PhoneAuthProvider.getCredential(
+//                       verificationId: widget.verificationId, smsCode: code);
+//                   print("check two");
+//                   AuthResult authResult;
+//                   try {
+//                     authResult = await FirebaseAuth.instance
+//                         .createUserWithEmailAndPassword(
+//                             email: widget.email, password: widget.password);
+//                     print(authResult.toString());
+//                     print('check three');
+//                     AuthResult result =
+//                         await authResult.user.linkWithCredential(credential);
+//                     user = result.user;
+//                     print('chech four');
+//                     await result.user.sendEmailVerification();
+//                     print('chech five');
+//                     await _databaseService.addUserData(
+//                         widget.info, widget.email);
+//                     print('chech six');
+//                     // await LocalNotifications.storeFCMToken(widget.email);
+//                     // print('chech seven');
+//                   } on PlatformException catch (error) {
+//                     if (authResult != null) {
+//                       await authResult.user.delete();
+//                     }
+//                     Navigator.of(context).pop();
+//                     showDialog(
+//                       context: context,
+//                       builder: (context) => AlertDialog(
+//                         content: Text(error.message),
+//                         actions: <Widget>[
+//                           FlatButton(
+//                             onPressed: () {
+//                               Navigator.of(context).pop();
+//                             },
+//                             child: Text('ok'),
+//                           ),
+//                         ],
+//                       ),
+//                     );
+//                   } catch (error) {
+//                     Navigator.of(context).pop();
+//                     showDialog(
+//                       context: context,
+//                       builder: (context) => AlertDialog(
+//                         content: Text("something went wrong!"),
+//                         actions: <Widget>[
+//                           FlatButton(
+//                             onPressed: () {
+//                               Navigator.of(context).pop();
+//                             },
+//                             child: Text('ok'),
+//                           ),
+//                         ],
+//                       ),
+//                     );
+//                   }
+//                   setState(() {
+//                     _isLoading = false;
+//                   });
+//                   if (user != null) {
+//                     await showDialog(
+//                       context: context,
+//                       builder: (context) => AlertDialog(
+//                         title: Text('Message'),
+//                         content: Text(
+//                             "A verification link is sent to your Email, Please verify"),
+//                         actions: <Widget>[
+//                           FlatButton(
+//                             onPressed: () {
+//                               Navigator.of(context).pop();
+//                             },
+//                             child: Text('ok'),
+//                           ),
+//                         ],
+//                       ),
+//                     );
+//                     Navigator.of(context).pop();
+//                     await FirebaseAuth.instance.signOut();
+//                     Navigator.pushReplacement(
+//                       context,
+//                       MaterialPageRoute(
+//                         builder: (context) => LoginScreen(),
+//                       ),
+//                     );
+//                   }
+//                 },
+//               ),
+//             ],
+//           );
+//   }
+// }

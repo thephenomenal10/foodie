@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -59,12 +60,12 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
   var now = new DateTime.now();
   var dt = DateTime.now();
 
-  var breakFastTimefrom = "06:30 AM";
-  var breakFastTimeto = "09:30 PM";
-  var lunchTimefrom = "12:00 AM";
-  var lunchTimeto = "03:00 PM";
-  var dinnerTimefrom = "07:30 AM";
-  var dinnerTimeto = "10:30 PM";
+  var breakFastTimefrom = "7:00 AM";
+  var breakFastTimeto = "9:00 PM";
+  var lunchTimefrom = "1:00 PM";
+  var lunchTimeto = "3:00 PM";
+  var dinnerTimefrom = "8:00 PM";
+  var dinnerTimeto = "10:00 PM";
   var format;
 
 ///////////////////////////////////////      this function will set the time into HH:MM am///////////////////////////////////////////////////////////
@@ -410,7 +411,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
     setState(() {
       paymentValue = value;
 
-      switch (licenseValue) {
+      switch (paymentValue) {
         case 0:
           payment = "Cash On Delivery";
           break;
@@ -422,6 +423,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
           break;
       }
     });
+    print(payment);
   }
 
 //radio button for handelling Cancelling subscription feature
@@ -451,6 +453,8 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
         validator: (val) {
           if (val.isEmpty) {
             return errorMsg;
+          } else if (val.length > 20) {
+            return "please enter in less than 20 characters";
           }
           return null;
         },
@@ -465,9 +469,10 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
 
   String email;
   void getEmail() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    email = (await FirebaseAuth.instance.currentUser()).email;
     setState(() {
-      email = prefs.getString("currentUserEmail");
+      // email = prefs.getString("currentUserEmail");
     });
   }
 
@@ -621,23 +626,37 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                                 'enter your City',
                                 'City',
                               ),
-                              getFormField(
-                                addressController,
-                                'enter your address',
-                                'Full address',
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: TextFormField(
+                                  controller: addressController,
+                                  validator: (val) {
+                                    if (val.isEmpty) {
+                                      return 'enter your address';
+                                    } else if (val.length > 30) {
+                                      return "please enter in less than 30 characters";
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                      labelText: 'Full address',
+                                      labelStyle: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          letterSpacing: 1.2)),
+                                  keyboardType: TextInputType.text,
+                                ),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(10),
                                 child: TextFormField(
-                                  // initialValue: email,
-
+                                  initialValue: email,
                                   enabled: false,
-                                  decoration: InputDecoration(
-                                      labelText: email,
-                                      labelStyle: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 1.2)),
+                                  // decoration: InputDecoration(
+                                  //     // labelText: email,
+                                  //     labelStyle: TextStyle(
+                                  //         color: Colors.black,
+                                  //         fontWeight: FontWeight.w600,
+                                  //         letterSpacing: 1.2)),
                                 ),
                               ),
                               Padding(
@@ -660,8 +679,8 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                                 ),
                               ),
                               RaisedButton(
-                                onPressed: () {
-                                  Navigator.push(
+                                onPressed: () async {
+                                  await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => SearchLocality(),
@@ -1210,7 +1229,8 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                                           activeColor: Colors.green,
                                           value: 0,
                                           groupValue: paymentValue,
-                                          onChanged: _handlePaymentValueChange,
+                                          onChanged: (val) =>
+                                              _handlePaymentValueChange(val),
                                         ),
                                         new Text(
                                           'Cash On Delivery',
@@ -1226,7 +1246,8 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                                           activeColor: Colors.green,
                                           value: 1,
                                           groupValue: paymentValue,
-                                          onChanged: _handlePaymentValueChange,
+                                          onChanged: (val) =>
+                                              _handlePaymentValueChange(val),
                                         ),
                                         new Text(
                                           'Online Payment',
@@ -1242,7 +1263,8 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                                           activeColor: Colors.green,
                                           value: 2,
                                           groupValue: paymentValue,
-                                          onChanged: _handlePaymentValueChange,
+                                          onChanged: (val) =>
+                                              _handlePaymentValueChange(val),
                                         ),
                                         new Text(
                                           'Both (Cash + Online Payment)',
@@ -1324,12 +1346,12 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                                             children: <Widget>[
                                               TextFormField(
                                                 controller: upiController,
-                                                validator: (val) {
-                                                  if (val.isEmpty) {
-                                                    return "enter your UPI id";
-                                                  }
-                                                  return null;
-                                                },
+                                                // validator: (val) {
+                                                //   if (val.isEmpty) {
+                                                //     return "enter your UPI id";
+                                                //   }
+                                                //   return null;
+                                                // },
                                                 decoration: InputDecoration(
                                                   labelText: "UPI ID",
                                                   border: InputBorder.none,
@@ -1385,12 +1407,12 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                                               ),
                                               TextFormField(
                                                 controller: paytmController,
-                                                validator: (val) {
-                                                  if (val.isEmpty) {
-                                                    return "enter your Paytm Number";
-                                                  }
-                                                  return null;
-                                                },
+                                                // validator: (val) {
+                                                //   if (val.isEmpty) {
+                                                //     return "enter your Paytm Number";
+                                                //   }
+                                                //   return null;
+                                                // },
                                                 decoration: InputDecoration(
                                                   labelText: "Paytm No.",
                                                   border: InputBorder.none,
@@ -1654,6 +1676,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
           "Tiffen Service Address": global.localityAddress,
           "rating": 0,
           "no of ratings": 0,
+          "Proof of Payment Photos": null,
           "SubscriptionStartDate": null,
           "SubscriptionEndDate": null
         };

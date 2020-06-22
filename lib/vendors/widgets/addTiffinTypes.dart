@@ -1,3 +1,5 @@
+import 'package:foodieapp/vendors/widgets/dialogBox.dart';
+
 import 'globalVariable.dart' as global;
 import 'package:flutter/material.dart';
 
@@ -37,6 +39,8 @@ class _AddTiffinTypesState extends State<AddTiffinTypes> {
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'provide description';
+                          } else if (value.length > 30) {
+                            return 'Description is too long';
                           }
                           return null;
                         },
@@ -55,6 +59,9 @@ class _AddTiffinTypesState extends State<AddTiffinTypes> {
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'provide cost';
+                          } else if (!value
+                              .contains(RegExp('[0-9]*\.?[0.9]*'))) {
+                            return 'Input format is wrong!';
                           }
                           return null;
                         },
@@ -82,7 +89,8 @@ class _AddTiffinTypesState extends State<AddTiffinTypes> {
                   },
                   decoration: InputDecoration(
                     labelText: 'Meal description',
-                    labelStyle: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 1.2),
+                    labelStyle: TextStyle(
+                        fontWeight: FontWeight.w600, letterSpacing: 1.2),
                     hintText: 'Ex: 6 chapati\'s + curd',
                   ),
                 ),
@@ -100,7 +108,9 @@ class _AddTiffinTypesState extends State<AddTiffinTypes> {
                   },
                   decoration: InputDecoration(
                     labelText: 'Cost',
-                    labelStyle: TextStyle(fontWeight: FontWeight.w600,),
+                    labelStyle: TextStyle(
+                      fontWeight: FontWeight.w600,
+                    ),
                     hintText: 'Ex: 49',
                     prefixText: '\u20B9 ',
                   ),
@@ -112,11 +122,18 @@ class _AddTiffinTypesState extends State<AddTiffinTypes> {
           RaisedButton.icon(
             onPressed: () {
               if (_formKey.currentState.validate()) {
-                setState(() {
-                  global.mealDescription.add(mealController.text);
-                  global.cost.add(double.parse(costController.text));
-                });
-
+                String meal = mealController.text;
+                double cost;
+                try {
+                  cost = double.parse(costController.text);
+                  setState(() {
+                    global.mealDescription.add(meal);
+                    global.cost.add(cost);
+                  });
+                } catch (error) {
+                  DialogBox().information(
+                      context, 'Invalid Input', 'Please check input cost!');
+                }
                 print(global.mealDescription);
                 print(global.cost);
                 setState(() {

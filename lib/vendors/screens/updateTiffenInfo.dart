@@ -60,11 +60,11 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
   var now = new DateTime.now();
   var dt = DateTime.now();
 
-  var breakFastTimefrom = "07:00 AM";
-  var breakFastTimeto = "09:00 AM";
-  var lunchTimefrom = "01:00 PM";
-  var lunchTimeto = "03:00 PM";
-  var dinnerTimefrom = "08:00 PM";
+  var breakFastTimefrom = "7:00 AM";
+  var breakFastTimeto = "9:00 AM";
+  var lunchTimefrom = "1:00 PM";
+  var lunchTimeto = "3:00 PM";
+  var dinnerTimefrom = "8:00 PM";
   var dinnerTimeto = "10:00 PM";
   var format;
 
@@ -411,7 +411,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
     setState(() {
       paymentValue = value;
 
-      switch (licenseValue) {
+      switch (paymentValue) {
         case 0:
           payment = "Cash On Delivery";
           break;
@@ -423,6 +423,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
           break;
       }
     });
+    print(payment);
   }
 
 //radio button for handelling Cancelling subscription feature
@@ -452,6 +453,8 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
         validator: (val) {
           if (val.isEmpty) {
             return errorMsg;
+          } else if (val.length > 20) {
+            return "please enter in less than 20 characters";
           }
           return null;
         },
@@ -636,23 +639,37 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                     'enter your City',
                                     'City',
                                   ),
-                                  getFormField(
-                                    addressController,
-                                    'enter your address',
-                                    'Full address',
+                                  Padding(
+                                    padding: EdgeInsets.all(10),
+                                    child: TextFormField(
+                                      controller: addressController,
+                                      validator: (val) {
+                                        if (val.isEmpty) {
+                                          return 'enter your address';
+                                        } else if (val.length > 30) {
+                                          return "please enter in less than 30 characters";
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                          labelText: 'Full address',
+                                          labelStyle: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 1.2)),
+                                      keyboardType: TextInputType.text,
+                                    ),
                                   ),
                                   Padding(
                                     padding: EdgeInsets.all(10),
                                     child: TextFormField(
-                                      // initialValue: email,
-
+                                      initialValue: email,
                                       enabled: false,
-                                      decoration: InputDecoration(
-                                          labelText: email,
-                                          labelStyle: TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600,
-                                              letterSpacing: 1.2)),
+                                      // decoration: InputDecoration(
+                                      //     labelText: email,
+                                      //     labelStyle: TextStyle(
+                                      //         color: Colors.black,
+                                      //         fontWeight: FontWeight.w600,
+                                      //         letterSpacing: 1.2)),
                                     ),
                                   ),
                                   Padding(
@@ -1292,12 +1309,12 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                                 children: <Widget>[
                                                   TextFormField(
                                                     controller: upiController,
-                                                    validator: (val) {
-                                                      if (val.isEmpty) {
-                                                        return "enter your UPI id";
-                                                      }
-                                                      return null;
-                                                    },
+                                                    // validator: (val) {
+                                                    //   if (val.isEmpty) {
+                                                    //     return "enter your UPI id";
+                                                    //   }
+                                                    //   return null;
+                                                    // },
                                                     decoration: InputDecoration(
                                                       labelText: "UPI ID",
                                                       border: InputBorder.none,
@@ -1363,14 +1380,37 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                                 children: <Widget>[
                                                   TextFormField(
                                                     controller: upiController,
+                                                    // validator: (val) {
+                                                    //   if (val.isEmpty) {
+                                                    //     return "enter your UPI id";
+                                                    //   }
+                                                    //   return null;
+                                                    // },
+                                                    decoration: InputDecoration(
+                                                      labelText: "UPI ID",
+                                                      border: InputBorder.none,
+                                                      focusedBorder:
+                                                          InputBorder.none,
+                                                      enabledBorder:
+                                                          InputBorder.none,
+                                                      errorBorder:
+                                                          InputBorder.none,
+                                                      disabledBorder:
+                                                          InputBorder.none,
+                                                    ),
+                                                  ),
+                                                  TextFormField(
+                                                    controller:
+                                                        bankAccountController,
                                                     validator: (val) {
                                                       if (val.isEmpty) {
-                                                        return "enter your UPI id";
+                                                        return "enter your Bank Account no";
                                                       }
                                                       return null;
                                                     },
                                                     decoration: InputDecoration(
-                                                      labelText: "UPI ID",
+                                                      labelText:
+                                                          "Bank account no.",
                                                       border: InputBorder.none,
                                                       focusedBorder:
                                                           InputBorder.none,
@@ -1405,12 +1445,12 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
                                                   ),
                                                   TextFormField(
                                                     controller: paytmController,
-                                                    validator: (val) {
-                                                      if (val.isEmpty) {
-                                                        return "enter your Paytm Number";
-                                                      }
-                                                      return null;
-                                                    },
+                                                    // validator: (val) {
+                                                    //   if (val.isEmpty) {
+                                                    //     return "enter your Paytm Number";
+                                                    //   }
+                                                    //   return null;
+                                                    // },
                                                     decoration: InputDecoration(
                                                       labelText: "Paytm No.",
                                                       border: InputBorder.none,

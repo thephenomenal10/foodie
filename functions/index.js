@@ -109,10 +109,12 @@ exports.vendorSubscriptionNotification = functions.firestore
   .onUpdate(async (change, context) => {
     const before = change.before.data();
     const after = change.after.data();
+    console.log(after["Proof of Payment Photos"]);
     if (
       before["Proof of Payment Photos"] === null &&
-      after["Proof of Payment Photos"] !== null
+      after["Proof of Payment Photos"] !== null 
     ) {
+      console.log("sub - if worked");
       const registeredTokens = [
         ...(
           await admin
@@ -131,9 +133,11 @@ exports.vendorSubscriptionNotification = functions.firestore
           },
         });
       } catch (error) {
+        console.log("sub not sent");
         return error;
       }
     }
+    console.log("not sent");
     return "no change";
   });
 
@@ -142,7 +146,11 @@ exports.vendorSubscriptionRenewalNotification = functions.firestore
   .onUpdate(async (change, context) => {
     const before = change.before.data();
     const after = change.after.data();
-    if (before.SubscriptionEndDate !== after.SubscriptionEndDate) {
+    if (
+      before.SubscriptionEndDate !== after.SubscriptionEndDate &&
+      before.SubscriptionEndDate !== null
+    ) {
+      console.log("ren - if worked");
       const registeredTokens = [
         ...(
           await admin
@@ -161,8 +169,10 @@ exports.vendorSubscriptionRenewalNotification = functions.firestore
           },
         });
       } catch (error) {
+        console.log("ren not sent renewal");
         return error;
       }
     }
+    console.log("not sent renewal");
     return "no change";
   });

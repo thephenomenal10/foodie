@@ -49,9 +49,9 @@ class _AccountScreenState extends State<AccountScreen> {
 
     setState(() async {
       _image = image;
-      saveImageToFirebase(email);//
+      saveImageToFirebase(email); //
       try {
-        await fetchImageFromFirebase(email);//
+        await fetchImageFromFirebase(email); //
       } catch (error) {}
       Navigator.push(
         context,
@@ -97,7 +97,10 @@ class _AccountScreenState extends State<AccountScreen> {
                 textColor: Colors.white,
                 color: Theme.of(context).primaryColor,
                 onPressed: () async {
-                  updateUserInfo();
+                  if (_formKey.currentState.validate()) {
+                    _formKey.currentState.save();
+                    updateUserInfo();
+                  }
                 },
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0),
@@ -313,6 +316,12 @@ class _AccountScreenState extends State<AccountScreen> {
                                   controller: nameController,
                                   // initialValue:
                                   enabled: _isEditMode,
+                                  validator: (value) {
+                                    if (value.length > 20) {
+                                      return "username is too long!";
+                                    }
+                                    return null;
+                                  },
                                   decoration: InputDecoration(
                                     labelText:
                                         _isEditMode == true ? "Name" : userName,
@@ -380,25 +389,34 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Future<void> updateUserInfo() async {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
-      Map<String, String> userInfo = {
-        "Name": nameController.text,
-        "Phone": phoneController.text,
-      };
-      email = (await FirebaseAuth.instance.currentUser()).email;
-      await databaseService.addUserData(userInfo, email);
-
+    // if (_formKey.currentState.validate()) {
+    //   _formKey.currentState.save();
+    final instance = await FirebaseAuth.instance.currentUser();
+    email = instance.email;
+    String name = nameController.text.trim();
+    String phone = phoneController.text.trim();
+    if (name.isEmpty) {
+      name = userName;
+    }
+    if (phone.isEmpty) {
+      phone = instance.phoneNumber;
+    }
+    if (phoneController.text.isNotEmpty) {
       await FirebaseAuthentication()
           .updatePhoneNumber(context, '+ 91 ' + phoneController.text.trim());
-
-      setState(() {
-        _isEditMode = !_isEditMode;
-        nameController.clear();
-        phoneController.clear();
-        emailController.clear();
-        getUserInfo();
-      });
     }
+    Map<String, String> userInfo = {
+      "Name": name,
+      "Phone": phone,
+    };
+    await databaseService.updateUserData(userInfo, email);
+    setState(() {
+      _isEditMode = !_isEditMode;
+      nameController.clear();
+      phoneController.clear();
+      emailController.clear();
+      getUserInfo();
+    });
+    // }
   }
 }
