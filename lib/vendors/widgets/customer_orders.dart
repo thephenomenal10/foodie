@@ -35,7 +35,7 @@ Widget _getOptionButton({
   );
 }
 
-Widget _columnOfOrdersWidgets(String path, String email) {
+Widget _columnOfOrdersWidgets(String path, String email,String phone) {
   return StreamBuilder(
     stream: Firestore.instance.collection(path).getDocuments().asStream(),
     builder: (context, snapshot) {
@@ -119,6 +119,7 @@ Widget _columnOfOrdersWidgets(String path, String email) {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => POSScreen(
+                            phone: phone,
                             mealCost: docs[index].data['mealCost'],
                             mealType: docs[index].data['foodType'],
                             skippedMeals: docs[index].data['skips'],
@@ -168,8 +169,9 @@ Widget _columnOfOrdersWidgets(String path, String email) {
 class CustomerOrders extends StatefulWidget {
   final id;
   final email;
+  final phone;
 
-  CustomerOrders(this.id, this.email);
+  CustomerOrders(this.id, this.email, this.phone);
 
   @override
   _CustomerOrdersState createState() => _CustomerOrdersState();
@@ -184,10 +186,10 @@ class _CustomerOrdersState extends State<CustomerOrders> {
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            AcceptedList(widget.id, widget.email),
-            PendingList(widget.id, widget.email),
-            CancelledList(widget.id, widget.email),
-            RejectedList(widget.id, widget.email),
+            AcceptedList(widget.id, widget.email, widget.phone),
+            PendingList(widget.id, widget.email, widget.phone),
+            CancelledList(widget.id, widget.email, widget.phone),
+            RejectedList(widget.id, widget.email, widget.phone),
           ],
         ),
       ),
@@ -198,7 +200,8 @@ class _CustomerOrdersState extends State<CustomerOrders> {
 class AcceptedList extends StatefulWidget {
   final id;
   final email;
-  AcceptedList(this.id, this.email);
+  final phone;
+  AcceptedList(this.id, this.email, this.phone);
   @override
   _AcceptedListState createState() => _AcceptedListState();
 }
@@ -225,6 +228,7 @@ class _AcceptedListState extends State<AcceptedList> {
             ? _columnOfOrdersWidgets(
                 'customer_collection/${widget.id}/acceptedOrders',
                 widget.email,
+                widget.phone,
               )
             : Container(),
       ],
@@ -235,7 +239,9 @@ class _AcceptedListState extends State<AcceptedList> {
 class PendingList extends StatefulWidget {
   final id;
   final email;
-  PendingList(this.id, this.email);
+  final phone;
+
+  PendingList(this.id, this.email, this.phone);
   @override
   _PendingListState createState() => _PendingListState();
 }
@@ -262,6 +268,7 @@ class _PendingListState extends State<PendingList> {
             ? _columnOfOrdersWidgets(
                 'customer_collection/${widget.id}/pendingOrders',
                 widget.email,
+                widget.phone,
               )
             : Container(),
       ],
@@ -272,7 +279,9 @@ class _PendingListState extends State<PendingList> {
 class CancelledList extends StatefulWidget {
   final id;
   final email;
-  CancelledList(this.id, this.email);
+  final phone;
+
+  CancelledList(this.id, this.email, this.phone);
   @override
   _CancelledListState createState() => _CancelledListState();
 }
@@ -298,7 +307,9 @@ class _CancelledListState extends State<CancelledList> {
         _selectCancel
             ? _columnOfOrdersWidgets(
                 'customer_collection/${widget.id}/cancelledOrders',
-                widget.email)
+                widget.email,
+                widget.phone,
+              )
             : Container(),
       ],
     );
@@ -308,7 +319,9 @@ class _CancelledListState extends State<CancelledList> {
 class RejectedList extends StatefulWidget {
   final id;
   final email;
-  RejectedList(this.id, this.email);
+  final phone;
+
+  RejectedList(this.id, this.email, this.phone);
   @override
   _RejectedListState createState() => _RejectedListState();
 }
@@ -335,6 +348,7 @@ class _RejectedListState extends State<RejectedList> {
             ? _columnOfOrdersWidgets(
                 'customer_collection/${widget.id}/rejectedOrders',
                 widget.email,
+                widget.phone,
               )
             : Container(),
       ],

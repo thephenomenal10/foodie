@@ -9,7 +9,7 @@ class POSScreen extends StatelessWidget {
   final int skippedMeals;
   final int totalMeals;
   final double mealCost;
-
+  final String phone;
   final String name;
   final String address;
   final int subscriptionDays;
@@ -23,6 +23,7 @@ class POSScreen extends StatelessWidget {
     this.skippedMeals,
     this.totalMeals,
     this.mealCost,
+    this.phone,
     this.name,
     this.address,
     this.subscriptionDays,
@@ -91,7 +92,7 @@ class POSScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 titleText('Contact:'),
-                valueText("243523"),
+                valueText(phone),
               ],
             ),
             SizedBox(

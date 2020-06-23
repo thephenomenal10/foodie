@@ -63,7 +63,8 @@ class CustomerOrdersScreen extends StatelessWidget {
             itemBuilder: (context, ind) => StreamBuilder(
               stream: Firestore.instance
                   .collection('customer_collection')
-                  .document('${customers[ind]['customerId']}').snapshots(),
+                  .document('${customers[ind]['customerId']}')
+                  .snapshots(),
               builder: (context, streamSnapshot) {
                 if (streamSnapshot.connectionState == ConnectionState.waiting) {
                   return Center(
@@ -78,23 +79,33 @@ class CustomerOrdersScreen extends StatelessWidget {
                 return Card(
                   elevation: 6.0,
                   child: ListTile(
-                    leading: Image.asset(
-                      "assets/my1.png",
-                      fit: BoxFit.contain,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 5),
+                    leading: CircleAvatar(
+                      radius: MediaQuery.of(context).size.width * 0.08,
+                      backgroundImage: streamSnapshot.data['image'] == null
+                          ? AssetImage(
+                              "assets/my1.png",
+                            )
+                          : NetworkImage(
+                              streamSnapshot.data['image'],
+                            ),
                     ),
                     title: Text(
                       streamSnapshot.data['name'],
                       style: TextStyle(
                         color: secondaryColor,
                         fontWeight: FontWeight.w600,
-                        fontSize: height * 0.03,
+                        fontSize: height * 0.025,
                       ),
                     ),
-                    subtitle: Text(
-                      streamSnapshot.data['address text'],
-                      style: TextStyle(
-                        color: secondaryColor,
-                        fontSize: height * 0.025,
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        streamSnapshot.data['address text'],
+                        style: TextStyle(
+                          color: secondaryColor,
+                          fontSize: height * 0.02,
+                        ),
                       ),
                     ),
                     trailing: RaisedButton(
@@ -106,6 +117,7 @@ class CustomerOrdersScreen extends StatelessWidget {
                             builder: (context) => CustomerSubscriptionsScreen(
                               customers[ind]['customerId'],
                               streamSnapshot.data['name'],
+                              streamSnapshot.data['phone'],
                               customers[ind]['vendorEmail'],
                             ),
                           ),
@@ -113,11 +125,10 @@ class CustomerOrdersScreen extends StatelessWidget {
                       },
                       child: Container(
                         alignment: Alignment.center,
-                        height: height * 0.11,
                         width: width * 0.22,
                         child: Text(
                           "Show Subscription",
-                          style: TextStyle(fontSize: width * 0.0385),
+                          style: TextStyle(fontSize: width * 0.038),
                           textAlign: TextAlign.center,
                         ),
                       ),

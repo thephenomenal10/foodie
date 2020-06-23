@@ -126,13 +126,20 @@ class PendingOrders extends StatelessWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Image(
-                                      image: snapshot.data['image'] != null
-                                          ? NetworkImage(snapshot.data['image'])
-                                          : AssetImage("assets/my1.png"),
-                                      height: 85.0,
-                                      width: 65.0,
+                                    CircleAvatar(
+                                      radius:
+                                          MediaQuery.of(context).size.width *
+                                              0.085,
+                                      backgroundImage:
+                                          snapshot.data['image'] == null
+                                              ? AssetImage(
+                                                  "assets/my1.png",
+                                                )
+                                              : NetworkImage(
+                                                  snapshot.data['image'],
+                                                ),
                                     ),
+                                    SizedBox(width: 5),
                                     Column(
                                       mainAxisSize: MainAxisSize.min,
                                       crossAxisAlignment:
@@ -147,7 +154,10 @@ class PendingOrders extends StatelessWidget {
                                         Container(
                                           padding: EdgeInsets.symmetric(
                                               vertical: 5.0),
-                                          width: MediaQuery.of(context).size.width*0.51,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.5,
                                           child: new Text(
                                             docs[index]['customerName'],
                                             style: new TextStyle(
@@ -159,15 +169,16 @@ class PendingOrders extends StatelessWidget {
                                           ),
                                         ),
                                         Container(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 5.0),
-                                          width: MediaQuery.of(context).size.width*0.51,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.5,
                                           child: new Text(
                                             docs[index]['customerAddress'],
                                             style: new TextStyle(
                                               color: secondaryColor,
                                               fontWeight: FontWeight.w600,
-                                              fontSize: 18.0,
+                                              fontSize: 15.0,
                                             ),
                                           ),
                                         )

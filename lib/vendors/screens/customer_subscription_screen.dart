@@ -5,8 +5,14 @@ import 'package:foodieapp/vendors/widgets/customer_orders.dart';
 class CustomerSubscriptionsScreen extends StatelessWidget {
   final String id;
   final String customerName;
+  final String customerPhone;
   final String vendorEmail;
-  CustomerSubscriptionsScreen(this.id, this.customerName, this.vendorEmail);
+  CustomerSubscriptionsScreen(
+    this.id,
+    this.customerName,
+    this.customerPhone,
+    this.vendorEmail,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +61,7 @@ class CustomerSubscriptionsScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(
                 vertical: 5,
               ),
-              child: CustomerOrders(id, vendorEmail),
+              child: CustomerOrders(id, vendorEmail,customerPhone),
             ),
           ),
         ],

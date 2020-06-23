@@ -10,7 +10,8 @@ class Orders extends StatelessWidget {
   final vendorName;
   final bool isSunday;
 
-  const Orders({Key key, this.dateTime, this.orders, this.vendorName, this.isSunday})
+  const Orders(
+      {Key key, this.dateTime, this.orders, this.vendorName, this.isSunday})
       : super(key: key);
 
   @override
@@ -160,17 +161,19 @@ class Orders extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
-                                        Image(
-                                          image: snapshot.data['image'] != null
+                                        CircleAvatar(
+                                          radius: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.085,
+                                          backgroundImage: snapshot
+                                                      .data['image'] !=
+                                                  null
                                               ? NetworkImage(
                                                   snapshot.data['image'])
                                               : AssetImage("assets/my1.png"),
-                                          height: 85.0,
-                                          width: 65.0,
                                         ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
+                                        SizedBox(width: 5),
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -178,8 +181,9 @@ class Orders extends StatelessWidget {
                                             Text(
                                               "ORDER No: #${index + 1}",
                                               style: new TextStyle(
-                                                  color: secondaryColor,
-                                                  fontSize: 15),
+                                                color: secondaryColor,
+                                                fontSize: 15,
+                                              ),
                                             ),
                                             Container(
                                               padding: EdgeInsets.symmetric(
@@ -191,14 +195,13 @@ class Orders extends StatelessWidget {
                                               child: new Text(
                                                 orders[index]['customerName'],
                                                 style: new TextStyle(
-                                                    color: secondaryColor,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 18.0),
+                                                  color: secondaryColor,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 18.0,
+                                                ),
                                               ),
                                             ),
                                             Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 5.0),
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
@@ -209,7 +212,7 @@ class Orders extends StatelessWidget {
                                                 style: new TextStyle(
                                                   color: secondaryColor,
                                                   fontWeight: FontWeight.w600,
-                                                  fontSize: 18.0,
+                                                  fontSize: 15.0,
                                                 ),
                                               ),
                                             )
