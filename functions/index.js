@@ -1,6 +1,5 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const { Message } = require("firebase-functions/lib/providers/pubsub");
 
 admin.initializeApp(functions.config().firebase);
 
