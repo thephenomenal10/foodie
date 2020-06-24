@@ -1,13 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:foodieapp/vendors/bottomNavigationBar.dart';
 import 'package:foodieapp/vendors/screens/createTiffenCentre.dart';
 import 'package:foodieapp/vendors/screens/login.dart';
 import 'package:foodieapp/vendors/screens/subPaymentScreen.dart';
-import 'package:foodieapp/vendors/services/firebase_service.dart';
-import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 
 class IsUserLoggedIn extends StatefulWidget {
   @override

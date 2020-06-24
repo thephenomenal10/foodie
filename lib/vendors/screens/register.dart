@@ -5,8 +5,7 @@ import 'package:foodieapp/vendors/screens/login.dart';
 import 'package:foodieapp/vendors/screens/verify_phone_screen.dart';
 import 'package:foodieapp/vendors/services/firebase_service.dart';
 import 'package:foodieapp/vendors/validation/validate.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
+import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -453,6 +452,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // setState(() {
       //   global.isLoading = true;
       // });
+      setState(() {
+        global.phone = '+91' + phoneController.text.trim();
+      });
 
       // SharedPreferences prefs = await SharedPreferences.getInstance();
       // await prefs.setString("currentUserEmail", emailController.text);
@@ -468,55 +470,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           builder: (context) => VerifyPhoneScreen(accountInfo),
         ),
       );
-      // Map<String, String> userInfo = {
-      //   "Email": emailController.text.trim(),
-      //   "Name": nameController.text.trim(),
-      //   "Phone": '+ 91 ' + phoneController.text.trim(),
-      //   "userType": "vendor",
-      // };
-      // try {
-      //   await firebaseAuthentication.signUp(
-      //     context,
-      //     emailController,
-      //     passController,
-      //     '+ 91 ' + phoneController.text.trim(),
-      //     nameController.text,
-      //     userInfo,
-      //   );
-      //   setState(() {
-      //     global.isLoading = false;
-      //   });
-      // } on PlatformException catch (error) {
-      //   print(error.message);
-      //   setState(() {
-      //     global.isLoading = false;
-      //   });
-      //   showDialog(
-      //     context: context,
-      //     child: AlertDialog(
-      //       title: Text('Alert'),
-      //       content: Text(
-      //         error.message,
-      //       ),
-      //       actions: <Widget>[
-      //         FlatButton(
-      //           onPressed: () => Navigator.of(context).pop(),
-      //           child: Text(
-      //             'OK',
-      //             style: TextStyle(
-      //               color: Theme.of(context).primaryColor,
-      //             ),
-      //           ),
-      //         )
-      //       ],
-      //     ),
-      //   );
-      // } catch (error) {
-      //   setState(() {
-      //     global.isLoading = false;
-      //   });
-      //   print(error + " runs");
-      // }
+      
     }
   }
 }

@@ -13,8 +13,6 @@ import 'package:foodieapp/vendors/services/databaseService.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 import 'package:intl/intl.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
@@ -339,15 +337,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
     }
   }
 
-  ///launching terms and condition url
-  _launchURL() async {
-    const url = 'https://flutter.io';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+
 
   //radio button for handeling service days of tiffen provider
   String days = "7 Days";
@@ -386,23 +376,7 @@ class UpdateTiffenInfoState extends State<UpdateTiffenInfo> {
     });
   }
 
-  //radio button for handelling FASSAI licensence
-  String want = "No";
-  int wantValue = 0;
-  void _handleWantValueChange(int value) {
-    setState(() {
-      wantValue = value;
 
-      switch (wantValue) {
-        case 0:
-          want = "No";
-          break;
-        case 1:
-          want = "Yes";
-          break;
-      }
-    });
-  }
 
 //radio button for handelling PAYMENT MODE
   String payment = "Cash On Delivery";

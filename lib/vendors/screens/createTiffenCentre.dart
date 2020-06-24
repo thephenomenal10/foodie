@@ -13,7 +13,6 @@ import 'package:foodieapp/vendors/services/databaseService.dart';
 import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 import 'package:intl/intl.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:day_night_time_picker/day_night_time_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -341,7 +340,7 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
 
   ///launching terms and condition url
   _launchURL() async {
-    const url = 'https://flutter.io';
+    const url = 'https://www.termsandconditionsgenerator.com/live.php?token=zfwbd3UcVWV2TDUBRYzQyRo7lByv54lA';
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -651,33 +650,20 @@ class CreateTiffenCentreState extends State<CreateTiffenCentre> {
                                 child: TextFormField(
                                   initialValue: email,
                                   enabled: false,
-                                  // decoration: InputDecoration(
-                                  //     // labelText: email,
-                                  //     labelStyle: TextStyle(
-                                  //         color: Colors.black,
-                                  //         fontWeight: FontWeight.w600,
-                                  //         letterSpacing: 1.2)),
+                                  
                                 ),
+                                
                               ),
                               Padding(
                                 padding: EdgeInsets.all(10),
                                 child: TextFormField(
-                                  controller: phoneController,
-                                  validator: (val) {
-                                    if (val.isEmpty) {
-                                      return "enter your phone no";
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                      labelText: "Phone no.",
-                                      prefix: Text("+91 "),
-                                      labelStyle: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          letterSpacing: 1.2)),
-                                  keyboardType: TextInputType.number,
+                                  initialValue: global.phone,
+                                  enabled: false,
+                                  
                                 ),
+                                
                               ),
+                              
                               RaisedButton(
                                 onPressed: () async {
                                   await Navigator.push(

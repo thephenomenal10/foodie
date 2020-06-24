@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
 import 'package:foodieapp/vendors/constants/constants.dart';
-import 'package:foodieapp/vendors/widgets/dialogBox.dart';
 import 'package:foodieapp/vendors/widgets/popUpPayment.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';

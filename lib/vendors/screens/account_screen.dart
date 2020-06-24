@@ -12,7 +12,6 @@ import 'package:foodieapp/vendors/screens/showTiffenInfo.dart';
 import 'package:foodieapp/vendors/services/databaseService.dart';
 import 'package:foodieapp/vendors/utils/mySlide.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/firebase_service.dart';
 // import 'package:foodieapp/vendors/widgets/globalVariable.dart' as global;

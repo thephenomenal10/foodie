@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:foodieapp/vendors/constants/constants.dart';
-import 'package:foodieapp/vendors/screens/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ForgotPass extends StatefulWidget {

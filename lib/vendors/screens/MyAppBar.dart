@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:foodieapp/vendors/utils/primaryColor.dart';
 
 
 class MyAppBar extends StatefulWidget {
