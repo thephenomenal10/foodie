@@ -280,7 +280,7 @@ class FirebaseAuthentication {
         context, MaterialPageRoute(builder: (context) => LoginScreen())));
   }
 
-  Future<void> updatePhoneNumber(context, String phoneNumber) async {
+  Future<void> updatePhoneNumber(context, String phoneNumber,String username) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
     TextEditingController _codeController = new TextEditingController();
     user = await FirebaseAuth.instance.currentUser();
@@ -288,7 +288,22 @@ class FirebaseAuthentication {
     await _auth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       timeout: Duration(seconds: 60),
-      verificationCompleted: null,
+      verificationCompleted: (AuthCredential credential) async {
+        try {
+          await user.updatePhoneNumberCredential(credential);
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BottomNavigationScreen(),
+            ),
+          );
+        } on PlatformException catch (error) {
+          DialogBox().information(context, 'Failed', error.message);
+        } catch (error) {
+          DialogBox().information(context, 'Failed', 'Something went wrong!');
+        }
+      },
       verificationFailed: (AuthException exception) {
         print(exception);
       },
@@ -316,23 +331,27 @@ class FirebaseAuthentication {
                     final code = _codeController.text.trim();
                     AuthCredential credential = PhoneAuthProvider.getCredential(
                         verificationId: verificationId, smsCode: code);
-                    user
-                        .updatePhoneNumberCredential(credential)
-                        .then((authResult) {
-                      if (user != null) {
-                        Navigator.pop(context);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BottomNavigationScreen(),
-                          ),
-                        );
-                      } else {
-                        print("Error");
-                      }
-                    }).catchError((e) {
-                      print(e.message);
-                    });
+                    try {
+                      await user.updatePhoneNumberCredential(credential);
+                      Map<String, String> userInfo = {
+                        "Name": username,
+                        "Phone": phoneNumber,
+                      };
+                      await DatabaseService()
+                          .updateUserData(userInfo, user.email);
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BottomNavigationScreen(),
+                        ),
+                      );
+                    } on PlatformException catch (error) {
+                      DialogBox().information(context, 'Failed', error.message);
+                    } catch (error) {
+                      DialogBox().information(
+                          context, 'Failed', 'Something went wrong!');
+                    }
                   },
                 )
               ],

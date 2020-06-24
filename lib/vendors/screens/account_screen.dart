@@ -316,7 +316,9 @@ class _AccountScreenState extends State<AccountScreen> {
                                   // initialValue:
                                   enabled: _isEditMode,
                                   validator: (value) {
-                                    if (value.length > 20) {
+                                    if (value.isEmpty) {
+                                      return 'Please enter username';
+                                    } else if (value.length > 20) {
                                       return "username is too long!";
                                     }
                                     return null;
@@ -332,9 +334,16 @@ class _AccountScreenState extends State<AccountScreen> {
                                 padding: EdgeInsets.all(10),
                                 child: TextFormField(
                                   controller: phoneController,
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return 'Please enter phone number';
+                                    }
+                                    return null;
+                                  },
                                   // initialValue: _isEditMode == true ? phone : null,
                                   enabled: _isEditMode,
                                   decoration: InputDecoration(
+                                    prefixText: '+ 91 ',
                                     labelText:
                                         _isEditMode == true ? "Phone" : phone,
                                     labelStyle: TextStyle(color: Colors.black),
@@ -388,34 +397,20 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Future<void> updateUserInfo() async {
-    // if (_formKey.currentState.validate()) {
-    //   _formKey.currentState.save();
-    final instance = await FirebaseAuth.instance.currentUser();
-    email = instance.email;
-    String name = nameController.text.trim();
-    String phone = phoneController.text.trim();
-    if (name.isEmpty) {
-      name = userName;
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      final instance = await FirebaseAuth.instance.currentUser();
+      email = instance.email;
+      String name = nameController.text.trim();
+      String phone = '+ 91 ' + phoneController.text.trim();
+      await FirebaseAuthentication().updatePhoneNumber(context, phone, name);
+      setState(() {
+        _isEditMode = !_isEditMode;
+        nameController.clear();
+        phoneController.clear();
+        emailController.clear();
+        getUserInfo();
+      });
     }
-    if (phone.isEmpty) {
-      phone = instance.phoneNumber;
-    }
-    if (phoneController.text.isNotEmpty) {
-      await FirebaseAuthentication()
-          .updatePhoneNumber(context, '+ 91 ' + phoneController.text.trim());
-    }
-    Map<String, String> userInfo = {
-      "Name": name,
-      "Phone": phone,
-    };
-    await databaseService.updateUserData(userInfo, email);
-    setState(() {
-      _isEditMode = !_isEditMode;
-      nameController.clear();
-      phoneController.clear();
-      emailController.clear();
-      getUserInfo();
-    });
-    // }
   }
 }

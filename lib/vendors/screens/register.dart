@@ -102,7 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 textAlign: TextAlign.left,
                 style: TextStyle(fontSize: 12),
                 decoration: InputDecoration(
-                  prefixText: '+91',
+                  prefixText: '+ 91 ',
                   prefixStyle: TextStyle(fontSize: 12),
                   fillColor: Color(0xFF00B712),
                   filled: true,
