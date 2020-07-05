@@ -91,7 +91,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         await uploadTask.onComplete;
         await streamSubscription.cancel();
 
-        String proofImageUrl = await storageReference.getDownloadURL();
+        proofImageUrl = await storageReference.getDownloadURL();
 
         await Firestore.instance
             .collection("tiffen_service_details")
@@ -553,6 +553,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               });
                             }
                             await uploadProofImages();
+                            print('executed first');
+                            await Firestore.instance
+                                .collection('subscription_notification')
+                                .document()
+                                .setData({
+                              'status': 'pending',
+                              'proofOfPayment': proofImageUrl,
+                              'vendorEmail': widget.vendorEmail,
+                            });
+                            print('executed second');
                             setState(() {
                               _isLoading = false;
                             });

@@ -93,6 +93,7 @@ class _IsUserLoggedInState extends State<IsUserLoggedIn> {
           } else if (endDate.difference(currentDate).isNegative) {
             print('subscription over');
             return PaymentScreen(
+              vendorEmail: user.email,
               isRenewal: true,
             );
           }
